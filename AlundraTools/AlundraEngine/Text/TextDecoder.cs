@@ -337,12 +337,16 @@ public static class TextDecoder
                             gameEngine.StaticVariables.g_currentVoiceSfxId = 4;
                             break;
 
+                        // GHIDRA: 800469f0 - centre the rest of the current line
                         case 'H':
                             currentLineIndex = gameEngine.StaticVariables.g_textCursor + 2;
                             gameEngine.StaticVariables.g_textCursor += 2;
                             var array = gameEngine.StaticVariables.g_scriptBuffer.Skip(currentLineIndex).TakeWhile(c => c != '\0').ToArray();
                             currentLineIndex = CalculateTextWidthFromScript(gameEngine, array);
-                            gameEngine.StaticVariables.g_textLineWidth[(gameEngine.StaticVariables.g_textBufferX + gameEngine.StaticVariables.g_textLineIndex) % 3] = currentLineIndex;
+                            // The original stores at (g_textBufferX + g_textLineIndex) % 3 because it addresses the
+                            // VRAM line strips; this port writes the glyphs to DialogLinesSprites[g_textLineIndex % 3],
+                            // so the width has to use the same linear index.
+                            gameEngine.StaticVariables.g_textLineWidth[gameEngine.StaticVariables.g_textLineIndex % 3] = currentLineIndex;
                             cursor = gameEngine.StaticVariables.g_textCursor;
                             goto switchD_80046540_RENDER_NEXT_CHARACTER;
 
@@ -929,117 +933,60 @@ public static class TextDecoder
         return result != -1;
     }
 
-    //8004771c
+    // GHIDRA: FUN_8004771C @ 0x8004771C
+    // Measures the on-screen width of the rest of a script line, used by the \H (centre line) code.
     public static int CalculateTextWidthFromScript(GameEngine gameEngine, char[] text)
     {
-        if (text == null || text?.Length == 0)
+        if (text == null || text.Length == 0)
         {
             return 0;
         }
 
-        char pbVar1;
-        int fontWidth;
-        int totalWidth;
-        char currentChar;
+        int totalWidth = 0;
         int index = 0;
 
-        totalWidth = 0;
-        currentChar = text[0];
-
-        while (currentChar != 0 && index < text.Length)
+        while (index < text.Length && text[index] != '\0')
         {
+            char currentChar = text[index];
+
+            // 0x80047750: '{' escape, the next byte selects a glyph in the 0x50.. range
             if (currentChar == 0x7b)
             {
-                fontWidth = gameEngine.StaticVariables.g_fontCharWidthTable[(text[1] + 0x50) * 5];
-                index += 2;
-            LAB_800478a0:
-                totalWidth += fontWidth;
+                index += 1;
+
+                if (index < text.Length)
+                {
+                    totalWidth += gameEngine.StaticVariables.g_fontCharWidthTable[(text[index] + 0x50) * 5];
+                }
+
+                index += 1;
+                continue;
             }
-            else
+
+            // 0x80047784: '}' escape, the next byte selects a glyph in the 0x90.. range
+            if (currentChar == 0x7d)
             {
-                if (currentChar == 0x7d)
+                index += 1;
+
+                if (index < text.Length)
                 {
-                    fontWidth = gameEngine.StaticVariables.g_fontCharWidthTable[(text[1] + 0x90) * 5];
-                    index += 2;
-
-                    //goto LAB_800478a0;
-                    totalWidth += fontWidth;
+                    totalWidth += gameEngine.StaticVariables.g_fontCharWidthTable[(text[index] + 0x90) * 5];
                 }
-                else if (currentChar != 0x5c)
-                {
-                    fontWidth = gameEngine.StaticVariables.g_fontCharWidthTable[(uint)currentChar * 5];
-                    index += 1;
 
-                    //goto LAB_800478a0;
-                    totalWidth += fontWidth;
-                }
-                else
-                {
-                    currentChar = text[++index];
-
-                    switch ((int)currentChar)
-                    {
-                        case 0x30:
-                        case 0x31:
-                        case 0x32:
-                        case 0x33:
-                        case 0x34:
-                        case 0x35:
-                        case 0x36:
-                        case 0x37:
-                        case 0x38:
-                        case 0x39:
-                            if (currentChar - 0x30 < 10)
-                            {
-                                index += 2;
-                                currentChar = text[index];
-
-                                do
-                                {
-                                    currentChar = text[++index];
-                                } while (currentChar - 0x30 < 10);
-                            }
-                            break;
-
-                        case 0x41:
-                        case 0x4e:
-                            return totalWidth;
-
-                        case 0x42:
-                        case 0x43:
-                        case 0x44:
-                        case 0x45:
-                        case 0x46:
-                        case 0x47:
-                        case 0x54:
-                        case 0x59:
-                            index += 2;
-                            break;
-
-                        case 0x57:
-                            index += 2;
-
-                            if (currentChar < 0x41)
-                            {
-                                fontWidth = currentChar - 0x20;
-                            }
-                            else
-                            {
-                                fontWidth = currentChar - 0x27;
-                            }
-
-                            fontWidth = gameEngine.StaticVariables.g_fontCharWidthTable[fontWidth * 5];
-                            index += 3;
-                            //goto LAB_800478a0;
-                            totalWidth += fontWidth;
-                            break;
-
-                        case 0x58:
-                            index += 3;
-                            break;
-                    }
-                }
+                index += 1;
+                continue;
             }
+
+            // 0x80047880: plain glyph
+            if (currentChar != 0x5c)
+            {
+                totalWidth += gameEngine.StaticVariables.g_fontCharWidthTable[(uint)currentChar * 5];
+                index += 1;
+                continue;
+            }
+
+            // 0x800477b8: control code, index now points at the code letter itself
+            index += 1;
 
             if (index >= text.Length)
             {
@@ -1047,6 +994,66 @@ public static class TextDecoder
             }
 
             currentChar = text[index];
+
+            switch ((int)currentChar)
+            {
+                // 0x800477e8: \<digits> sets a temporary flag, the digit run carries no width
+                case 0x30:
+                case 0x31:
+                case 0x32:
+                case 0x33:
+                case 0x34:
+                case 0x35:
+                case 0x36:
+                case 0x37:
+                case 0x38:
+                case 0x39:
+                    while (index < text.Length && (uint)(text[index] - 0x30) < 10)
+                    {
+                        index += 1;
+                    }
+                    break;
+
+                // 0x800478b4: \A (wait) and \N (new line) end the current line
+                case 0x41:
+                case 0x4e:
+                    return totalWidth;
+
+                // 0x80047878: codes without an argument and without width
+                case 0x42:
+                case 0x43:
+                case 0x44:
+                case 0x45:
+                case 0x46:
+                case 0x47:
+                case 0x54:
+                case 0x59:
+                    index += 1;
+                    break;
+
+                // 0x80047824: \W<c> draws one symbol glyph, its argument selects the glyph
+                case 0x57:
+                    index += 1;
+
+                    if (index < text.Length)
+                    {
+                        char symbol = text[index];
+                        int glyph = symbol < 0x41 ? symbol - 0x20 : symbol - 0x27;
+                        totalWidth += gameEngine.StaticVariables.g_fontCharWidthTable[glyph * 5];
+                    }
+
+                    index += 1;
+                    break;
+
+                // 0x80047870: \X<c> is substituted later, it carries no width here
+                case 0x58:
+                    index += 2;
+                    break;
+
+                // 0x800478a4: every other code (\H included) is left in place and re-read as a plain glyph
+                default:
+                    break;
+            }
         }
 
         return totalWidth;

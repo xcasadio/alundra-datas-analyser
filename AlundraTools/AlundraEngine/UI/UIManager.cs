@@ -208,8 +208,11 @@ public class UIManager
         {
             //uVar2 = _gameEngine.StaticVariables.g_drawModes[0x14].tag;
             iVar8 = 0;
-            sVar10 = 0;
-            iVar3 = (iVar5 + line) % 3;
+            // GHIDRA: 80045ac0 -> $t4 is decremented once per line, so the line pitch is 0x10 - 1.
+            sVar10 = (short)-line;
+            // JUSTIFICATION: see RenderText - the three line buffers are kept linear in this port and rotated
+            // explicitly below, so g_textBufferX is not folded into the index.
+            iVar3 = line;
             iVar9 = iVar3/* * 0x28*/;
 
             if (_gameEngine.StaticVariables.g_textNextChoice == 0)
@@ -232,13 +235,15 @@ public class UIManager
 
             if (_gameEngine.StaticVariables.g_textLineWidth[iVar3] == 0)
             {
-                sprite.x0 = (short)(callbackInfo.Data.X + callbackInfo.Data.Width);
-                sprite.y0 = (short)(callbackInfo.Data.Y + callbackInfo.Data.Height + sVar10 + heightOffset - iVar14);
+                // GHIDRA: 80045c28 -> x0 = data->x + record->x, y0 = data->y + record->y
+                sprite.x0 = (short)(callbackInfo.Data.X + callbackInfo.X);
+                sprite.y0 = (short)(callbackInfo.Data.Y + callbackInfo.Y + sVar10 + heightOffset - iVar14);
             }
             else
             {
+                // GHIDRA: 80045b6c -> centred line: x0 = data->x + (data->width * 8 - lineWidth) / 2
                 sprite.x0 = (short)(callbackInfo.Data.X + (callbackInfo.Data.Width * 8 - _gameEngine.StaticVariables.g_textLineWidth[iVar3]) / 2);
-                sprite.y0 = (short)(callbackInfo.Data.Y + callbackInfo.Data.Height + sVar10 + heightOffset - iVar14);
+                sprite.y0 = (short)(callbackInfo.Data.Y + callbackInfo.Y + sVar10 + heightOffset - iVar14);
             }
 
             sprite.u0 = (byte)(line * 0x40);
@@ -250,7 +255,7 @@ public class UIManager
             foreach (var spr in DialogLinesSprites[index])
             {
                 _gameEngine.Renderer.AddSprite(
-                    spr.X + callbackInfo.Data.Width,
+                    sprite.x0 + spr.X,
                     /*spr.Y +*/index * 0x10 + sprite.y0,
                     spr.Width, spr.Height,
                     SpriteDepth.ForegroundUI, spr.Bitmap, spr.Alpha);
@@ -278,15 +283,18 @@ public class UIManager
         {
             _gameEngine.StaticVariables.g_textMessageConfirmed = 0;
             _gameEngine.StaticVariables.g_textBufferX = (_gameEngine.StaticVariables.g_textBufferX + 1) % 3;
-            index = (_gameEngine.StaticVariables.g_textBufferX + _gameEngine.StaticVariables.g_textLineIndex) % 3;
-            _gameEngine.StaticVariables.g_textLineWidth[index] = 0;
-            //DialogLinesSprites[index].Clear();
 
             DialogLinesSprites[0].Clear();
             DialogLinesSprites[0].AddRange(DialogLinesSprites[1]);
             DialogLinesSprites[1].Clear();
             DialogLinesSprites[1].AddRange(DialogLinesSprites[2]);
             DialogLinesSprites[2].Clear();
+
+            // The original only clears the strip that g_textBufferX just freed; here the lines are rotated
+            // explicitly, so the centring widths have to follow the same rotation.
+            _gameEngine.StaticVariables.g_textLineWidth[0] = _gameEngine.StaticVariables.g_textLineWidth[1];
+            _gameEngine.StaticVariables.g_textLineWidth[1] = _gameEngine.StaticVariables.g_textLineWidth[2];
+            _gameEngine.StaticVariables.g_textLineWidth[2] = 0;
 
             //iVar5 = _gameEngine.StaticVariables.g_textBufferX + 2;
             //rect.x = 0x3c0;
@@ -1058,23 +1066,29 @@ public class UIManager
         sVar6 = 0;
         do
         {
-            offsetY = 0;
-            currentLine = (bufferX + lineIndex) % 3;
+            // GHIDRA: 800455f4 -> $t2 is decremented once per line, so the line pitch is 0x10 - 1.
+            offsetY = (short)-lineIndex;
+            // JUSTIFICATION: the original indexes the three VRAM line strips with (g_textBufferX + line) % 3.
+            // This port keeps the three lines linear in DialogLinesSprites / g_textLineWidth and rotates them
+            // explicitly in FUN_80045988, so the display line index is used directly here.
+            currentLine = lineIndex;
 
             var sprite = _gameEngine.StaticVariables.g_textFullLinesSprites[currentLine];
 
             if (_gameEngine.StaticVariables.g_textLineWidth[currentLine] == 0)
             {
-                sprite.x0 = (short)(callbackInfo.Data.X + callbackInfo.Data.Width);
-                sprite.y0 = (short)(callbackInfo.Data.Y + callbackInfo.Height + offsetY + sVar6);
+                // GHIDRA: 800456cc -> x0 = data->x + record->x, y0 = data->y + record->y
+                sprite.x0 = (short)(callbackInfo.Data.X + callbackInfo.X);
+                sprite.y0 = (short)(callbackInfo.Data.Y + callbackInfo.Y + offsetY + sVar6);
             }
             else
             {
+                // GHIDRA: 80045658 -> centred line: x0 = data->x + (data->width * 8 - lineWidth) / 2
                 sprite.x0 = (short)(callbackInfo.Data.X + (callbackInfo.Data.Width * 8 - _gameEngine.StaticVariables.g_textLineWidth[currentLine]) / 2);
-                sprite.y0 = (short)(callbackInfo.Data.Y + callbackInfo.Data.Height + offsetY + sVar6);
+                sprite.y0 = (short)(callbackInfo.Data.Y + callbackInfo.Y + offsetY + sVar6);
             }
 
-            //offsetY = offsetY + -1;
+
             //pPrimitiveEntry = _gameEngine.StaticVariables.g_textFullLinesSprites[currentLine * 2].tag;
             //pOrderTable = _gameEngine.StaticVariables.DAT_80146f60 + uVar1 * 0x28);
 
@@ -1084,10 +1098,12 @@ public class UIManager
             //uVar2 = _gameEngine.StaticVariables.g_drawModes[0x14].tag;
 
 
+            // The original draws one pre-composed 0x40 wide line strip at (x0, y0); here the line is a list of
+            // glyph sprites whose X is the pen offset inside the line, so the line origin has to be added back.
             foreach (var spr in DialogLinesSprites[lineIndex])
             {
                 _gameEngine.Renderer.AddSprite(
-                    spr.X + callbackInfo.Data.Width,
+                    sprite.x0 + spr.X,
                     /*spr.Y*/lineIndex * 0x10 + sprite.y0,
                     spr.Width, spr.Height,
                     SpriteDepth.ForegroundUI, spr.Bitmap, spr.Alpha);
@@ -1202,6 +1218,9 @@ public class UIManager
         _gameEngine.StaticVariables.g_textLineIndex = 0;
         _gameEngine.StaticVariables.g_textCursor = 0;
         _gameEngine.StaticVariables.g_textRenderStep = 0;
+        // GHIDRA: 80045380 -> the three g_textLineWidth entries are zeroed when a message starts,
+        // otherwise a \H width kept from the previous message would centre the new one.
+        Array.Clear(_gameEngine.StaticVariables.g_textLineWidth);
 
         byte yOffset = 0x20;
 
