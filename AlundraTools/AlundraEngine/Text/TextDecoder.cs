@@ -943,6 +943,10 @@ public static class TextDecoder
         }
 
         int totalWidth = 0;
+        // DEVIATION: the original counts the trailing spaces of a line, which pushes a centred line to the
+        // left (\HFlorin\W5Roulette carries eight of them). trimmedWidth is the width up to the last glyph
+        // that is not a space, so a centred line is centred on its visible text.
+        int trimmedWidth = 0;
         int index = 0;
 
         while (index < text.Length && text[index] != '\0')
@@ -957,6 +961,7 @@ public static class TextDecoder
                 if (index < text.Length)
                 {
                     totalWidth += gameEngine.StaticVariables.g_fontCharWidthTable[(text[index] + 0x50) * 5];
+                    trimmedWidth = totalWidth;
                 }
 
                 index += 1;
@@ -971,6 +976,7 @@ public static class TextDecoder
                 if (index < text.Length)
                 {
                     totalWidth += gameEngine.StaticVariables.g_fontCharWidthTable[(text[index] + 0x90) * 5];
+                    trimmedWidth = totalWidth;
                 }
 
                 index += 1;
@@ -981,6 +987,12 @@ public static class TextDecoder
             if (currentChar != 0x5c)
             {
                 totalWidth += gameEngine.StaticVariables.g_fontCharWidthTable[(uint)currentChar * 5];
+
+                if (currentChar != ' ')
+                {
+                    trimmedWidth = totalWidth;
+                }
+
                 index += 1;
                 continue;
             }
@@ -1017,7 +1029,7 @@ public static class TextDecoder
                 // 0x800478b4: \A (wait) and \N (new line) end the current line
                 case 0x41:
                 case 0x4e:
-                    return totalWidth;
+                    return trimmedWidth;
 
                 // 0x80047878: codes without an argument and without width
                 case 0x42:
@@ -1040,6 +1052,7 @@ public static class TextDecoder
                         char symbol = text[index];
                         int glyph = symbol < 0x41 ? symbol - 0x20 : symbol - 0x27;
                         totalWidth += gameEngine.StaticVariables.g_fontCharWidthTable[glyph * 5];
+                        trimmedWidth = totalWidth;
                     }
 
                     index += 1;
@@ -1056,7 +1069,7 @@ public static class TextDecoder
             }
         }
 
-        return totalWidth;
+        return trimmedWidth;
     }
 
 
