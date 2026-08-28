@@ -3320,7 +3320,8 @@ public static class FunctionTypeC
     //Giles (homme religieux)
     public static void AI_FUN_800756ec(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss"
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Melzas2_FinalBoss"
             && entity.Name != "Giles (homme religieux)"
             && entity.Name != "Klein (rêve uniquement)")
         {
@@ -3443,7 +3444,9 @@ public static class FunctionTypeC
     // GHIDRA: AI_FUN_80075a3c @ 0x80075A3C
     public static void AI_FUN_80075a3c(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Dragon"
+            && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
         }
