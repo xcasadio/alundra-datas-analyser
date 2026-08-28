@@ -27,6 +27,10 @@ public abstract class EtcRes
     public abstract string GetOtherString(int id);
     public abstract string GetItemDescription(int itemId);
 
+    // The inventory description has two lines: IndexTable[itemId + 0x280] and IndexTable[itemId + 0x300].
+    // The original keeps them in two pointer tables (0x800C628C and 0x800C6290, stride 8).
+    public abstract string GetItemDescriptionSecondLine(int itemId);
+
     protected string ReadString(byte[] buffer, ref int l)
     {
         string str = null;

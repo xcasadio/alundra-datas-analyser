@@ -1357,18 +1357,18 @@ public class UIManager
                         break;
                     }
 
-                    if (currentChar == '{')
+                    if (currentChar == '{' || currentChar == '}')
                     {
                         k++;
-                        //formattedText[j] = (char)(text[k] + 'P');
-                        formattedText[j] = TextDecoder.DecodeCharacter(text[k]);
-                    }
-                    else if (currentChar == '}')
-                    {
-                        //é
-                        //9 14
-                        k++;
-                        //formattedText[j] = (char)(text[k] - 0x70);
+
+                        // The escape needs its second byte; a text cut mid-pair has nothing to decode.
+                        if (k >= text.Length)
+                        {
+                            break;
+                        }
+
+                        //formattedText[j] = (char)(text[k] + 'P');  // '{'
+                        //formattedText[j] = (char)(text[k] - 0x70); // '}'
                         formattedText[j] = TextDecoder.DecodeCharacter(text[k]);
                     }
                     else

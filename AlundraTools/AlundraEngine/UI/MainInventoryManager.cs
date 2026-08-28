@@ -922,12 +922,12 @@ public class MainInventoryManager
         DisplayInventoryTexts();
     }
 
-    //80055fe8
+    // GHIDRA: FUN_80055FE8 @ 0x80055FE8
+    // Types the selected slot's name, waits ~60 frames, then types the two description lines.
+    // g_inventoryCursorText is the state machine: 0 name setup, 1..0x10 name, 0x11..0x4c pause,
+    // 0x4d description line 0 setup, 0x4e..0x8d line 0, 0x8e line 1 setup, 0x8f..0xce line 1, 0xcf done.
     private void DisplayInventoryTexts()
     {
-        int uVar1;
-        int iVar2;
-
         var itemId = _gameEngine.StaticVariables.g_ItemIdBySlotIndex[_gameEngine.StaticVariables.g_inventorySelectedSlotId];
 
         if (itemId == 0)
@@ -937,17 +937,9 @@ public class MainInventoryManager
 
         if (itemId == -1)
         {
-            var slotIndex = _gameEngine.StaticVariables.g_inventorySelectedSlotId;
-            var value = (uint)GetItemIdFromSlotIndex(slotIndex);
-
-            if (slotIndex < 6)
-            {
-                value = _gameEngine.PlayerManager.GetWeaponIdBySlotId((int)value);
-            }
-            else
-            {
-                value = _gameEngine.PlayerManager.GetItemIdFromSlotId(value);
-            }
+            // GHIDRA: 8005602c - the slot accessor already resolves to an item id.
+            var value = _gameEngine.PlayerManager.GetItemIdFromSlotId(
+                (uint)GetSlotIdFromInventorySlotIndex(_gameEngine.StaticVariables.g_inventorySelectedSlotId));
 
             if (value == 0xffffffff)
             {
@@ -956,221 +948,156 @@ public class MainInventoryManager
 
             itemId = (int)value;
         }
-        else
+        else if (_gameEngine.PlayerManager.GetNumberOfItem(itemId) == 0)
         {
-            iVar2 = _gameEngine.PlayerManager.GetNumberOfItem(itemId);
-
-            if (iVar2 == 0)
-            {
-                return;
-            }
+            return;
         }
 
-        //
-        //InventoryWeaponDescriptionLinesSprites[1].Clear();
+        var cursor = _gameEngine.StaticVariables.g_inventoryCursorText;
 
-        if (_gameEngine.StaticVariables.g_inventoryCursorText == 0)
+        // GHIDRA: 8005607c - load the name into line 0, nothing revealed yet
+        if (cursor == 0)
         {
-            var text = _gameEngine.EtcRes.GetItemName(itemId);//_gameEngine.StaticVariables.g_itemDropProperties[itemId * 2];
-            //text = text.PadRight(0x20);
-            text = text.Substring(0, _gameEngine.StaticVariables.g_inventoryCursorText);
-            iVar2 = 0x20;
-
-            //LAB_8005616c:
             InventoryWeaponDescriptionLinesSprites[0].Clear();
-            //_gameEngine.UIManager.DisplayIconName(
-            //    _gameEngine.StaticVariables.g_spriteInventoryText,
-            //    InventoryWeaponDescriptionLinesSprites[0],
-            //    text.ToCharArray(),
-            //    iVar2,
-            //    0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
-            //    0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y, 
-            //    2);
             _gameEngine.StaticVariables.INT_8017fef0 = 0;
             _gameEngine.StaticVariables.g_spriteInventoryText[0].w = 0;
             _gameEngine.StaticVariables.g_spriteInventoryText[1].w = 0;
-            //InventoryWeaponDescriptionLinesSprites[0].Clear();
-            _gameEngine.StaticVariables.g_inventoryCursorText += 1;
+            _gameEngine.StaticVariables.g_inventoryCursorText = cursor + 1;
+            return;
         }
-        else
+
+        // GHIDRA: 800560b8 - reveal the name one character at a time
+        if ((uint)(cursor - 1) < 0x10)
         {
-            if (_gameEngine.StaticVariables.g_inventoryCursorText - 1U < 0x10)
+            var name = _gameEngine.EtcRes.GetItemName(itemId) ?? string.Empty;
+
+            if (cursor - 1 >= name.Length)
             {
-                var text = _gameEngine.EtcRes.GetItemName(itemId);//_gameEngine.StaticVariables.g_itemDropProperties[itemId * 2];
-                //text = text.PadRight(0x11);
-                var initialLength = text.Length;
-                var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText);
-                text = text.Substring(0, length);
-                //text.Length == _gameEngine.StaticVariables.INT_8017feec - 1
-
-                if (length > initialLength)//text[length] == '\0')
-                {
-                    _gameEngine.StaticVariables.g_inventoryCursorText = 0x11;
-                    uVar1 = 0;
-                }
-                else
-                {
-                    //var text = _gameEngine.EtcRes.GetOtherString((int)itemId); //_gameEngine.StaticVariables.g_itemDropProperties[itemId * 2];
-                    FUN_80055f48(0, 0, ' ');
-                        //_gameEngine.StaticVariables.g_inventoryCursorText,
-                        //text[_gameEngine.StaticVariables.g_inventoryCursorText - 1]);
-
-                    _gameEngine.UIManager.DisplayIconName(
-                        _gameEngine.StaticVariables.g_spriteInventoryText,
-                        InventoryWeaponDescriptionLinesSprites[0],
-                        text.ToCharArray(),
-                        0,
-                        0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
-                        0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y, 
-                        2);
-
-                    uVar1 = 0;
-                }
-            }
-            else if (_gameEngine.StaticVariables.g_inventoryCursorText - 0x11U < 0x3c)
-            {
-                uVar1 = 0;
-                _gameEngine.StaticVariables.g_inventoryCursorText += 1;
+                _gameEngine.StaticVariables.g_inventoryCursorText = 0x11;
             }
             else
             {
-                if (_gameEngine.StaticVariables.g_inventoryCursorText == 0x4d)
-                {
-                    var text = _gameEngine.EtcRes.GetItemDescription(itemId);//_gameEngine.StaticVariables.g_itemDropProperties[itemId * 2];
-                    //text = _gameEngine.StaticVariables.g_tileSetEtcBase[itemId * 2];
-                    //text = text.PadRight(0x40);var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText);
-                    var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText);
-                    text = text.Substring(0, length);
-                    iVar2 = 0x40;
-                    //goto LAB_8005616c;
-
-                    InventoryWeaponDescriptionLinesSprites[0].Clear();
-                    //_gameEngine.UIManager.DisplayIconName(
-                    //    _gameEngine.StaticVariables.g_spriteInventoryText,
-                    //    InventoryWeaponDescriptionLinesSprites[0],
-                    //    text.ToCharArray(),
-                    //    iVar2,
-                    //    0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
-                    //    0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y,
-                    //    2);
-                    _gameEngine.StaticVariables.INT_8017fef0 = 0;
-                    _gameEngine.StaticVariables.g_spriteInventoryText[0].w = 0;
-                    _gameEngine.StaticVariables.g_spriteInventoryText[1].w = 0;
-                    _gameEngine.StaticVariables.g_inventoryCursorText += 1;
-                    return;
-                }
-
-                if (_gameEngine.StaticVariables.g_inventoryCursorText - 0x4eU < 0x40)
-                {
-                    uVar1 = 0;
-                    var text = _gameEngine.EtcRes.GetItemDescription(itemId);//_gameEngine.StaticVariables.g_tileSetEtcBase[itemId * 2];
-                    var initialLength = text.Length;
-                    var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText - 0x04d);
-                    text = text.Substring(0, length);
-
-                    if (_gameEngine.StaticVariables.g_inventoryCursorText - 0x4e > initialLength)
-                    {
-                        _gameEngine.StaticVariables.g_inventoryCursorText = 0x8e;
-                    }
-                    else
-                    {
-                        FUN_80055f48(0, 0, ' ');
-                            //_gameEngine.StaticVariables.g_inventoryCursorText - 0x4d,
-                            //text[_gameEngine.StaticVariables.g_inventoryCursorText - 0x4e]);
-
-                        _gameEngine.UIManager.DisplayIconName(
-                            _gameEngine.StaticVariables.g_spriteInventoryText,
-                            InventoryWeaponDescriptionLinesSprites[0],
-                            text.ToCharArray(),
-                            0,
-                            0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
-                            0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y, 
-                            2);
-
-                        uVar1 = 0;
-                    }
-                }
-                else
-                {
-                    if (_gameEngine.StaticVariables.g_inventoryCursorText == 0x8e)
-                    {
-                        SPRT[] sprites =
-                        [
-                            _gameEngine.StaticVariables.g_spriteInventoryText[2],
-                            _gameEngine.StaticVariables.g_spriteInventoryText[3]
-                        ];
-
-                        InventoryWeaponDescriptionLinesSprites[1].Clear();
-
-                        //var text3 = _gameEngine.EtcRes.GetItemDescription((int)itemId);//_gameEngine.StaticVariables.g_paletteSetEtcBase
-                        ////text3 = text3.PadRight(0x40);
-                        ////var initialLength = text3.Length;
-                        //var length = Math.Min(text3.Length - 1, _gameEngine.StaticVariables.g_inventoryCursorText);
-                        //text3 = text3.Substring(0, length);
-                        //
-                        //_gameEngine.UIManager.DisplayIconName(sprites,
-                        //    InventoryWeaponDescriptionLinesSprites[1],
-                        //    text3.ToCharArray(),
-                        //    0x40,
-                        //    0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
-                        //    0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y,
-                        //    3);
-
-                        _gameEngine.StaticVariables.INT_8017fef0 = 0;
-                        _gameEngine.StaticVariables.g_inventoryCursorText += 1;
-
-                        DisplayInventoryDescription(0);
-
-                        _gameEngine.StaticVariables.g_spriteInventoryText[2].w = 0;
-                        _gameEngine.StaticVariables.g_spriteInventoryText[3].w = 0;
-                        return;
-                    }
-
-                    if (_gameEngine.StaticVariables.g_inventoryCursorText - 0x8fU < 0x40)
-                    {
-                        var text = _gameEngine.EtcRes.GetItemDescription(itemId);
-                        var initialLength = text.Length;
-                        var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText);
-                        text = text.Substring(0, length);
-
-                        if (_gameEngine.StaticVariables.g_inventoryCursorText - 0x8f < 0x40)
-                        {
-                            _gameEngine.StaticVariables.g_inventoryCursorText = 0xcf;
-                        }
-                        else
-                        {
-                            FUN_80055f48(1, 0, ' ');
-                                //_gameEngine.StaticVariables.g_inventoryCursorText - 0x90,
-                                //text[_gameEngine.StaticVariables.g_inventoryCursorText - 0x8f]);
-
-                            _gameEngine.UIManager.DisplayIconName(
-                                _gameEngine.StaticVariables.g_spriteInventoryText,
-                                InventoryWeaponDescriptionLinesSprites[1],
-                                text.ToCharArray(),
-                                0,
-                                0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
-                                0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y, 
-                                2);
-                        }
-                    }
-                    else if (_gameEngine.StaticVariables.g_inventoryCursorText != 0xcf)
-                    {
-                        return;
-                    }
-
-                    DisplayInventoryDescription(0);
-                    uVar1 = 1;
-                }
+                FUN_80055f48(0, name[cursor - 1]);
+                RenderRevealedLine(0, name, _gameEngine.StaticVariables.g_inventoryCursorText - 1);
             }
 
-            DisplayInventoryDescription(uVar1);
+            DisplayInventoryDescription(0);
+            return;
         }
+
+        // GHIDRA: 8005610c - hold the name on screen before the description takes over
+        if ((uint)(cursor - 0x11) < 0x3c)
+        {
+            _gameEngine.StaticVariables.g_inventoryCursorText = cursor + 1;
+            DisplayInventoryDescription(0);
+            return;
+        }
+
+        // GHIDRA: 80056128 - line 0 switches from the name to the first description line
+        if (cursor == 0x4d)
+        {
+            InventoryWeaponDescriptionLinesSprites[0].Clear();
+            _gameEngine.StaticVariables.INT_8017fef0 = 0;
+            _gameEngine.StaticVariables.g_spriteInventoryText[0].w = 0;
+            _gameEngine.StaticVariables.g_spriteInventoryText[1].w = 0;
+            _gameEngine.StaticVariables.g_inventoryCursorText = cursor + 1;
+            return;
+        }
+
+        // GHIDRA: 80056190 - reveal the first description line
+        if ((uint)(cursor - 0x4e) < 0x40)
+        {
+            var firstLine = _gameEngine.EtcRes.GetItemDescription(itemId) ?? string.Empty;
+
+            if (cursor - 0x4e >= firstLine.Length)
+            {
+                _gameEngine.StaticVariables.g_inventoryCursorText = 0x8e;
+            }
+            else
+            {
+                FUN_80055f48(0, firstLine[cursor - 0x4e]);
+                RenderRevealedLine(0, firstLine, _gameEngine.StaticVariables.g_inventoryCursorText - 0x4e);
+            }
+
+            DisplayInventoryDescription(0);
+            return;
+        }
+
+        // GHIDRA: 800561e4 - the second description line uses sprites 2/3 and its own string pool
+        if (cursor == 0x8e)
+        {
+            InventoryWeaponDescriptionLinesSprites[1].Clear();
+            _gameEngine.StaticVariables.INT_8017fef0 = 0;
+            _gameEngine.StaticVariables.g_inventoryCursorText = cursor + 1;
+            DisplayInventoryDescription(0);
+            _gameEngine.StaticVariables.g_spriteInventoryText[2].w = 0;
+            _gameEngine.StaticVariables.g_spriteInventoryText[3].w = 0;
+            return;
+        }
+
+        // GHIDRA: 80056250 - reveal the second description line
+        if ((uint)(cursor - 0x8f) < 0x40)
+        {
+            var secondLine = _gameEngine.EtcRes.GetItemDescriptionSecondLine(itemId) ?? string.Empty;
+
+            if (cursor - 0x8f >= secondLine.Length)
+            {
+                _gameEngine.StaticVariables.g_inventoryCursorText = 0xcf;
+            }
+            else
+            {
+                FUN_80055f48(1, secondLine[cursor - 0x8f]);
+                RenderRevealedLine(1, secondLine, _gameEngine.StaticVariables.g_inventoryCursorText - 0x8f);
+            }
+
+            DisplayInventoryDescription(0);
+            DisplayInventoryDescription(1);
+            return;
+        }
+
+        // GHIDRA: 800562a4 - both lines are complete, keep drawing them
+        if (cursor == 0xcf)
+        {
+            DisplayInventoryDescription(0);
+            DisplayInventoryDescription(1);
+        }
+    }
+
+    // JUSTIFICATION: the original composes the whole line into a VRAM strip once and reveals it by
+    // growing the sprite width; this port keeps one sprite per glyph, so the visible prefix is
+    // rebuilt every frame instead. An escape pair ({x / }x) is never split across the boundary.
+    private void RenderRevealedLine(int lineIndex, string text, int visibleLength)
+    {
+        visibleLength = Math.Clamp(visibleLength, 0, text.Length);
+
+        if (visibleLength > 0 && (text[visibleLength - 1] == '{' || text[visibleLength - 1] == '}'))
+        {
+            visibleLength -= 1;
+        }
+
+        SPRT[] sprites =
+        [
+            _gameEngine.StaticVariables.g_spriteInventoryText[lineIndex * 2],
+            _gameEngine.StaticVariables.g_spriteInventoryText[lineIndex * 2 + 1]
+        ];
+
+        InventoryWeaponDescriptionLinesSprites[lineIndex].Clear();
+
+        _gameEngine.UIManager.DisplayIconName(
+            sprites,
+            InventoryWeaponDescriptionLinesSprites[lineIndex],
+            text.Substring(0, visibleLength).ToCharArray(),
+            0x40,
+            0,
+            0,
+            lineIndex == 0 ? 2 : 3);
     }
 
     //80055e30
     private void DisplayInventoryDescription(int lineIndex)
     {
-        var sprite = _gameEngine.StaticVariables.g_spriteInventoryText[lineIndex];
+        // GHIDRA: 80055e54 - the sprite pair for a line is at lineIndex * 0x28 bytes, i.e. lineIndex * 2.
+        var sprite = _gameEngine.StaticVariables.g_spriteInventoryText[lineIndex * 2];
         var inventoryDescriptionBackground = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground;
         sprite.x0 = (short)(inventoryDescriptionBackground.X + 0x10);
         sprite.y0 = (short)(inventoryDescriptionBackground.Y + 0xc + lineIndex * 0x10);
@@ -1206,31 +1133,24 @@ public class MainInventoryManager
         }
     }
 
-    //80055f48
-    private void FUN_80055f48(int index, int offset, char c)
+    // GHIDRA: FUN_80055F48 @ 0x80055F48
+    // Commits one character every third frame: widens the line's sprite pair and advances the cursor.
+    // The original also takes the character index but overwrites it with the line index straight away.
+    private void FUN_80055f48(int lineIndex, char c)
     {
-        int iVar1;
-        int i;
-
-        if (_gameEngine.StaticVariables.INT_8017fef0 == 0)
-        {
-            i = 0;
-            _gameEngine.StaticVariables.INT_8017fef0 = 2;
-            _gameEngine.StaticVariables.g_inventoryCursorText += 1;
-            iVar1 = index * 0x28;
-
-            do
-            {
-                _gameEngine.StaticVariables.g_spriteInventoryText[i].w = (short)(_gameEngine.StaticVariables.g_spriteInventoryText[i].w + _gameEngine.StaticVariables.g_fontCharWidthTable[(c & 0xff) * 5]);
-                _gameEngine.StaticVariables.g_spriteInventoryText[i + 1].w = (short)(_gameEngine.StaticVariables.g_spriteInventoryText[i + 1].w + _gameEngine.StaticVariables.g_fontCharWidthTable[(c & 0xff) * 5]);
-                i += 1;
-
-            } while (i < 1);
-        }
-        else
+        if (_gameEngine.StaticVariables.INT_8017fef0 != 0)
         {
             _gameEngine.StaticVariables.INT_8017fef0 -= 1;
+            return;
         }
+
+        _gameEngine.StaticVariables.INT_8017fef0 = 2;
+        _gameEngine.StaticVariables.g_inventoryCursorText += 1;
+
+        var charWidth = _gameEngine.StaticVariables.g_fontCharWidthTable[(c & 0xff) * 5];
+        var sprites = _gameEngine.StaticVariables.g_spriteInventoryText;
+        sprites[lineIndex * 2].w = (short)(sprites[lineIndex * 2].w + charWidth);
+        sprites[lineIndex * 2 + 1].w = (short)(sprites[lineIndex * 2 + 1].w + charWidth);
     }
 
     //800562dc
@@ -1455,7 +1375,7 @@ public class MainInventoryManager
 
                         if (textureId == -1)
                         {
-                            itemId = GetItemIdFromSlotIndex(offset);
+                            itemId = GetSlotIdFromInventorySlotIndex(offset);
 
                             var value = _gameEngine.PlayerManager.GetItemIdFromSlotId((uint)itemId);
 
@@ -1536,23 +1456,22 @@ public class MainInventoryManager
         } while (row < 4);
     }
 
-    private static int GetItemIdFromSlotIndex(int slotIndex)
-    {
-        int itemId;
-        itemId = slotIndex < 6 ? slotIndex + 1 : slotIndex;
+    // GHIDRA: accessor table @ 0x800B9E68 - one thunk per inventory slot, each calling
+    // GetItemIdFromSlotId (FUN_8004E18C) with a fixed slot id. Only the entries whose
+    // g_ItemIdBySlotIndex is -1 are ever used; the others hold GetNumberOfItem instead.
+    // Weapon columns 1 and 2 are deliberately crossed in the original: column 1 shows slot 3
+    // (0x8004E2A8) and column 2 shows slot 2 (0x8004E288).
+    private static readonly int[] SlotIdByInventorySlotIndex =
+    [
+         1,  3,  2,  4,  5, -1,
+        -1, -1, -1, -1, -1, 11,
+        16, 17, 18, 19, -1, -1,
+        -1, -1, -1, 20, 21, 22
+    ];
 
-        itemId = itemId switch
-        {
-            12 => 16,
-            13 => 17,
-            14 => 18,
-            15 => 19,
-            21 => 20,
-            22 => 21,
-            23 => 22,
-            _ => itemId
-        };
-        return itemId;
+    private static int GetSlotIdFromInventorySlotIndex(int slotIndex)
+    {
+        return SlotIdByInventorySlotIndex[slotIndex];
     }
 
     //80056a98
@@ -1885,17 +1804,11 @@ public class MainInventoryManager
         {
             if (slotId == -1)
             {
+                // GHIDRA: 8005789c - the slot accessor already resolves to an item id, there is no
+                // second weapon-slot indirection.
                 var slotIndex = _gameEngine.StaticVariables.g_inventorySelectedSlotId;
-                var value = (uint)GetItemIdFromSlotIndex(slotIndex);
-
-                if (slotIndex < 6)
-                {
-                    value = _gameEngine.PlayerManager.GetWeaponIdBySlotId((int)value);
-                }
-                else
-                {
-                    value = _gameEngine.PlayerManager.GetItemIdFromSlotId(value);
-                }
+                var value = _gameEngine.PlayerManager.GetItemIdFromSlotId(
+                    (uint)GetSlotIdFromInventorySlotIndex(slotIndex));
 
                 slotId = (int)value;
 

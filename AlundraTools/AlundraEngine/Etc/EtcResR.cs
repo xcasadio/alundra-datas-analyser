@@ -86,4 +86,9 @@ public class EtcResR : EtcRes
     {
         return DescriptionItems[itemId * 2];
     }
+
+    public override string GetItemDescriptionSecondLine(int itemId)
+    {
+        return OtherStrings[itemId * 2];
+    }
 }
