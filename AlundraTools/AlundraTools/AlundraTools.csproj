@@ -24,6 +24,12 @@
     <None Update="map_names.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <!-- docs/plan-e11c-musique.md, slice C1, D-C-2: g_defaultSoundOffsetList (StaticVariables.cs),
+         483 raw entries, generated once from that exact array (see this repo's converter-side
+         MusicIndexCatalogReader.cs for the consumer that applies the §1.1 semantics). -->
+    <None Update="MapMusicIndex.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
