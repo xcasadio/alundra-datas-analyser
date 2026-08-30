@@ -426,6 +426,14 @@ public class SoundBin
             var loopStart = loopStartBlock * SamplesPerBlock;
             var loopEnd = loopEndBlock * SamplesPerBlock + SamplesPerBlock - 1;
             var sampleRate = CalculateToneSampleRate(attr, record.Note);
+            if (sampleRate == 0)
+            {
+                // Pitch refused (see VoicePitchGuard): drop the tone rather than write a WAV at an
+                // invented rate. Same silent-continue shape as the missing-VAG-body case above; the
+                // caller reports it through the guard's own hit count.
+                continue;
+            }
+
             tones.Add(new SfxToneSample(dex, buff, sampleRate, loopStart, loopEnd, repeat));
         }
 
@@ -1926,7 +1934,17 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
 
         var noteDelta = octaveCarry + (note + 0x3c - tone.Center);
         var octaveShift = (noteDelta / 12) - 5;
-        var pitch = s_voicePitchTable[((noteDelta % 12) << 4) + fineIndex];
+
+        // Same guard as the two SoundManager sites (docs/plan-extraction-bgm.md, D-X-3). Refusing here
+        // returns 0, which ConvertRawPitchToSampleRate already turns into a 0 sample rate - the signal
+        // DecodeSfxTones uses to drop the tone rather than export a WAV at an invented rate. The
+        // acceptance requires this site's hit count to read ZERO.
+        if (!VoicePitchGuard.TryGetTableIndex(noteDelta % 12, fineIndex, VoicePitchSite.Exporter, out var tableIndex))
+        {
+            return 0;
+        }
+
+        var pitch = s_voicePitchTable[tableIndex];
 
         if (octaveShift > 0)
         {

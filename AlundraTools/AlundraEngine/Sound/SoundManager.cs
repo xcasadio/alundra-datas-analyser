@@ -4240,6 +4240,10 @@ public class SoundManager
                 return matchCount;
             }
 
+            /// <summary>Returned by <see cref="FUN_80091b60"/> when the pitch-table index falls outside
+            /// the table (docs/plan-extraction-bgm.md). Unambiguous: a real return is masked to 16 bits.</summary>
+            private const uint RefusedPitch = 0xFFFFFFFF;
+
             // GHIDRA: FUN_80091B60 @ 0x80091B60
             private uint FUN_80091b60()
             {
@@ -4252,7 +4256,15 @@ public class SoundManager
                     fineIndex = 0x0F;
                 }
 
-                uint pitch = s_voicePitchTable[(semitoneRemainder << 4) + fineIndex];
+                // docs/plan-extraction-bgm.md (X1): retail data can put this index out of the table -
+                // the original read out of bounds and carried on, we refuse the voice instead. See
+                // VoicePitchGuard for why that is a deviation and not a restoration.
+                if (!VoicePitchGuard.TryGetTableIndex(semitoneRemainder, fineIndex, VoicePitchSite.Sequencer, out var tableIndex))
+                {
+                    return RefusedPitch;
+                }
+
+                uint pitch = s_voicePitchTable[tableIndex];
                 var octaveShift = octaveQuotient - 5;
                 if (octaveShift < 0)
                 {
@@ -4374,6 +4386,15 @@ public class SoundManager
                     else
                     {
                         var pitch = FUN_80091b60();
+                        if (pitch == RefusedPitch)
+                        {
+                            // Out-of-table index: refuse this layer rather than invent a pitch
+                            // (docs/plan-extraction-bgm.md). Same shape as the load failure below.
+                            StopVoice(voiceId);
+                            playedMask = 0xFFFFFFFF;
+                            continue;
+                        }
+
                         FUN_80090c58(matchCount, unchecked((short)pitch));
                         if (loadedVabBody == null || !TryPlayLoadedVabToneVoice(voiceId, (short)vabId, programNumber, _gameEngine.StaticVariables.DAT_801f76a4, note))
                         {
@@ -4771,7 +4792,17 @@ public class SoundManager
 
         var noteDelta = octaveCarry + (note + 0x3c - toneAttr.Center);
         var octaveShift = (noteDelta / 12) - 5;
-        var pitch = s_voicePitchTable[((noteDelta % 12) << 4) + fineIndex];
+
+        // Same guard as the sequencer path (docs/plan-extraction-bgm.md, D-X-3). No sfx in the retail
+        // data is known to reach it - the acceptance requires this site's hit count to read ZERO -
+        // but the exposure is real: 274 sfx tones could produce a negative delta, so this path was
+        // lucky rather than correct. 0 is this method's own existing "no pitch" return.
+        if (!VoicePitchGuard.TryGetTableIndex(noteDelta % 12, fineIndex, VoicePitchSite.Sfx, out var tableIndex))
+        {
+            return 0;
+        }
+
+        var pitch = s_voicePitchTable[tableIndex];
 
         if (octaveShift > 0)
         {

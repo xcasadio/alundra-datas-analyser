@@ -90,6 +90,12 @@ internal class Program
             return;
         }
 
+        if (args.Length > 0 && string.Equals(args[0], "--verify-bgm", StringComparison.OrdinalIgnoreCase))
+        {
+            VerifyBgm(args);
+            return;
+        }
+
         if (args.Length > 0 && string.Equals(args[0], "--extract-movies", StringComparison.OrdinalIgnoreCase))
         {
             ExtractMovies(args);
@@ -101,7 +107,8 @@ internal class Program
             Console.WriteLine("Usage: AlundraDataExtractor <gamePath> <extractionPath> [--tiled-tileset-layout original|compact] [--spritesheet-layout original|compact]");
             Console.WriteLine("       AlundraDataExtractor --trace-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
             Console.WriteLine("       AlundraDataExtractor --render-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
-            Console.WriteLine("       AlundraDataExtractor --extract-movies <cdImage.bin> <movieOutputPath>");
+            Console.WriteLine("       AlundraDataExtractor --verify-bgm <gamePath|soundBinPath> [--frames N]");
+        Console.WriteLine("       AlundraDataExtractor --extract-movies <cdImage.bin> <movieOutputPath>");
             return;
         }
 
@@ -141,6 +148,18 @@ internal class Program
     // touching TimesPlayed. So the loop point is detected the model-free way instead: watch
     // SequenceTrackState.SeqPosition frame to frame and stop the first time it goes backwards.
     // Capped at maxSeconds as a safety net for tracks that never loop within that window.
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: docs/plan-extraction-bgm.md decision D-X-7 - this batch never cleans its output
+    // directory, so a track that is refused today would otherwise keep the file a previous, broken run
+    // wrote for it. Removing it is what makes "a silent render is a failure, not a file" true on disk.
+    private static void DeleteStaleBgm(string filePath)
+    {
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
+    }
+
     private static void ExtractDataFromBgm(string soundBinPath, string extractionPath)
     {
         Console.WriteLine("Extract BGM");
@@ -160,31 +179,56 @@ internal class Program
         const int maxFrames = maxSeconds * 60;
         var maxSoundIndex = (soundBin.MusicSeqVabOffsets.Length - 4) / 3;
         var exported = new List<BgmExportRecord>();
+        var silent = 0;
+        var failed = 0;
 
         for (var soundIndex = 1; soundIndex <= maxSoundIndex; soundIndex++)
         {
+            var fileName = $"bgm_{soundIndex:D3}.wav";
+            var filePath = Path.Combine(bgmPath, fileName);
+
             try
             {
                 gameEngine.SoundManager.LoadMapSequence(soundIndex, 1);
                 var seqId = gameEngine.StaticVariables.g_requestedSeqId;
                 if (seqId < 0)
                 {
+                    Console.WriteLine($"BGM {soundIndex}: no sequence (seqId<0) - not exported");
+                    DeleteStaleBgm(filePath);
+                    failed++;
                     continue;
                 }
 
                 var result = RenderBgmTrackUntilLoop(gameEngine, mixer, seqId, maxFrames);
-                var fileName = $"bgm_{soundIndex:D3}.wav";
-                WriteStereoWav(Path.Combine(bgmPath, fileName), result.Samples, SpuMixerSoundPlaybackBackend.OutputSampleRate);
+
+                // docs/plan-extraction-bgm.md, decision D-X-4: a render that never crossed the
+                // audibility threshold is a FAILURE, not a file. 26 tracks were once written as five
+                // seconds of silence while the run reported success - and FirstAudibleFrame, the very
+                // field that proves it, was already being recorded and never read. Refusing to write
+                // is not enough on its own: the batch never cleans its output directory, so the stale
+                // silent file has to go too (D-X-7), or "not a file" would be false on disk.
+                if (result.FirstAudibleFrame < 0)
+                {
+                    Console.WriteLine($"BGM {soundIndex}: rendered SILENT ({result.Frames} frames, peak {result.PeakLeft}/{result.PeakRight}) - not exported");
+                    DeleteStaleBgm(filePath);
+                    silent++;
+                    continue;
+                }
+
+                WriteStereoWav(filePath, result.Samples, SpuMixerSoundPlaybackBackend.OutputSampleRate);
                 exported.Add(new BgmExportRecord(soundIndex, fileName, result.Frames, result.Frames / 60.0, result.LoopDetected, result.PeakLeft, result.PeakRight, result.RmsLeft, result.RmsRight, result.FirstAudibleFrame));
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"BGM {soundIndex} failed: {ex.Message}");
+                DeleteStaleBgm(filePath);
+                failed++;
             }
         }
 
         File.WriteAllText(Path.Combine(soundPath, "bgm.json"), JsonSerializer.Serialize(exported, _jsonSerializerOptions));
-        Console.WriteLine($"Extracted {exported.Count}/{maxSoundIndex} BGM tracks");
+        Console.WriteLine($"Extracted BGM: rendered={exported.Count} silent={silent} failed={failed} (of {maxSoundIndex})");
+        Console.WriteLine(VoicePitchGuard.FormatReport());
     }
 
     // JUSTIFICATION: C# language bridge only
@@ -288,11 +332,19 @@ internal class Program
                 return true;
             }
 
+            // docs/plan-extraction-bgm.md, D-X-3: the exporter-side pitch guard is expected NEVER to
+            // fire on retail data (the acceptance requires its hit count to read zero). If it ever
+            // does, the dropped tone must be visible in sfx.json - so it is recorded through the
+            // EXISTING record-level SkipReason rather than a new per-tone field, which would emit
+            // "SkipReason": null on every tone and move the whole manifest even when untriggered.
+            var guardHitsBefore = VoicePitchGuard.Hits(VoicePitchSite.Exporter);
             var tones = soundBin.DecodeSfxTones(sfxid);
             if (tones == null)
             {
                 return false;
             }
+
+            var pitchRefusals = VoicePitchGuard.Hits(VoicePitchSite.Exporter) - guardHitsBefore;
 
             var record = soundBin.SfxRecords[sfxid];
             var toneExports = new SfxToneExport[tones.Count];
@@ -308,7 +360,9 @@ internal class Program
                 toneExports[i] = new SfxToneExport(tone.ToneIndex, fileName, tone.SampleRate, tone.LoopStart, tone.LoopEnd, tone.Repeat);
             }
 
-            var skipReason = tones.Count == 0 ? "no tones (NumTones=0)" : null;
+            var skipReason = pitchRefusals > 0
+                ? $"pitch out of table ({pitchRefusals} tone(s) refused)"
+                : tones.Count == 0 ? "no tones (NumTones=0)" : null;
             exported[sfxid] = new SfxExportRecord(sfxid, record.VabId, record.ProgramNumber, record.ToneNumber, record.Note, record.SeqNum, record.RefSfxId, record.MaxVoices, record.NumTones, skipReason, toneExports);
             return true;
         }
@@ -406,6 +460,93 @@ internal class Program
     // JUSTIFICATION: C# language bridge only
     // RELATION: offline validation harness for SpuMixerSoundPlaybackBackend; renders the desktop
     // synthesis of the staged SPU voice state to a listenable 44100 Hz stereo WAV with level stats.
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: read-only acceptance oracle for the BGM batch export (docs/plan-extraction-bgm.md,
+    // slice X1). Renders every LoadMapSequence-addressable track through the SAME shared-GameEngine
+    // shape ExtractDataFromBgm uses - one engine, InitializeSoundSystem once - and reports the peak
+    // and an audible/silent verdict per index, writing nothing to disk. It exists because 26 of the
+    // 46 tracks were exported as five seconds of silence and NOTHING reported it: the batch swallowed
+    // the exception that poisoned them (Program.cs, ExtractDataFromBgm) and wrote the files anyway.
+    // Run it BEFORE a fix to reproduce that profile, and after one to show the recovery.
+    private static void VerifyBgm(string[] args)
+    {
+        if (args.Length < 2)
+        {
+            Console.WriteLine("Usage: AlundraDataExtractor --verify-bgm <gamePath|soundBinPath> [--frames N]");
+            return;
+        }
+
+        var soundBinPath = ResolveSoundBinPath(args[1]);
+        var frames = ReadIntOption(args, "--frames", 3600);
+
+        var soundBin = new SoundBin(soundBinPath);
+        var mixer = new SpuMixerSoundPlaybackBackend();
+        soundBin.AttachPlaybackBackend(mixer);
+        var gameEngine = new GameEngine(null!, null!, soundBin, null!, null!, null);
+        gameEngine.StaticVariables.Initialize(gameEngine);
+        gameEngine.SoundManager.InitializeSoundSystem();
+
+        const int samplesPerFrame = SpuMixerSoundPlaybackBackend.OutputSampleRate / 60;
+        var renderBuffer = new short[samplesPerFrame * 2];
+        var maxSoundIndex = (soundBin.MusicSeqVabOffsets.Length - 4) / 3;
+
+        var audible = 0;
+        var silent = 0;
+        var failed = 0;
+
+        Console.WriteLine($"Verify BGM ({maxSoundIndex} tracks, {frames} frames each)");
+        Console.WriteLine("idx  peak   verdict");
+
+        for (var soundIndex = 1; soundIndex <= maxSoundIndex; soundIndex++)
+        {
+            try
+            {
+                gameEngine.SoundManager.LoadMapSequence(soundIndex, 1);
+                var seqId = gameEngine.StaticVariables.g_requestedSeqId;
+                if (seqId < 0)
+                {
+                    Console.WriteLine($"{soundIndex,3}  {"-",5}  SKIPPED (seqId<0)");
+                    failed++;
+                    continue;
+                }
+
+                var peak = 0;
+                for (var frame = 0; frame < frames; frame++)
+                {
+                    gameEngine.SoundManager.AdvanceSoundFrame();
+                    mixer.RenderSamples(renderBuffer, samplesPerFrame);
+                    foreach (var sample in renderBuffer)
+                    {
+                        var magnitude = Math.Abs((int)sample);
+                        if (magnitude > peak)
+                        {
+                            peak = magnitude;
+                        }
+                    }
+                }
+
+                // Same audibility threshold the batch export itself uses, so the two agree.
+                var isAudible = peak > 64;
+                Console.WriteLine($"{soundIndex,3}  {peak,5}  {(isAudible ? "AUDIBLE" : "*** SILENT ***")}");
+                if (isAudible)
+                {
+                    audible++;
+                }
+                else
+                {
+                    silent++;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{soundIndex,3}  {"-",5}  *** FAILED *** {ex.GetType().Name}: {ex.Message}");
+                failed++;
+            }
+        }
+
+        Console.WriteLine($"audible={audible} silent={silent} failed={failed}");
+    }
+
     private static void RenderBgm(string[] args)
     {
         if (args.Length < 3)
