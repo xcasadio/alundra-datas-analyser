@@ -30,6 +30,25 @@
     <None Update="MapMusicIndex.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <!-- docs/plan-e12-dialogues.md, slice E12.b, D-E12-2: g_fontCharWidthTable
+         (StaticVariables.cs:9484), 256 raw code;advance rows, generated once from that exact array
+         (stride 5, advance at [code*5] - verified against all four TextDecoder.cs consumption sites,
+         :214/:237/:448/:607, which all read that same offset). See this repo's converter-side
+         FontCharWidthCatalogReader.cs for the consumer, which applies its own raw-code -> codepoint
+         mapping. -->
+    <None Update="FontCharWidths.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <!-- docs/plan-e12-dialogues.md, slice E12.b, D-E12-6: the ETC index table (1024 int16, index;value)
+         is the first 1024 int16 of the game's own ETC_RES.R file - mirrors EtcResR.cs:7-13's exact
+         read. Not in the decompiled code at all, so unlike every other CSV in this project it cannot
+         be regenerated from a literal array - it was dumped once, straight off
+         "<gamePath>\DATA\ETC_RES.R" (France release), with a throwaway console tool that read the
+         same 1024 int16 header EtcResR's constructor reads, then deleted. See this repo's
+         converter-side EtcIndexCatalogReader.cs for the consumer. -->
+    <None Update="EtcIndexTable.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
