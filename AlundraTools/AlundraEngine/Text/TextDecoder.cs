@@ -5,39 +5,60 @@ namespace AlundraEngine.Text;
 
 public static class TextDecoder
 {
+    // Escape pairs, derived from this file's own TextInterpreter glyph selection (below, and
+    // 0x80047784 in the original): '{' + c selects glyph 0x50 + c, '}' + c selects glyph 0x90 + c,
+    // and the glyph indexes line up with CP1252/Latin-1 - every historical entry already satisfied
+    // the formula ('}Y' = 0x90+0x59 = 0xE9 = e-acute, '{B' = 0x50+0x42 = 0x92 = right quote, ...).
+    // Corrected 2026-09-02 against a full-corpus scan of the extracted text (24431 strings): three
+    // entries were prefix typos and seven pairs were missing entirely, leaving 1192 occurrences
+    // undecoded ("o}i" instead of "où", "c{Lur" instead of "cœur") or WRONGLY decoded (the closing
+    // guillemet '{k' = 0x50+0x6B = 0xBB = '»' used to come out as 'ù'). Each entry's character is
+    // proven both by the formula and by its corpus contexts ("Bien s}kr", "na}_f", "Puits n{`1",
+    // "l'}9lu", "{[ Paul {k").
     private static readonly Dictionary<string, string> Tokens = new()
     {
-        { "}7", "Ç" },
-        { "{k", "ù" },
-        { "{i", "ù" },
-        { "{B", "'" },
-        { "}d", "ô" },
-        { "}P", "à" },
-        { "}R", "â" },
-        { "}X", "è" }, //8 14
-        { "}W", "ç" }, //7 14
-        { "}Y", "é" }, //9 14
-        { "}Z", "ê" }, //11 14
-        { "}^", "î" },
-        { "}¨", "ï" },
+        { "}7", "Ç" },  // 0x90+0x37 = 0xC7
+        { "{B", "'" },  // 0x50+0x42 = 0x92 (CP1252 right single quote)
+        { "}d", "ô" },  // 0x90+0x64 = 0xF4
+        { "}P", "à" },  // 0x90+0x50 = 0xE0
+        { "}R", "â" },  // 0x90+0x52 = 0xE2
+        { "}X", "è" },  // 0x90+0x58 = 0xE8 //8 14
+        { "}W", "ç" },  // 0x90+0x57 = 0xE7 //7 14
+        { "}Y", "é" },  // 0x90+0x59 = 0xE9 //9 14
+        { "}Z", "ê" },  // 0x90+0x5A = 0xEA //11 14
+        { "}^", "î" },  // 0x90+0x5E = 0xEE
+        { "}¨", "ï" },  // historical entry, kept: harmless if the pre-pass ever yields 0xA8 here
+        { "}_", "ï" },  // 0x90+0x5F = 0xEF - the form the corpus actually contains ("na}_f")
+        { "}i", "ù" },  // 0x90+0x69 = 0xF9 - was mistyped '{i' ("l'endroit o}i")
+        { "}k", "û" },  // 0x90+0x6B = 0xFB ("Bien s}kr")
+        { "}9", "É" },  // 0x90+0x39 = 0xC9 ("l'}9lu")
+        { "{k", "»" },  // 0x50+0x6B = 0xBB - was wrongly mapped to 'ù' ("{[ Paul {k")
+        { "{[", "«" },  // 0x50+0x5B = 0xAB
+        { "{L", "œ" },  // 0x50+0x4C = 0x9C (CP1252 oe ligature - "c{Lur")
+        { "{`", "°" },  // 0x50+0x60 = 0xB0 ("Puits n{`1")
         //{ "\\N", Environment.NewLine },
     };
 
+    // NOTE: keyed by the second byte ALONE, so it cannot distinguish '{k' ('»') from '}k' ('û') -
+    // it keeps the '}' interpretation for both. No extraction path uses it (DecodeString above is the
+    // one GameMap/EtcRes call); kept in sync with the corrected pair table where unambiguous.
     private static readonly Dictionary<char, char> TokensWithoutSpecialCharacter = new()
     {
         { '7', 'Ç' },
-        { 'k', 'ù' },
+        { 'k', 'û' },
         { 'i', 'ù' },
         { 'B', '\'' },
         { 'd', 'ô' },
         { 'P', 'à' },
         { 'R', 'â' },
-        { 'X', 'è' }, 
-        { 'W', 'ç' }, 
-        { 'Y', 'é' }, 
-        { 'Z', 'ê' }, 
+        { 'X', 'è' },
+        { 'W', 'ç' },
+        { 'Y', 'é' },
+        { 'Z', 'ê' },
         { '^', 'î' },
-        { '¨', 'ï' }
+        { '¨', 'ï' },
+        { '_', 'ï' },
+        { '9', 'É' }
     };
 
     public static string DecodeString(string message)
