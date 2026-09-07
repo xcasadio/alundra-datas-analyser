@@ -49,6 +49,14 @@
     <None Update="EtcIndexTable.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <!-- docs/plan-e11b-opcodes-audio.md, slice B3, D-B-7: VabIndexByMapId (SoundBin.cs:2335), 483
+         raw entries (map ids 0..482, values 0..76, 74 distinct), generated once from that exact
+         array, same "raw port" precedent as MapMusicIndex.csv above (interpreting the value - which
+         sound group a map's own VAB belongs to - is the CONSUMER's job; see this repo's
+         converter-side MapSoundGroupIndexCatalogReader.cs for the consumer that applies it). -->
+    <None Update="MapSoundGroupIndex.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
