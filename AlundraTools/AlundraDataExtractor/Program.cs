@@ -102,12 +102,19 @@ internal class Program
             return;
         }
 
+        if (args.Length > 0 && string.Equals(args[0], "--probe-portraits", StringComparison.OrdinalIgnoreCase))
+        {
+            ProbePortraits(args);
+            return;
+        }
+
         if (args.Length < 2)
         {
             Console.WriteLine("Usage: AlundraDataExtractor <gamePath> <extractionPath> [--tiled-tileset-layout original|compact] [--spritesheet-layout original|compact]");
             Console.WriteLine("       AlundraDataExtractor --trace-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
             Console.WriteLine("       AlundraDataExtractor --render-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
             Console.WriteLine("       AlundraDataExtractor --verify-bgm <gamePath|soundBinPath> [--frames N]");
+            Console.WriteLine("       AlundraDataExtractor --probe-portraits <gamePath> <outputJsonPath>");
         Console.WriteLine("       AlundraDataExtractor --extract-movies <cdImage.bin> <movieOutputPath>");
             return;
         }
@@ -405,6 +412,85 @@ internal class Program
 
         File.WriteAllText(Path.Combine(soundPath, "sfx.json"), JsonSerializer.Serialize(exported.Values, _jsonSerializerOptions));
         Console.WriteLine($"Extracted {exported.Values.Count(r => r.Tones.Length > 0)}/{soundBin.SfxRecords.Length - 1} sound effects ({exported.Values.Sum(r => r.Tones.Length)} WAV files)");
+    }
+
+    private record PortraitProbeRecord(int Icon, int ItemId, int Position, string Status, int? Sector5Id, long? Signature, int? Spritesheet, int? Page, int? Palette, int? SourceX, int? SourceY, int? Swidth, int? Sheight);
+
+    // JUSTIFICATION: read-only measurement for docs/plan-e13c-icones-hud.md, tranche S1.a (D-E13C-3).
+    // RELATION: opens the .BIN exactly the way the normal extraction path does (CreateGameEngine),
+    // then calls SpriteRecord.GetPortraitImageset - never GameMapHelper.EnumerateImages - for every
+    // icon value D-E13C-1 already established (31..119, itemId = icon - 30; GraphicManager.cs:1911-
+    // 1914 and :1791 index SpriteInfo.SpriteRecords by that same value, "position" below). It writes
+    // only to the caller's outputJsonPath: no file under gamePath, data-extracted/ or
+    // alundra-project/ is read for writing or touched. Icon 72 (itemId 42, §6 point 5 of the plan)
+    // is expected to report "missing record": SpriteInfo.cs:93-101 leaves SpriteRecords[i] null
+    // whenever SpriteTable[i] is 0 or -1, and that case is measured here, not guessed.
+    private static void ProbePortraits(string[] args)
+    {
+        if (args.Length < 3)
+        {
+            Console.WriteLine("Usage: AlundraDataExtractor --probe-portraits <gamePath> <outputJsonPath>");
+            return;
+        }
+
+        var gamePath = args[1];
+        var outputJsonPath = args[2];
+
+        const int firstIcon = 31;
+        const int lastIcon = 119;
+
+        var gameEngine = CreateGameEngine(gamePath, out _, out _, out _);
+        gameEngine.InitializeEngine();
+
+        var spriteRecords = gameEngine.AlundraMap.SpriteInfo.SpriteRecords;
+        using var br = gameEngine.DatasBin.OpenBin();
+
+        var results = new List<PortraitProbeRecord>();
+
+        for (var icon = firstIcon; icon <= lastIcon; icon++)
+        {
+            var itemId = icon - 30;
+
+            if (icon < 0 || icon >= spriteRecords.Length)
+            {
+                results.Add(new PortraitProbeRecord(icon, itemId, icon, $"out of range (SpriteRecords.Length={spriteRecords.Length})", null, null, null, null, null, null, null, null, null));
+                continue;
+            }
+
+            var record = spriteRecords[icon];
+            if (record == null)
+            {
+                results.Add(new PortraitProbeRecord(icon, itemId, icon, "missing record (SpriteTable entry is 0 or -1)", null, null, null, null, null, null, null, null, null));
+                continue;
+            }
+
+            try
+            {
+                var imageset = record.GetPortraitImageset(br);
+                var image = imageset.Images[0];
+                results.Add(new PortraitProbeRecord(
+                    icon, itemId, icon, "ok", record.Header.Sector5Id,
+                    image.Signature, image.Spritesheet, image.Spritesheet & 7, image.Palette,
+                    image.SourceX, image.SourceY, image.Swidth, image.Sheight));
+            }
+            catch (Exception ex)
+            {
+                results.Add(new PortraitProbeRecord(icon, itemId, icon, $"exception: {ex.GetType().Name}: {ex.Message}", record.Header.Sector5Id, null, null, null, null, null, null, null, null));
+            }
+        }
+
+        var outputDir = Path.GetDirectoryName(Path.GetFullPath(outputJsonPath));
+        if (!string.IsNullOrEmpty(outputDir))
+        {
+            Directory.CreateDirectory(outputDir);
+        }
+
+        File.WriteAllText(outputJsonPath, JsonSerializer.Serialize(results, _jsonSerializerOptions));
+
+        Console.WriteLine($"Probed {results.Count} icons ({firstIcon}..{lastIcon}), wrote {outputJsonPath}");
+        Console.WriteLine($"  ok: {results.Count(r => r.Status == "ok")}");
+        Console.WriteLine($"  missing record: {results.Count(r => r.Status.StartsWith("missing"))}");
+        Console.WriteLine($"  exception: {results.Count(r => r.Status.StartsWith("exception"))}");
     }
 
     // JUSTIFICATION: C# language bridge only
