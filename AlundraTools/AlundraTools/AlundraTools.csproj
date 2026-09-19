@@ -57,6 +57,28 @@
     <None Update="MapSoundGroupIndex.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <!-- docs/plan-e13c-icones-hud.md, slice S1.b, D-E13C-2: g_itemsProperties (StaticVariables.cs:737-838),
+         100 raw rows (item_id 0..99, one row per entry) of that exact 5-ushort-wide array (columns
+         documented at StaticVariables.cs:729-734: slot, replace_flag, priority, max_count, icon). Same
+         "linked, not copied" precedent as MapSoundGroupIndex.csv above: the analyser owns this table,
+         this repo's converter only reads it and republishes it raw (see this repo's converter-side
+         ItemsPropertiesCatalogReader.cs, slice S2, for the consumer). -->
+    <None Update="ItemsProperties.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <!-- docs/plan-e13c-icones-hud.md, slice S1.b, D-E13C-4: the item -> portrait sprite signature
+         correspondence, 88 rows, one per exploitable icon column of g_itemsProperties (item 42's icon
+         column names a sprite-table entry that SpriteInfo.cs:93-101 never builds - "missing record" -
+         so it is absent here, see docs/plan-e13c-icones-hud.md S1.a). Not a raw port of a single
+         decompiled array like the others: it is the result of AlundraDataExtractor's probe-portraits
+         probe (Program.cs) reading GetPortraitImageset for the 89 icon values straight off the game
+         binary. Same "linked, not copied" reasoning: this repo owns the measurement, this repo's
+         converter only reads it and republishes it raw (see this repo's converter-side
+         ItemPortraitCatalogReader.cs, slice S2, for the consumer, which resolves each signature to the
+         .sprite asset id the converter already emitted for it). -->
+    <None Update="ItemPortrait.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
