@@ -79,6 +79,17 @@
     <None Update="ItemPortrait.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <!-- docs/plan-e13c-icones-hud.md, slice S1.c, D-E13C-2: g_itemDropProperties (StaticVariables.cs:841),
+         98 raw rows (item_id 0..97, the bound of the new-game unlock loop, GameInitializer.cs:408), the
+         four byte fields as the array holds them: Field1, SoundSfxIndex, Field3, Field4. Field3 stays whole:
+         its high bit is the item unlocked at the start of a new game (GameInitializer.cs:402) and its low
+         seven bits are read on their own by PlayerManager. Field0 is left out, and on purpose: it is a string
+         the decompilation did not recover, empty on all 98 records, so it carries nothing to republish.
+         Same "linked, not copied" precedent as the two tables above: the converter only reads it and
+         republishes it raw (its ItemDropPropertiesCatalogReader.cs, slice S2.b). -->
+    <None Update="ItemDropProperties.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
