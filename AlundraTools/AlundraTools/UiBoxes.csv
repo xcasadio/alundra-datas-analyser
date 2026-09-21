@@ -1,0 +1,8 @@
+box;x;y;width;height
+g_UiBoxesInventoryWeaponBackground;8;16;21;6
+g_UiBoxesInventoryItemBackground;8;64;21;13
+g_UiBoxesInventoryWeaponNameBackground;176;16;18;4
+g_UiBoxesInventoryItemNameBackground;176;64;18;4
+UIBoxConfiguration_800b9a10;240;112;0;0
+g_UiBoxesInventoryMoneyFalconKeyIcons;176;96;3;9
+g_uiBoxesInventoryDescriptionBackground;16;168;36;7
