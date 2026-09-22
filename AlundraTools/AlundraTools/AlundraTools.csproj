@@ -90,6 +90,21 @@
     <None Update="ItemDropProperties.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <!-- docs/plan-e13d-inventaire.md (parent repository), slice D3.a, D-E13D-13 and D-E13D-14: the layout of
+         the main inventory's seven background boxes, raw. UiBoxes.csv holds the seven UIBoxConfiguration
+         literals (StaticVariables.cs:11196-11267) in the drawing order of FUN_80056598's seven
+         DisplayUiBoxes calls (MainInventoryManager.cs:914-920): X, Y, then Width and Height in 8 pixel cells,
+         the empty 0 by 0 spacer included. UiBoxCells.csv holds every SPRT literal of each box's SpritesA
+         array, 822 rows, in array order: x0, y0, u0, v0, w, h, clut. SpritesB is left out on purpose: A and
+         B are the two double-buffer copies of a box, the original shows one per frame, and the inventory is
+         baked from copy A alone (the parent plan measures why, section 7). Same "linked, not copied"
+         precedent as the tables above: the parent's converter reads both and bakes one image per box. -->
+    <None Update="UiBoxes.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="UiBoxCells.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
