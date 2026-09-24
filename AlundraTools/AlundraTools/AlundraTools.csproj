@@ -98,7 +98,12 @@
          array, 822 rows, in array order: x0, y0, u0, v0, w, h, clut. SpritesB is left out on purpose: A and
          B are the two double-buffer copies of a box, the original shows one per frame, and the inventory is
          baked from copy A alone (the parent plan measures why, section 7). Same "linked, not copied"
-         precedent as the tables above: the parent's converter reads both and bakes one image per box. -->
+         precedent as the tables above: the parent's converter reads both and bakes one image per box.
+         docs/plan-e13d-sous-inventaire.md, slice SI1: five more rows follow, the sub-inventory's own boxes
+         (UIBoxConfiguration_800af664, 800b06dc, 800b122c, 800b1d7c, 800b287c, StaticVariables.cs:11279-11327)
+         in the order of DisplaySubInventory's FUN_80053270 calls (SubInventoryManager.cs:456-462), and their
+         529 cells of copy A (A and B are equal for these five). The description and money boxes it also
+         draws are the main inventory's, already listed above. Existing rows are unchanged. -->
     <None Update="UiBoxes.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
