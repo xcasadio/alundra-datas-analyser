@@ -550,24 +550,16 @@ public class SoundManager
         {
             //DoNothing();
         }
-        else
-        {
-            SetSeqVolume(_gameEngine.StaticVariables.g_requestedSeqId, 0x7F, 0x7F);
 
-            if ((0 < soundIndex) && (stopAllSound != 0))
-            {
-                StopAllSound();
-            }
-            else
-            {
-                // Not in the executable: LoadMapSequence @ 0x80049BE0 never calls PlaySeq (in the whole
-                // executable only StopAllSound and 0x80049428 do). Kept so the analyser still plays the
-                // loaded track; see follow-up S1 of the Alundra port's audio plan.
-                PlaySeq(_gameEngine.StaticVariables.g_requestedSeqId, 1, 1);
-            }
-        }
-
+        // 80049CF0-80049D10: the executable stores the raw index back (-1 stays -1) before the stop-all test, and
+        // calls neither SetSeqVolume nor PlaySeq. Loading never plays: the track starts when StopAllSound runs,
+        // here on request or through g_resetSoundFlag in HandleMapSoundStreaming.
         _gameEngine.StaticVariables.g_currentMapSoundIndex = (short)soundIndex;
+
+        if ((0 < soundIndex) && (stopAllSound != 0))
+        {
+            StopAllSound();
+        }
 
         _gameEngine.StaticVariables.g_resetSoundFlag = 1;
     }
@@ -5341,8 +5333,10 @@ public class SoundManager
     {
         ResetSoundEffectRuntime();
 
-        if (SoundBin.SfxRecordsData[soundEffectId][0] == 0xFF &&
-            SoundBin.SfxRecordsData[soundEffectId][6] == 0)
+        // 80049F58-80049F78: a warp sound with no sequence (+0xA) and no voice (+0x10) counts as none.
+        var soundEffectRecord = _gameEngine.SoundBin.SfxRecords[soundEffectId];
+        if (soundEffectRecord.SeqNum == -1 &&
+            soundEffectRecord.MaxVoices == 0)
         {
             soundEffectId = 0;
         }
@@ -5554,16 +5548,11 @@ public class SoundManager
                 _gameEngine.StaticVariables.g_requestedSeqId = LoadSeq(_gameEngine.StaticVariables.g_soundBinSequenceBuffer, _gameEngine.StaticVariables.g_currentVabId);
                 SetSeqVolume(_gameEngine.StaticVariables.g_requestedSeqId, 0x7F, 0x7F);
 
+                // 8004B5B8-8004B5D8: no PlaySeq. Without the stop-all request the track stays loaded, silent,
+                // until StopAllSound plays it (opcode 0xA5).
                 if (_gameEngine.StaticVariables.g_forceStopAllSound != 0)
                 {
                     StopAllSound();
-                }
-                else
-                {
-                    // Not in the executable: case 5 of HandleMapSoundStreaming (0x8004B580-0x8004B5D8)
-                    // never calls PlaySeq. Kept so the analyser still plays the loaded track; see
-                    // follow-up S1 of the Alundra port's audio plan.
-                    PlaySeq(_gameEngine.StaticVariables.g_requestedSeqId, 1, 1);
                 }
 
                 _gameEngine.StaticVariables.g_soundLoadState = 0;
