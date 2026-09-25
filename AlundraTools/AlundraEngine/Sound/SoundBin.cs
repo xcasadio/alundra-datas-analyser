@@ -387,7 +387,15 @@ public class SoundBin
 
     }
 
-    public readonly record struct SfxToneSample(int ToneIndex, byte[] Pcm, int SampleRate, int LoopStart, int LoopEnd, bool Repeat);
+    // Volume/Pan: VagAtr.Vol/Pan of the decoded tone, in the VAB the samples come from.
+    public readonly record struct SfxToneSample(int ToneIndex, byte[] Pcm, int SampleRate, int LoopStart, int LoopEnd, bool Repeat, byte Volume, byte Pan);
+
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: volume/pan attributes of the record DecodeSfxTones actually decoded, after the RefSfxId
+    // chain (TryResolveSfxVab): VabHdr.Mvol of the VAB the samples come from and ProgAtr.Mvol/Mpan of the
+    // resolved record's program - the values the key-on and remix volume paths read
+    // (FUN_80090C58 @ 0x80090C58, PlaySoundEffectWithToneVolumeMix @ 0x80049794).
+    public readonly record struct SfxProgramAttributes(int ResolvedSfxId, byte VabMasterVolume, byte ProgramVolume, byte ProgramPan);
 
     // JUSTIFICATION: C# language bridge only
     // RELATION: archival counterpart to PlaySoundEffect; decodes every tone of a SfxRecord instead of
@@ -397,10 +405,22 @@ public class SoundBin
     // instead of the full pre-allocated block size.
     public List<SfxToneSample>? DecodeSfxTones(int sfxid, bool is8Bit = false)
     {
-        if (!TryResolveSfxVab(sfxid, out var record, out var header, out var bodybuff))
+        return DecodeSfxTones(sfxid, out _, is8Bit);
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: same decode, also returning the resolved record's program attributes for the export.
+    public List<SfxToneSample>? DecodeSfxTones(int sfxid, out SfxProgramAttributes attributes, bool is8Bit = false)
+    {
+        attributes = default;
+
+        if (!TryResolveSfxVab(sfxid, out var record, out var header, out var bodybuff, out var resolvedSfxId))
         {
             return null;
         }
+
+        var programAttributes = header.ProgAttributes[record.ProgramNumber];
+        attributes = new SfxProgramAttributes(resolvedSfxId, header.Header.Mvol, programAttributes.Mvol, programAttributes.Mpan);
 
         var tones = new List<SfxToneSample>(record.NumTones);
         for (var dex = 0; dex < record.NumTones; dex++)
@@ -434,17 +454,18 @@ public class SoundBin
                 continue;
             }
 
-            tones.Add(new SfxToneSample(dex, buff, sampleRate, loopStart, loopEnd, repeat));
+            tones.Add(new SfxToneSample(dex, buff, sampleRate, loopStart, loopEnd, repeat, attr.Vol, attr.Pan));
         }
 
         return tones;
     }
 
-    private bool TryResolveSfxVab(int sfxid, out SfxRecord record, out VabHeader header, out byte[] bodybuff)
+    private bool TryResolveSfxVab(int sfxid, out SfxRecord record, out VabHeader header, out byte[] bodybuff, out int resolvedSfxId)
     {
         record = null!;
         header = null!;
         bodybuff = null!;
+        resolvedSfxId = sfxid;
 
         if (sfxid <= 0 || sfxid >= SfxRecords.Length)
         {
@@ -476,6 +497,7 @@ public class SoundBin
                     return false;
                 }
 
+                resolvedSfxId = candidate.RefSfxId;
                 candidate = SfxRecords[candidate.RefSfxId];
                 if (candidate == null)
                 {

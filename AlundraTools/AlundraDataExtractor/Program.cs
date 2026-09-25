@@ -108,6 +108,12 @@ internal class Program
             return;
         }
 
+        if (args.Length > 0 && string.Equals(args[0], "--extract-sfx", StringComparison.OrdinalIgnoreCase))
+        {
+            ExtractSfxOnly(args);
+            return;
+        }
+
         if (args.Length < 2)
         {
             Console.WriteLine("Usage: AlundraDataExtractor <gamePath> <extractionPath> [--tiled-tileset-layout original|compact] [--spritesheet-layout original|compact]");
@@ -115,6 +121,7 @@ internal class Program
             Console.WriteLine("       AlundraDataExtractor --render-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
             Console.WriteLine("       AlundraDataExtractor --verify-bgm <gamePath|soundBinPath> [--frames N]");
             Console.WriteLine("       AlundraDataExtractor --probe-portraits <gamePath> <outputJsonPath>");
+            Console.WriteLine("       AlundraDataExtractor --extract-sfx <gamePath> <extractionPath>");
         Console.WriteLine("       AlundraDataExtractor --extract-movies <cdImage.bin> <movieOutputPath>");
             return;
         }
@@ -311,9 +318,35 @@ internal class Program
         return (allSamples.ToArray(), frame, loopDetected, peakLeft, peakRight, rmsLeft, rmsRight, firstAudibleFrame);
     }
 
-    private record SfxToneExport(int ToneIndex, string File, int SampleRate, int LoopStart, int LoopEnd, bool Repeat);
+    // Volume/Pan (VagAtr) and the three record-level attributes (VabHdr.Mvol, ProgAtr.Mvol/Mpan) come from the
+    // record DecodeSfxTones actually decoded, after the RefSfxId chain; null when the record was not resolved.
+    // Appended at the end so the fields that were already there keep their place in sfx.json.
+    private record SfxToneExport(int ToneIndex, string File, int SampleRate, int LoopStart, int LoopEnd, bool Repeat, int? Volume, int? Pan);
 
-    private record SfxExportRecord(int Id, short VabId, short ProgramNumber, short ToneNumber, short Note, short SeqNum, short RefSfxId, short MaxVoices, short NumTones, string? SkipReason, SfxToneExport[] Tones);
+    private record SfxExportRecord(int Id, short VabId, short ProgramNumber, short ToneNumber, short Note, short SeqNum, short RefSfxId, short MaxVoices, short NumTones, string? SkipReason, SfxToneExport[] Tones,
+        int? VabMasterVolume, int? ProgramVolume, int? ProgramPan);
+
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: sound effects only (sound/sfx.json and sound/sfx/*.wav), through the very same GameEngine
+    // and ExtractDataFromSoundBin as the full extraction, so the WAV files are identical to its output;
+    // lets sfx.json be refreshed without re-extracting (and re-decoding) everything else.
+    private static void ExtractSfxOnly(string[] args)
+    {
+        if (args.Length < 3)
+        {
+            Console.WriteLine("Usage: AlundraDataExtractor --extract-sfx <gamePath> <extractionPath>");
+            return;
+        }
+
+        var gamePath = args[1];
+        var extractionPath = args[2];
+        Console.WriteLine($"Extract sound effects from {gamePath}");
+        Console.WriteLine($"To {extractionPath}");
+
+        var gameEngine = CreateGameEngine(gamePath, out _, out _, out _);
+        gameEngine.InitializeEngine();
+        ExtractDataFromSoundBin(gameEngine.SoundBin, extractionPath);
+    }
 
     // JUSTIFICATION: C# language bridge only
     // RELATION: exhaustive archival export of every SfxRecord (global VabId=-1 bank plus every
@@ -328,6 +361,8 @@ internal class Program
         Directory.CreateDirectory(sfxPath);
 
         var exported = new SortedDictionary<int, SfxExportRecord>();
+        var siblingSourcedCount = 0;
+        var crossVabIds = new List<string>();
 
         // Only records a result on successful resolution; unresolved ids are retried on every
         // OpenMapVab pass below since a given map-specific VabId is only reachable once that
@@ -345,7 +380,7 @@ internal class Program
             // EXISTING record-level SkipReason rather than a new per-tone field, which would emit
             // "SkipReason": null on every tone and move the whole manifest even when untriggered.
             var guardHitsBefore = VoicePitchGuard.Hits(VoicePitchSite.Exporter);
-            var tones = soundBin.DecodeSfxTones(sfxid);
+            var tones = soundBin.DecodeSfxTones(sfxid, out var attributes);
             if (tones == null)
             {
                 return false;
@@ -364,13 +399,26 @@ internal class Program
                     File.WriteAllBytes(Path.Combine(sfxPath, fileName), wav.ToArray());
                 }
 
-                toneExports[i] = new SfxToneExport(tone.ToneIndex, fileName, tone.SampleRate, tone.LoopStart, tone.LoopEnd, tone.Repeat);
+                toneExports[i] = new SfxToneExport(tone.ToneIndex, fileName, tone.SampleRate, tone.LoopStart, tone.LoopEnd, tone.Repeat, tone.Volume, tone.Pan);
+            }
+
+            // The samples of a map record may come from a sibling further down its RefSfxId chain (the first one
+            // whose VAB is the map VAB open right now): counted, since the attributes follow those samples.
+            if (attributes.ResolvedSfxId != sfxid)
+            {
+                siblingSourcedCount++;
+                var resolvedVabId = soundBin.SfxRecords[attributes.ResolvedSfxId].VabId;
+                if (resolvedVabId != record.VabId)
+                {
+                    crossVabIds.Add($"{sfxid}->{attributes.ResolvedSfxId} (VAB {record.VabId}->{resolvedVabId})");
+                }
             }
 
             var skipReason = pitchRefusals > 0
                 ? $"pitch out of table ({pitchRefusals} tone(s) refused)"
                 : tones.Count == 0 ? "no tones (NumTones=0)" : null;
-            exported[sfxid] = new SfxExportRecord(sfxid, record.VabId, record.ProgramNumber, record.ToneNumber, record.Note, record.SeqNum, record.RefSfxId, record.MaxVoices, record.NumTones, skipReason, toneExports);
+            exported[sfxid] = new SfxExportRecord(sfxid, record.VabId, record.ProgramNumber, record.ToneNumber, record.Note, record.SeqNum, record.RefSfxId, record.MaxVoices, record.NumTones, skipReason, toneExports,
+                attributes.VabMasterVolume, attributes.ProgramVolume, attributes.ProgramPan);
             return true;
         }
 
@@ -407,11 +455,13 @@ internal class Program
             var reason = record.VabId == -2 ? "invalid (VabId=-2)"
                 : record.SeqNum != -1 ? "sequence-triggered, not a decodable sample"
                 : "map VAB not resolvable";
-            exported[sfxid] = new SfxExportRecord(sfxid, record.VabId, record.ProgramNumber, record.ToneNumber, record.Note, record.SeqNum, record.RefSfxId, record.MaxVoices, record.NumTones, reason, []);
+            exported[sfxid] = new SfxExportRecord(sfxid, record.VabId, record.ProgramNumber, record.ToneNumber, record.Note, record.SeqNum, record.RefSfxId, record.MaxVoices, record.NumTones, reason, [],
+                null, null, null);
         }
 
         File.WriteAllText(Path.Combine(soundPath, "sfx.json"), JsonSerializer.Serialize(exported.Values, _jsonSerializerOptions));
         Console.WriteLine($"Extracted {exported.Values.Count(r => r.Tones.Length > 0)}/{soundBin.SfxRecords.Length - 1} sound effects ({exported.Values.Sum(r => r.Tones.Length)} WAV files)");
+        Console.WriteLine($"Sound effects exported from a sibling of their RefSfxId chain: {siblingSourcedCount} ({crossVabIds.Count} of them from another VAB: {string.Join(", ", crossVabIds)})");
     }
 
     private record PortraitProbeRecord(int Icon, int ItemId, int Position, string Status, int? Sector5Id, long? Signature, int? Spritesheet, int? Page, int? Palette, int? SourceX, int? SourceY, int? Swidth, int? Sheight);
