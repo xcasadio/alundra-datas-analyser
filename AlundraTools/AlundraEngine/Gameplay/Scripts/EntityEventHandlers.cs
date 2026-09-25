@@ -3612,7 +3612,8 @@ public class EntityEventHandlers
     // 80041CA0
     public int Script_191_0BF(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.SoundManager.PlaySoundEffectWithToneVolumeMix(variables[1], variables[3], variables[4]);
+        // The sound effect id is 16 bits: 0x80041CA0 builds it as (v[2] << 8) | v[1] before the call.
+        _gameEngine.SoundManager.PlaySoundEffectWithToneVolumeMix(variables[1] | (variables[2] << 8), variables[3], variables[4]);
         return 5;
     }
 
