@@ -430,17 +430,6 @@ public class SoundManager
 
     private void FUN_8004b114Core(int soundIndex, int stopAllSound)
     {
-        if (!_gameEngine.StaticVariables.IsBgmActivated && soundIndex > 0)
-        {
-            _gameEngine.StaticVariables.g_soundLoadState = 0;
-            _gameEngine.StaticVariables.g_soundEffectState = 0;
-            _gameEngine.StaticVariables.g_currentMapSoundIndex = 0;
-            InitializeBgm(_gameEngine.StaticVariables.g_requestedSeqId);
-            ResetSomethingSound(_gameEngine.StaticVariables.g_requestedSeqId);
-            FreeLoadedVab(_gameEngine.StaticVariables.g_currentVabId);
-            return;
-        }
-
         if (-1 < soundIndex)
         {
             if (soundIndex == 0)
@@ -569,8 +558,11 @@ public class SoundManager
             {
                 StopAllSound();
             }
-            else if (_gameEngine.StaticVariables.IsBgmActivated)
+            else
             {
+                // Not in the executable: LoadMapSequence @ 0x80049BE0 never calls PlaySeq (in the whole
+                // executable only StopAllSound and 0x80049428 do). Kept so the analyser still plays the
+                // loaded track; see follow-up S1 of the Alundra port's audio plan.
                 PlaySeq(_gameEngine.StaticVariables.g_requestedSeqId, 1, 1);
             }
         }
@@ -648,14 +640,6 @@ public class SoundManager
     private void LoadBgmCore(int bgmIndex)
     {
         _gameEngine.StaticVariables.g_resetSoundFlag = 0;
-
-        if (!_gameEngine.StaticVariables.IsBgmActivated && bgmIndex != 0)
-        {
-            _gameEngine.StaticVariables.g_soundEffectState = 0;
-            InitializeBgm(_gameEngine.StaticVariables.g_requestedSeqId);
-            ResetSomethingSound(_gameEngine.StaticVariables.g_requestedSeqId);
-            return;
-        }
 
         if (bgmIndex == 0)
         {
@@ -3746,10 +3730,7 @@ public class SoundManager
 
             FUN_8008b878(0x7f, 0x7f);
             SetSeqVolume(_gameEngine.StaticVariables.g_requestedSeqId, 0x7f, 0x7f);
-            if (_gameEngine.StaticVariables.IsBgmActivated)
-            {
-                PlaySeq(_gameEngine.StaticVariables.g_requestedSeqId, 1, 1);
-            }
+            PlaySeq(_gameEngine.StaticVariables.g_requestedSeqId, 1, 1);
         }
     }
 
@@ -5577,8 +5558,11 @@ public class SoundManager
                 {
                     StopAllSound();
                 }
-                else if (_gameEngine.StaticVariables.IsBgmActivated)
+                else
                 {
+                    // Not in the executable: case 5 of HandleMapSoundStreaming (0x8004B580-0x8004B5D8)
+                    // never calls PlaySeq. Kept so the analyser still plays the loaded track; see
+                    // follow-up S1 of the Alundra port's audio plan.
                     PlaySeq(_gameEngine.StaticVariables.g_requestedSeqId, 1, 1);
                 }
 
