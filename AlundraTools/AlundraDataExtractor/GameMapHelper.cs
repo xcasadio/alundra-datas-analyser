@@ -266,5 +266,12 @@ public static class GameMapHelper
                 }
             }
         }
+
+        // The inventory's opening portrait belongs to no animation (GameMap.InventoryPortrait): it enters
+        // the atlas after every animation image and receives its AtlasX/AtlasY like them.
+        if (gameMap.InventoryPortrait != null)
+        {
+            yield return gameMap.InventoryPortrait;
+        }
     }
 }

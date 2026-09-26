@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text.Json.Serialization;
 using AlundraEngine.Graphics;
 using AlundraEngine.Text;
 
@@ -23,6 +24,14 @@ public class GameMap
     public Bitmap SpriteSheetBitmap;
     private readonly int _numSpriteSheets = 8;
     public ScrollScreen? ScrollScreen;
+
+    // The image the inventory's opening portrait draws: sprite record 0's portrait, as
+    // GraphicManager.GetAnimationImageByIndex(0) (0x80057b40) returns it. No animation uses it, so only
+    // the extractor fills it, and only for the global map; every other map leaves it null and its JSON
+    // omits it, which keeps the map_<n>.json files unchanged (the CasaEngine port's
+    // docs/plan-portrait-inventaire.md, P2).
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public SiImage? InventoryPortrait;
 
     public GameMap(BinaryReader br, DataBinHeader dbheader)
     {

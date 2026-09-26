@@ -1362,6 +1362,9 @@ internal class Program
         Console.WriteLine("Extract map alundra");
         using var br = datasBin.OpenBin();
         datasBin.AlundraGameMap.Load(br);
+        // The inventory's opening portrait (sprite record 0, see GameMap.InventoryPortrait) is in no
+        // animation: without this field, neither the atlas nor map_alundra.json would carry it.
+        datasBin.AlundraGameMap.InventoryPortrait = datasBin.AlundraGameMap.SpriteInfo.SpriteRecords[0].GetPortraitImageset(br).Images[0];
         SaveAlundraMap(datasBin.AlundraGameMap, dataPath, spriteSheetLayoutMode);
 
         for (int i = 0; i < 483; i++)
