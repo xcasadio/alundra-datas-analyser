@@ -2321,9 +2321,10 @@ public class EntityEventHandlers
     }
 
     // 8003FD14
+    // ALUN_CD.EXE (France) 0x8003FD14: the binary reads no operand here - the local computed from
+    // variables[0]/[1] is dead code, removed.
     public int Script_JumpRelativeFromStoredParam_07D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var value = (variables[1] << 24) | (variables[1] << 16) | (variables[1] << 8) | variables[0];
         return eventProgramState._34 - eventProgramState.CodeIndex; //variables[0];
     }
 
@@ -2595,11 +2596,14 @@ public class EntityEventHandlers
     }
 
     // 800404A8
+    // ALUN_CD.EXE (France) 0x800404A8: the binary walks its matching-entity buffer BACKWARD (count-1
+    // down to 0); the decompilation walked it forward. No observable difference (a plain OR across
+    // matches), but ported here to match the binary exactly.
     public int Script_141_08D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
-        for (var i = 0; i < num; i++)
+        for (var i = num - 1; i >= 0; i--)
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
 
@@ -3234,9 +3238,11 @@ public class EntityEventHandlers
         int baseY = entity.PosY;
         int baseZ = entity.PosZ;
 
-        int dx0 = variables[3];
-        int dy0 = variables[4];
-        int dz0 = variables[5];
+        // ALUN_CD.EXE (France) 0x80041344: dx0/dy0/dz0 are read as SIGNED bytes, even though
+        // FillDataFromCommand zero-extends every operand byte; dx1/dy1/dz1 stay unsigned.
+        int dx0 = (sbyte)variables[3];
+        int dy0 = (sbyte)variables[4];
+        int dz0 = (sbyte)variables[5];
 
         int dx1 = variables[6];
         int dy1 = variables[7];
@@ -3250,12 +3256,23 @@ public class EntityEventHandlers
         int maxY = minY + (dy1 << 20);
         int maxZ = minZ + (dz1 << 20);
 
-        int i = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[2]) - 1;
+        int count2 = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[2]);
 
-        while (i > 0)
+        // ALUN_CD.EXE (France) 0x80041344: no candidates -> Result = 0 (the decompilation left the
+        // previous Result untouched here). Default to 0, only ever raised to 1 below.
+        eventProgramState.Result = 0;
+
+        if (count2 == 0)
+        {
+            return 9;
+        }
+
+        // ALUN_CD.EXE (France) 0x80041344: the loop tests EVERY candidate, index 0 included (the
+        // binary's loop is tested at the bottom); the decompilation's `while (i > 0)` skipped index 0.
+        for (int i = count2 - 1; i >= 0; i--)
         {
             entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
-            
+
             int ex = entity.PosX;
             int ey = entity.PosY;
             int ez = entity.PosZ;
@@ -3270,10 +3287,10 @@ public class EntityEventHandlers
                 eventProgramState.Result = 1;
                 return 0x9;
             }
-
-            i--;
         }
 
+        // ALUN_CD.EXE (France) 0x80041344: Result = 0 when the loop exhausts with no candidate inside
+        // the box (the decompilation left the previous Result untouched here too).
         return 9;
     }
 
@@ -3442,15 +3459,19 @@ public class EntityEventHandlers
     }
 
     // 800418F8
+    // ALUN_CD.EXE (France) 0x800418F8: passes variables[1] (not variables[2]) as the search type to
+    // GetMatchingEntityBySearchType (T5 cross-check, D-E16-28); compared value and field stay
+    // variables[2]/TargetAnimationId (+0x88). Same loop shape as 0xAD/0xB8: every match is tested down
+    // to index 0 inclusive (the decompilation's `while (i > 0)` skipped index 0).
     public int Script_183_0B7(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Breakpoint.TriggerBreak();
 
         var animationId = (byte)variables[2];
 
-        int i = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[2]) - 1;
+        int i = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]) - 1;
 
-        while (i > 0)
+        while (i >= 0)
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
 
@@ -3469,9 +3490,11 @@ public class EntityEventHandlers
     }
 
     // 80041988
+    // ALUN_CD.EXE (France) 0x80041988: compares CurrentAnimationId (+0x90), not TargetAnimationId
+    // (+0x88) - the decompilation and both size tables named this opcode/field wrong (D-E16-27/28).
     public int Script_184_0B8(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var targetAnimationId = (uint)variables[2];
+        var currentAnimationId = (uint)variables[2];
 
         int i = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]) - 1;
 
@@ -3479,7 +3502,7 @@ public class EntityEventHandlers
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
 
-            if (entity.TargetAnimationId == targetAnimationId)
+            if (entity.CurrentAnimationId == currentAnimationId)
             {
                 eventProgramState.Result = 1;
                 return 3;
