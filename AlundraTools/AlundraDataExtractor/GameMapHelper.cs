@@ -99,6 +99,23 @@ public static class GameMapHelper
         graphics.DrawImage(tileBitmap, x, y);
     }
 
+    // The portrait bit of SpriteTableHeader.FlagsPortraitShadowType (EntityFlags.HasPortrait).
+    private const byte HasPortraitFlag = 0x80;
+
+    // Fills SpriteRecord.DialoguePortrait of every record that has a portrait, so that SaveSpriteSheet gives
+    // it a cell and a position and the map JSON carries it. Call it right after GameMap.Load, with the reader
+    // the map was loaded from.
+    public static void LoadDialoguePortraits(GameMap gameMap, BinaryReader br)
+    {
+        foreach (var spriteRecord in gameMap.SpriteInfo.SpriteRecords.Where(x => x != null))
+        {
+            if ((spriteRecord.Header.FlagsPortraitShadowType & HasPortraitFlag) != 0)
+            {
+                spriteRecord.DialoguePortrait = spriteRecord.GetPortraitImageset(br).Images[0];
+            }
+        }
+    }
+
     // Writes the map spritesheet PNG and records, on every SiImage, where its quad landed there
     // (AtlasX/AtlasY). Call this before serializing the map to JSON so those fields are set.
     //
@@ -417,6 +434,12 @@ public static class GameMapHelper
         if (gameMap.InventoryPortrait != null)
         {
             yield return gameMap.InventoryPortrait;
+        }
+
+        // The dialogue portraits come last too, in record order: they belong to no animation either.
+        foreach (var spriteRecord in gameMap.SpriteInfo.SpriteRecords.Where(x => x?.DialoguePortrait != null))
+        {
+            yield return spriteRecord.DialoguePortrait;
         }
     }
 }

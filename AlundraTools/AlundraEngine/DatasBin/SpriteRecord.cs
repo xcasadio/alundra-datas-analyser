@@ -1,4 +1,5 @@
-﻿using AlundraEngine.Gameplay.Scripts;
+﻿using System.Text.Json.Serialization;
+using AlundraEngine.Gameplay.Scripts;
 
 namespace AlundraEngine.DatasBin;
 
@@ -6,6 +7,13 @@ public class SpriteRecord
 {
     public readonly SpriteTableHeader Header;
     public readonly AnimationSet[] AnimSets;
+
+    // The image the dialogue boxes draw as this record's portrait (SpriteTableHeader.FlagsPortraitShadowType
+    // bit 7), as GetPortraitImageset returns it. No animation uses it, so only the extractor fills it, for the
+    // records that have a portrait; every other record leaves it null and its JSON omits it (same shape as
+    // GameMap.InventoryPortrait).
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public SiImage? DialoguePortrait;
 
     public SpriteRecord(BinaryReader br, long binOffset, int id, int memoryAddress, int spriteInfoMemoryAddress)
     {
