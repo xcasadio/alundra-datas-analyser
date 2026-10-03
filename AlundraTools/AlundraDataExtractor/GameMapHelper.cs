@@ -231,15 +231,35 @@ public static class GameMapHelper
     // practice.
     private static SpriteSheetLayout CreateCompactSpriteSheetLayout(List<SiImage> uniqueImages)
     {
-        const int canvasWidth = 512;
-        const int padding = 1; // keep neighbouring cells from bleeding into each other when sampled
+        var packingOrder = CompactPackingOrder(uniqueImages);
+        var (positions, canvasHeight) = ShelfPack(packingOrder);
+        var positionBySignature = new Dictionary<long, (int X, int Y)>();
 
-        var packingOrder = uniqueImages
+        for (var i = 0; i < packingOrder.Count; i++)
+        {
+            positionBySignature[packingOrder[i].Signature] = positions[i];
+        }
+
+        return new SpriteSheetLayout(CompactCanvasWidth, Math.Max(canvasHeight, 1), packingOrder, positionBySignature);
+    }
+
+    private const int CompactCanvasWidth = 512;
+
+    private static List<SiImage> CompactPackingOrder(IEnumerable<SiImage> images)
+    {
+        return images
             .OrderByDescending(image => image.Sheight)
             .ThenBy(image => image.Signature)
             .ToList();
+    }
 
-        var positionBySignature = new Dictionary<long, (int X, int Y)>();
+    // Shelf packing of the images in the order given, on a CompactCanvasWidth-wide canvas, 1 px of padding.
+    // Returns the position of each image (same index) and the canvas height.
+    private static (List<(int X, int Y)> Positions, int CanvasHeight) ShelfPack(List<SiImage> packingOrder)
+    {
+        const int padding = 1; // keep neighbouring cells from bleeding into each other when sampled
+
+        var positions = new List<(int X, int Y)>(packingOrder.Count);
         int cursorX = 0, cursorY = 0, shelfHeight = 0, canvasHeight = 0;
 
         foreach (var image in packingOrder)
@@ -247,20 +267,97 @@ public static class GameMapHelper
             int cellWidth = image.Swidth + padding;
             int cellHeight = image.Sheight + padding;
 
-            if (cursorX + cellWidth > canvasWidth)
+            if (cursorX + cellWidth > CompactCanvasWidth)
             {
                 cursorX = 0;
                 cursorY += shelfHeight;
                 shelfHeight = 0;
             }
 
-            positionBySignature[image.Signature] = (cursorX, cursorY);
+            positions.Add((cursorX, cursorY));
             cursorX += cellWidth;
             shelfHeight = Math.Max(shelfHeight, cellHeight);
             canvasHeight = Math.Max(canvasHeight, cursorY + shelfHeight);
         }
 
-        return new SpriteSheetLayout(canvasWidth, Math.Max(canvasHeight, 1), packingOrder, positionBySignature);
+        return (positions, canvasHeight);
+    }
+
+    // Writes the map's effect sheet, if it has any effect quad, and records on every effect quad where its
+    // cell landed (AtlasX/AtlasY). Call this before serializing the map to JSON, like SaveSpriteSheet.
+    //
+    // The effect quads are in no entity animation (SpriteInfo.SpriteEffectRecords), so the entity sheet has
+    // never drawn them and their AtlasX/AtlasY were always 0. The sheet is always Compact: one cell per
+    // (VRAM page, palette, source region), not per Signature - two quads that differ only by the semi/ABR bits
+    // of the Spritesheet byte show the same texels, and those bits belong to the quad, not to the cell. Quads
+    // of size 0 x 0 (map 161) get no cell and keep AtlasX/AtlasY = 0. Only the effect SiImage instances are
+    // stamped: an entity image with the same Signature keeps its own entity-sheet position.
+    public static void SaveEffectSheet(GameMap gameMap, string fileName)
+    {
+        var effectImages = EnumerateEffectImages(gameMap).Where(image => image.Swidth != 0 && image.Sheight != 0).ToList();
+        var representativeByCell = new Dictionary<EffectCell, SiImage>();
+
+        foreach (var image in effectImages)
+        {
+            representativeByCell.TryAdd(GetEffectCell(image), image);
+        }
+
+        if (representativeByCell.Count == 0)
+        {
+            return;
+        }
+
+        var packingOrder = CompactPackingOrder(representativeByCell.Values);
+        var (positions, canvasHeight) = ShelfPack(packingOrder);
+        var height = Math.Max(canvasHeight, 1);
+        var positionByCell = new Dictionary<EffectCell, (int X, int Y)>();
+        var canvas = new ushort[CompactCanvasWidth * height];
+
+        for (var i = 0; i < packingOrder.Count; i++)
+        {
+            var image = packingOrder[i];
+            positionByCell[GetEffectCell(image)] = positions[i];
+            DrawSpriteWords(canvas, CompactCanvasWidth, height, gameMap.GetSpriteWords(image), image.Swidth, image.Sheight, positions[i].X, positions[i].Y);
+        }
+
+        SaveWordCanvas(canvas, CompactCanvasWidth, height, fileName);
+
+        foreach (var image in effectImages)
+        {
+            var (x, y) = positionByCell[GetEffectCell(image)];
+            image.AtlasX = x;
+            image.AtlasY = y;
+        }
+    }
+
+    // JUSTIFICATION: C# language bridge only - the dictionary key of an effect cell.
+    private readonly record struct EffectCell(int Page, byte Palette, byte SourceX, byte SourceY, byte Width, byte Height);
+
+    private static EffectCell GetEffectCell(SiImage image)
+    {
+        return new EffectCell(image.Spritesheet & 0x7, image.Palette, image.SourceX, image.SourceY, image.Swidth, image.Sheight);
+    }
+
+    private static IEnumerable<SiImage> EnumerateEffectImages(GameMap gameMap)
+    {
+        foreach (var effectRecord in gameMap.SpriteInfo.SpriteEffectRecords.Where(x => x?.PreloadedAnims != null))
+        {
+            foreach (var animation in effectRecord.PreloadedAnims.Where(x => x?.Frames != null))
+            {
+                foreach (var frame in animation.Frames)
+                {
+                    if (frame?.Images?.Images == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (var image in frame.Images.Images)
+                    {
+                        yield return image;
+                    }
+                }
+            }
+        }
     }
 
     // JUSTIFICATION: C# language bridge only - carries one resolved spritesheet layout so both modes

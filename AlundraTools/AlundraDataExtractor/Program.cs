@@ -1391,6 +1391,7 @@ internal class Program
         // Must run before the JSON dump below: it populates SiImage.AtlasX/AtlasY, which the
         // serialized map_alundra.json needs to carry.
         GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.png"), spriteSheetLayoutMode);
+        GameMapHelper.SaveEffectSheet(gameMap, Path.Combine(extractionPath, "map_alundra_effectsheet.png"));
 
         File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMap, _jsonSerializerOptions));
 
@@ -1405,6 +1406,7 @@ internal class Program
         // Must run before the JSON dump below: it populates SiImage.AtlasX/AtlasY, which the
         // serialized map_{id}.json needs to carry.
         GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_spritesheet.png"), spriteSheetLayoutMode);
+        GameMapHelper.SaveEffectSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_effectsheet.png"));
 
         //var gameMapJson = ConvertGameMap(gameMap);
         //File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
