@@ -221,6 +221,12 @@ public class GameMap
                     buff[y * outputwidth / 2 + i] = (byte)((readbuff[i] & 0xf0) >> 4 | (readbuff[i + 1] & 0x0f) << 4);
                 }
 
+                // An odd width ends on the high nibble of the last byte read, which has no successor to pair
+                // with: the loop above stops one byte short and used to drop that last column.
+                if (swidth % 2 == 1)
+                {
+                    buff[y * outputwidth / 2 + readbuff.Length - 1] = (byte)((readbuff[^1] & 0xf0) >> 4);
+                }
             }
             else
             {
