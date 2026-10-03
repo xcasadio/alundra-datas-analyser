@@ -1,4 +1,5 @@
-﻿using AlundraEngine.Graphics;
+﻿using System.Text.Json.Serialization;
+using AlundraEngine.Graphics;
 
 namespace AlundraEngine.DatasBin;
 
@@ -21,6 +22,12 @@ public class SpriteInfo
     private long _binOffset;
 
     public readonly Color[][] Palettes;
+
+    // The raw 16-bit CLUT words behind Palettes (same indexing). Palettes keeps only RGB and a 0/255 alpha, so
+    // bit 15 (the PSX semi-transparency flag, STP) is lost there; the extractor reads it from here to write the
+    // per-texel alpha code of the sprite sheets. Not serialized: the map JSON stays as it is.
+    [JsonIgnore]
+    public readonly ushort[][] PaletteWords;
     public readonly Bitmap PalettesBitmap;
 
     public SpriteInfo(BinaryReader br, int memoryAddress, int sectorEnd)
@@ -62,17 +69,20 @@ public class SpriteInfo
         br.BaseStream.Position = _binOffset + Header.SpritePalettesPointer;
         var maxPalettes = 41; //32;
         Palettes = new Color[maxPalettes][];
+        PaletteWords = new ushort[maxPalettes][];
         var buff = new byte[maxPalettes * 16 * 2];
         br.Read(buff, 0, buff.Length);
         var buffdex = 0;
         for (var i = 0; i < maxPalettes; i++)
         {
             Palettes[i] = new Color[16];
+            PaletteWords[i] = new ushort[16];
 
             for (var j = 0; j < 16; j++)
             {
                 var b2 = buff[buffdex++];
                 var b1 = buff[buffdex++];
+                PaletteWords[i][j] = (ushort)((b1 << 8) | b2);
                 Palettes[i][j] = ImageHelper.FromPsxColor((b1 << 8) | b2);
             }
         }

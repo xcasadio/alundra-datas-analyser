@@ -154,6 +154,35 @@ public class GameMap
 
     public Bitmap GenerateSpriteBitmap(SiImage img, Color[] pal)
     {
+        var buff = CropSpriteIndices(img, out var outputwidth);
+
+        return ImageHelper.BitmapFromPsxBuff(buff, outputwidth, img.Sheight, 4, pal);
+    }
+
+    // The CLUT word of every texel of the quad's crop, row-major, Swidth x Sheight, bit 15 (STP) kept. The
+    // extractor builds the sprite sheets from these words rather than from GetSpriteBitmap, whose colours have
+    // lost that bit.
+    public ushort[] GetSpriteWords(SiImage img)
+    {
+        var buff = CropSpriteIndices(img, out var outputwidth);
+        var palette = SpriteInfo.PaletteWords[img.Palette];
+        var words = new ushort[img.Swidth * img.Sheight];
+
+        for (var y = 0; y < img.Sheight; y++)
+        {
+            for (var x = 0; x < img.Swidth; x++)
+            {
+                var packed = buff[(y * outputwidth + x) / 2];
+                words[y * img.Swidth + x] = palette[x % 2 == 0 ? packed & 0xf : packed >> 4];
+            }
+        }
+
+        return words;
+    }
+
+    // The quad's 4bpp texels cut out of its VRAM page, rows padded to a multiple of 8 texels with index 0.
+    private byte[] CropSpriteIndices(SiImage img, out int outputwidth)
+    {
         // SourceX/SourceY, not Sx/Sy: a mirrored quad names its VRAM window one texel early (see
         // SiImage). Cropping at the raw Sx pulled in a column of the neighbouring sprite and cut
         // the quad's own last column, which showed up in game as stray pixels beside every
@@ -161,7 +190,7 @@ public class GameMap
         var shiftleft = img.SourceX % 2 == 1;
         int swidth = img.Swidth;
         var readwidth = swidth;
-        int outputwidth = img.Swidth;
+        outputwidth = img.Swidth;
 
         if (outputwidth % 8 > 0)//make output interval of 8
         {
@@ -205,7 +234,7 @@ public class GameMap
 
         }
 
-        return ImageHelper.BitmapFromPsxBuff(buff, outputwidth, img.Sheight, 4, pal);
+        return buff;
     }
 
     private readonly Dictionary<long, Bitmap> _tileCache = new();

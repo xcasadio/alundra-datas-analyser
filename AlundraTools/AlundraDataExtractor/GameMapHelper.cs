@@ -130,20 +130,15 @@ public static class GameMapHelper
             _ => throw new ArgumentOutOfRangeException(nameof(layoutMode), layoutMode, "Unsupported spritesheet layout mode.")
         };
 
-        using (var bitmap = new Bitmap(layout.Width, layout.Height))
-        {
-            using (var graphics = Graphics.FromImage(bitmap))
-            {
-                foreach (var image in layout.DrawOrder)
-                {
-                    var spriteBitmap = gameMap.GetSpriteBitmap(image);
-                    var (x, y) = layout.PositionBySignature[image.Signature];
-                    graphics.DrawImage(spriteBitmap, x, y);
-                }
-            }
+        var canvas = new ushort[layout.Width * layout.Height];
 
-            bitmap.Save(fileName, ImageFormat.Png);
+        foreach (var image in layout.DrawOrder)
+        {
+            var (x, y) = layout.PositionBySignature[image.Signature];
+            DrawSpriteWords(canvas, layout.Width, layout.Height, gameMap.GetSpriteWords(image), image.Swidth, image.Sheight, x, y);
         }
+
+        SaveWordCanvas(canvas, layout.Width, layout.Height, fileName);
 
         foreach (var (signature, position) in layout.PositionBySignature)
         {
@@ -153,6 +148,59 @@ public static class GameMapHelper
                 image.AtlasY = position.Y;
             }
         }
+    }
+
+    // Sprite sheets are built from the raw CLUT words, not from drawn bitmaps: a word keeps its bit 15 (STP),
+    // and drawing 128-alpha texels through Graphics.DrawImage would blend their RGB with what is underneath.
+    // A word 0x0000 is transparent and never overwrites; any other word does (the last texel drawn wins,
+    // alpha code included).
+    private static void DrawSpriteWords(ushort[] canvas, int canvasWidth, int canvasHeight, ushort[] words, int width, int height, int x, int y)
+    {
+        for (var row = 0; row < height && y + row < canvasHeight; row++)
+        {
+            for (var column = 0; column < width && x + column < canvasWidth; column++)
+            {
+                var word = words[row * width + column];
+
+                if (word != 0)
+                {
+                    canvas[(y + row) * canvasWidth + x + column] = word;
+                }
+            }
+        }
+    }
+
+    // Alpha code per texel (E19.g G0-R1): 0 for the transparent word 0x0000 (left as it is), 128 when bit 15 (STP) is set
+    // (0x8000 included, which is semi-transparent black), 255 otherwise. The RGB is the one the extractor has
+    // always written: ImageHelper.FromPsxColor's channels, in Format32bppArgb memory order (B, G, R, A), so the
+    // PNG red is the word's low five bits.
+    private const byte AlphaSemiTransparent = 128;
+    private const byte AlphaOpaque = 255;
+
+    private static void SaveWordCanvas(ushort[] canvas, int width, int height, string fileName)
+    {
+        var pixels = new byte[width * height * 4];
+
+        for (var i = 0; i < canvas.Length; i++)
+        {
+            var word = canvas[i];
+
+            if (word == 0)
+            {
+                continue;
+            }
+
+            pixels[i * 4] = (byte)(((word >> 10) & 0x1f) << 3);
+            pixels[i * 4 + 1] = (byte)(((word >> 5) & 0x1f) << 3);
+            pixels[i * 4 + 2] = (byte)((word & 0x1f) << 3);
+            pixels[i * 4 + 3] = (word & 0x8000) != 0 ? AlphaSemiTransparent : AlphaOpaque;
+        }
+
+        using var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+        var data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+        System.Runtime.InteropServices.Marshal.Copy(pixels, 0, data.Scan0, pixels.Length);
+        bitmap.UnlockBits(data);
+        bitmap.Save(fileName, ImageFormat.Png);
     }
 
     // Historical layout: the eight 256x256 VRAM pages stacked vertically, each quad drawn at the
