@@ -28,12 +28,12 @@ Pop-Location
 
 ## Options de layout
 
-Deux sorties image ont un layout configurable, avec des defauts differents : le tileset Tiled est `compact`, le spritesheet reste `original`.
+Deux sorties image ont un layout configurable ; le tileset Tiled et le spritesheet sont `compact` par defaut.
 
 | Option | Sortie concernee | Defaut | Modes |
 | --- | --- | --- | --- |
 | `--tiled-tileset-layout original\|compact` | `data\tiled\map_N_tileset.png` | `compact` | `compact` packe uniquement les tiles utilisees, une cellule par `rawTileId` ; `original` reprend le layout historique du tilesheet |
-| `--spritesheet-layout original\|compact` | `data\map_N_spritesheet.png` et `data\map_alundra_spritesheet.png` | `original` | `original` empile les pages VRAM natives ; `compact` packe uniquement les quads utilises, une cellule par couple (region VRAM, palette) |
+| `--spritesheet-layout original\|compact` | `data\map_N_spritesheet.png` et `data\map_alundra_spritesheet.png` | `compact` | `compact` packe uniquement les quads utilises, une cellule par couple (region VRAM, palette) ; `original` empile les pages VRAM natives (une region reutilisee avec plusieurs palettes partage une cellule) |
 
 ```powershell
 Push-Location AlundraTools\AlundraTools

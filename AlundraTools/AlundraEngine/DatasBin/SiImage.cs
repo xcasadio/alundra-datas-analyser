@@ -47,10 +47,11 @@ public class SiImage
 
     // Not part of the original PSX binary layout. Populated by GameMapHelper.SaveSpriteSheet()
     // as this quad's position in the exported spritesheet PNG (same Swidth/Sheight as the crop
-    // size). Where they land depends on the export layout: SpriteSheetLayoutMode.Original stacks the
-    // native VRAM pages, so AtlasX/AtlasY come out equal to (SourceX, page*256+SourceY) and quads
-    // reusing one VRAM region under different palettes still share a cell; Compact gives one cell
-    // per (region, palette) instead, so every quad crops the color it was actually meant to show.
+    // size). Where they land depends on the export layout: Compact (the default) gives one cell
+    // per (region, palette), so every quad crops the color it was actually meant to show;
+    // SpriteSheetLayoutMode.Original stacks the native VRAM pages, so AtlasX/AtlasY come out equal
+    // to (SourceX, page*256+SourceY) and quads reusing one VRAM region under different palettes
+    // still share a cell.
     public int AtlasX;
     public int AtlasY;
 

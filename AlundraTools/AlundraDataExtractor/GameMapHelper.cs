@@ -8,13 +8,15 @@ namespace AlundraDataExtractor;
 public enum SpriteSheetLayoutMode
 {
     /// <summary>
-    /// The eight native 256x256 VRAM pages stacked vertically, holes included. Default: it keeps the
-    /// exported sheet aligned with the original VRAM coordinates.
+    /// The eight native 256x256 VRAM pages stacked vertically, holes included. It keeps the exported
+    /// sheet aligned with the original VRAM coordinates, but a VRAM region reused under several
+    /// palettes shares one cell (the last one drawn wins), so some quads crop another palette's colors.
     /// </summary>
     Original,
 
     /// <summary>
-    /// Only the quads actually used, shelf-packed, one cell per (VRAM region, palette) pair.
+    /// Only the quads actually used, shelf-packed, one cell per (VRAM region, palette) pair. Default:
+    /// every quad crops its own colors.
     /// </summary>
     Compact
 }
@@ -123,7 +125,7 @@ public static class GameMapHelper
     // (Spritesheet+Palette+SourceX+SourceY+Swidth+Sheight already combined, see SiImage), so a quad
     // and its mirrored twin share one cell, and both stamp the resulting position on every SiImage
     // instance carrying that signature.
-    public static void SaveSpriteSheet(GameMap gameMap, string fileName, SpriteSheetLayoutMode layoutMode = SpriteSheetLayoutMode.Original)
+    public static void SaveSpriteSheet(GameMap gameMap, string fileName, SpriteSheetLayoutMode layoutMode = SpriteSheetLayoutMode.Compact)
     {
         var uniqueImages = new List<SiImage>();
         var imagesBySignature = new Dictionary<long, List<SiImage>>();
@@ -220,16 +222,17 @@ public static class GameMapHelper
         bitmap.Save(fileName, ImageFormat.Png);
     }
 
-    // Historical layout: the eight 256x256 VRAM pages stacked vertically, each quad drawn at the
-    // VRAM window it samples (SourceX/SourceY, not Sx/Sy - a mirrored quad names its source one
-    // texel early, see SiImage). Pages keep their holes, so the sheet stays readable next to the
-    // original VRAM dumps, and AtlasX/AtlasY come out equal to the native coordinates.
+    // Original layout (no longer the default, see Compact): the eight 256x256 VRAM pages stacked
+    // vertically, each quad drawn at the VRAM window it samples (SourceX/SourceY, not Sx/Sy - a
+    // mirrored quad names its source one texel early, see SiImage). Pages keep their holes, so the
+    // sheet stays readable next to the original VRAM dumps, and AtlasX/AtlasY come out equal to the
+    // native coordinates.
     //
     // These coordinates are not collision-free: the same VRAM region is legitimately reused with a
     // different palette across frames of the same animation (e.g. a color-cycling sparkle), and all
     // of those quads land on one cell here, so the last one drawn wins and the others crop the
-    // wrong color. Draw order is first-seen order, as the historical export had it. Use Compact
-    // when every (region, palette) pair must survive.
+    // wrong color. Draw order is first-seen order, as the historical export had it. Compact, the
+    // default, keeps every (region, palette) pair.
     private static SpriteSheetLayout CreateOriginalSpriteSheetLayout(List<SiImage> uniqueImages)
     {
         var positionBySignature = new Dictionary<long, (int X, int Y)>();
@@ -243,9 +246,9 @@ public static class GameMapHelper
     }
 
     // Compact layout: one cell per unique Signature, so a region reused under several palettes gets
-    // one cell per palette and every quad crops the color it was meant to show. Tallest-first shelf
-    // packing: simple, deterministic, and good enough for the small (mostly 16-48px) quads found in
-    // practice.
+    // one cell per palette and every quad crops the color it was meant to show. This is the default
+    // layout of the sprite sheets. Tallest-first shelf packing: simple, deterministic, and good
+    // enough for the small (mostly 16-48px) quads found in practice.
     private static SpriteSheetLayout CreateCompactSpriteSheetLayout(List<SiImage> uniqueImages)
     {
         var packingOrder = CompactPackingOrder(uniqueImages);

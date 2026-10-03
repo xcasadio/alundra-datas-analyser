@@ -144,7 +144,7 @@ internal class Program
         ExtractDataFromEtcRes(etcRes, gameEngine.StaticVariables, extractionPath);
         var psxFramesPerSecond = etcRes is EtcResUsa ? 60 : 50;
         var tiledTilesetLayoutMode = ReadEnumOption(args, "--tiled-tileset-layout", TiledTilesetLayoutMode.Compact);
-        var spriteSheetLayoutMode = ReadEnumOption(args, "--spritesheet-layout", SpriteSheetLayoutMode.Original);
+        var spriteSheetLayoutMode = ReadEnumOption(args, "--spritesheet-layout", SpriteSheetLayoutMode.Compact);
         ExtractDataFromDatasBin(gameEngine.DatasBin, gameEngine.StaticVariables, extractionPath, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode);
         ExtractDataFromSoundBin(gameEngine.SoundBin, extractionPath);
         ExtractDataFromBgm(Path.Combine(gamePath, "DATA", "SOUND.BIN"), extractionPath);
