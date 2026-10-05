@@ -39,6 +39,15 @@
     <None Update="FontCharWidths.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <!-- docs/plan-e19-opcodes.md, slice E19.f2b0, F2B0-R1: the whole glyph table of the same array,
+         g_fontCharWidthTable (StaticVariables.cs:9483), 256 rows code;width;height;srcX;srcY;yOffset
+         (the five ints of each entry, in that order; FontCharWidths.csv keeps only the first),
+         generated once from that exact array by a throwaway tool kept outside the repository. It is
+         the rectangle RenderTextBitmap (0x800478C4) copies out of FONT3.TIM for each raw code. See
+         this repo's converter-side FontGlyphTableCatalogReader.cs for the consumer. -->
+    <None Update="FontGlyphTable.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <!-- docs/plan-e12-dialogues.md, slice E12.b, D-E12-6: the ETC index table (1024 int16, index;value)
          is the first 1024 int16 of the game's own ETC_RES.R file - mirrors EtcResR.cs:7-13's exact
          read. Not in the decompiled code at all, so unlike every other CSV in this project it cannot
