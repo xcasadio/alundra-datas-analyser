@@ -182,16 +182,9 @@ internal class Program
         var bgmPath = Path.Combine(soundPath, "bgm");
         Directory.CreateDirectory(bgmPath);
 
-        var soundBin = new SoundBin(soundBinPath);
-        var mixer = new SpuMixerSoundPlaybackBackend();
-        soundBin.AttachPlaybackBackend(mixer);
-        var gameEngine = new GameEngine(null!, null!, soundBin, null!, null!, null);
-        gameEngine.StaticVariables.Initialize(gameEngine);
-        gameEngine.SoundManager.InitializeSoundSystem();
-
         const int maxSeconds = 240;
         const int maxFrames = maxSeconds * 60;
-        var maxSoundIndex = (soundBin.MusicSeqVabOffsets.Length - 4) / 3;
+        var maxSoundIndex = (new SoundBin(soundBinPath).MusicSeqVabOffsets.Length - 4) / 3;
         var exported = new List<BgmExportRecord>();
         var silent = 0;
         var failed = 0;
@@ -203,6 +196,16 @@ internal class Program
 
             try
             {
+                // docs/plan-e19-opcodes.md section 1.2v (X2, D-E19-69): every track is rendered from a
+                // fresh sound bank, mixer, engine and sound system, like --render-bgm. One shared system
+                // made each track start with what the previous one left sounding.
+                var soundBin = new SoundBin(soundBinPath);
+                var mixer = new SpuMixerSoundPlaybackBackend();
+                soundBin.AttachPlaybackBackend(mixer);
+                var gameEngine = new GameEngine(null!, null!, soundBin, null!, null!, null);
+                gameEngine.StaticVariables.Initialize(gameEngine);
+                gameEngine.SoundManager.InitializeSoundSystem();
+
                 gameEngine.SoundManager.LoadMapSequence(soundIndex, 1);
                 var seqId = gameEngine.StaticVariables.g_requestedSeqId;
                 if (seqId < 0)
@@ -598,8 +601,9 @@ internal class Program
     // synthesis of the staged SPU voice state to a listenable 44100 Hz stereo WAV with level stats.
     // JUSTIFICATION: C# language bridge only
     // RELATION: read-only acceptance oracle for the BGM batch export (docs/plan-extraction-bgm.md,
-    // slice X1). Renders every LoadMapSequence-addressable track through the SAME shared-GameEngine
-    // shape ExtractDataFromBgm uses - one engine, InitializeSoundSystem once - and reports the peak
+    // slice X1). Renders every LoadMapSequence-addressable track through a SHARED GameEngine - one
+    // engine, InitializeSoundSystem once - which is NOT the shape ExtractDataFromBgm uses since X2
+    // (a fresh sound system per track, docs/plan-e19-opcodes.md section 1.2v) - and reports the peak
     // and an audible/silent verdict per index, writing nothing to disk. It exists because 26 of the
     // 46 tracks were exported as five seconds of silence and NOTHING reported it: the batch swallowed
     // the exception that poisoned them (Program.cs, ExtractDataFromBgm) and wrote the files anyway.
