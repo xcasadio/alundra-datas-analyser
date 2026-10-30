@@ -273,7 +273,7 @@ public static class TiledMapExporter
                 TiledProperty.Int("ZViscosity", gameMap.Info.ZViscosity),
                 TiledProperty.Int("SlideEffectId", gameMap.Info.SlideEffectId),
                 TiledProperty.Int("TileCutEffectId", gameMap.Info.BalanceLevel),
-                TiledProperty.Int("C", gameMap.Info.C),
+                TiledProperty.Int("DustEffectId", gameMap.Info.C),
                 TiledProperty.Int("D", gameMap.Info.D),
                 TiledProperty.Int("E", gameMap.Info.E),
                 TiledProperty.Int("F", gameMap.Info.F),

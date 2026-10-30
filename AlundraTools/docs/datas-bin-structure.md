@@ -76,7 +76,7 @@ Layout (offsets relative to `InfoBlock` start):
 | 6 | `int16` | `TerminalVelocity` | Terminal velocity / Z viscosity |
 | 8 | `byte` | `SlideEffectId` | Slide effect id / XY resistance |
 | 9 | `byte` | `BalanceLevel` | Balance/anim deletion parameter (exported as the Tiled map property `TileCutEffectId`) |
-| 10 | `byte` | `C` | Unknown / reserved |
+| 10 | `byte` | `C` | Dust effect id (exported as the Tiled map property `DustEffectId`) |
 | 11 | `byte` | `D` | Unknown / reserved |
 | 12 | `byte` | `E` | Unknown / reserved |
 | 13 | `byte` | `F` | Unknown / reserved |
