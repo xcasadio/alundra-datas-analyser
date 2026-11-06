@@ -2377,7 +2377,29 @@ public class SoundManager
             var noteVelocity = unchecked((ushort)voiceSlot.field_0x08);
             var effectiveVelocity = (noteVelocity * channelVolume) / 0x7F;
             var baseVolume = (effectiveVelocity * (((int)vabHeader.Header.Mvol << 14) - vabHeader.Header.Mvol)) / 0x3F01;
-            var toneAttributes = vabHeader.VagAttributes[programNumber][voiceSlot.ToneIndex];
+
+            // 0x80094350-0x80094368 [binary]: the tone record is read from ONE flat table, the VAB's tone table
+            // (pointer 0x801F7680) + ((programNumber << 4) + slot+0x14) << 5, with no bound check. That table holds
+            // ps * 16 records (LoadVabHeaderCore puts the VAG offset table at tone table + (ps << 9), 0x8008FD38).
+            var flatToneIndex = (programNumber << 4) + voiceSlot.ToneIndex;
+            if ((uint)flatToneIndex >= (uint)(vabHeader.VagAttributes.Length << 4))
+            {
+                // A voice slot outlives its sequence: the key-off 0x80091134 clears only +0x00, +0x04 and +0x1B, and
+                // the full slot reset 0x800954DC has no caller [binary]. The match above therefore still finds a voice
+                // of the PREVIOUS track loaded into the same sequence and VAB slots, and its program can be past the
+                // new VAB's ps (SelectLoadedVabProgram bounds the program by 0x801F7660, 0x40 or 0x80 from the VAB
+                // version, not by ps). The original then reads past the tone table and carries on: into the VAG
+                // offset table for the next 16 records, then into the rest of the header buffer (0x8015B1A0 for the
+                // map music, handed to 0x8004A184 at 0x80049C4C), whose bytes there are not part of the current header.
+                // The port does not model that memory (it clears the buffer before each load), so the original's
+                // result cannot be ported.
+                // DEVIATION: past the tone table, the voice is left as it is (no volume write), the offset-table window
+                // included; the same refuse-rather-than-invent policy as VoicePitchGuard. The count does not matter:
+                // the three callers (0x8008C2B0, 0x8008C30C, 0x8008C370) drop the return value.
+                continue;
+            }
+
+            var toneAttributes = vabHeader.VagAttributes[flatToneIndex >> 4][flatToneIndex & 0x0F];
             baseVolume = (baseVolume * programAttributes.Mvol * toneAttributes.Vol) / 0x3F01;
 
             var leftVolume = (baseVolume * sequenceState.field_0x74) / 0x7F;
