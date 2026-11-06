@@ -53,6 +53,9 @@ public sealed class SequencerTickProfile
     /// <summary>The number of output samples of tick n.</summary>
     public int SamplesInTick(long tick) => (int)(StartSample(tick + 1) - StartSample(tick));
 
+    /// <summary>The longest tick, in output samples: ceil(44100 / f) (735 at 60 Hz, 887 at 49.761 Hz).</summary>
+    public int MaxSamplesInTick => (int)((OutputSampleRate * TickRateDenominator + TickRateNumerator - 1) / TickRateNumerator);
+
     /// <summary>The tick n that holds output sample i: StartSample(n) &lt;= i &lt; StartSample(n + 1).</summary>
     public long TickOfSample(long sample) => ((sample + 1) * TickRateNumerator - 1) / (OutputSampleRate * TickRateDenominator);
 

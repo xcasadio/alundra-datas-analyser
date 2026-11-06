@@ -9,6 +9,7 @@ using AlundraEngine.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace AlundraDataExtractor;
 
@@ -122,19 +123,21 @@ internal class Program
 
         if (args.Length < 2)
         {
-            Console.WriteLine("Usage: AlundraDataExtractor <gamePath> <extractionPath> [--tiled-tileset-layout original|compact] [--spritesheet-layout original|compact]");
-            Console.WriteLine("       AlundraDataExtractor --trace-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
-            Console.WriteLine("       AlundraDataExtractor --render-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
-            Console.WriteLine("       AlundraDataExtractor --verify-bgm <gamePath|soundBinPath> [--frames N]");
+            Console.WriteLine("Usage: AlundraDataExtractor <gamePath> <extractionPath> [--tiled-tileset-layout original|compact] [--spritesheet-layout original|compact] [--tick pal|desktop60]");
+            Console.WriteLine("       AlundraDataExtractor --trace-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N] [--tick pal|desktop60]");
+            Console.WriteLine("       AlundraDataExtractor --render-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N] [--tick pal|desktop60]");
+            Console.WriteLine("       AlundraDataExtractor --verify-bgm <gamePath|soundBinPath> [--frames N] [--tick pal|desktop60]");
             Console.WriteLine("       AlundraDataExtractor --probe-portraits <gamePath> <outputJsonPath>");
             Console.WriteLine("       AlundraDataExtractor --extract-sfx <gamePath> <extractionPath>");
-            Console.WriteLine("       AlundraDataExtractor --extract-bgm <gamePath> <extractionPath>");
+            Console.WriteLine("       AlundraDataExtractor --extract-bgm <gamePath> <extractionPath> [--tick pal|desktop60]");
         Console.WriteLine("       AlundraDataExtractor --extract-movies <cdImage.bin> <movieOutputPath>");
             return;
         }
 
         var gamePath = args[0];
         var extractionPath = args[1];
+        // Read before any extraction step, so a bad --tick value stops the run before it writes anything.
+        var tickProfile = ReadTickProfile(args);
         Console.WriteLine($"Extract data from {gamePath}");
         Console.WriteLine($"To {extractionPath}");
 
@@ -154,10 +157,29 @@ internal class Program
         var spriteSheetLayoutMode = ReadEnumOption(args, "--spritesheet-layout", SpriteSheetLayoutMode.Compact);
         ExtractDataFromDatasBin(gameEngine.DatasBin, gameEngine.StaticVariables, extractionPath, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode);
         ExtractDataFromSoundBin(gameEngine.SoundBin, extractionPath);
-        ExtractDataFromBgm(Path.Combine(gamePath, "DATA", "SOUND.BIN"), extractionPath);
+        ExtractDataFromBgm(Path.Combine(gamePath, "DATA", "SOUND.BIN"), extractionPath, tickProfile);
     }
 
-    private record BgmExportRecord(int SoundIndex, string File, int Frames, double DurationSeconds, bool LoopDetected, int PeakLeft, int PeakRight, double RmsLeft, double RmsRight, int FirstAudibleFrame, bool Looping, int? LoopStartFrame, int? LoopStartSample);
+    // TickRate (ticks per second) is written last and only at a profile other than desktop60, so a desktop60 bgm.json is
+    // byte-identical to the ones written before the PAL tick; its absence means 60 Hz, 735 samples per tick (parent
+    // repository docs/plan-bgm-tick-pal.md, D5 and P4). Frames and LoopStartFrame count ticks of that rate.
+    private record BgmExportRecord(int SoundIndex, string File, int Frames, double DurationSeconds, bool LoopDetected, int PeakLeft, int PeakRight, double RmsLeft, double RmsRight, int FirstAudibleFrame, bool Looping, int? LoopStartFrame, int? LoopStartSample,
+        [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] double? TickRate);
+
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: --tick pal|desktop60 picks the SequencerTickProfile the music is rendered on (parent repository
+    // docs/plan-bgm-tick-pal.md, P4). pal, the default, is the cadence of the French binary: rate 50 and one tick per PAL
+    // VBlank, 49.761 Hz. desktop60 is AlundraGame's cadence and the one of every export before that plan, kept to prove the
+    // change inert.
+    private enum BgmTickOption
+    {
+        Pal,
+        Desktop60,
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static SequencerTickProfile ReadTickProfile(string[] args) =>
+        ReadEnumOption(args, "--tick", BgmTickOption.Pal) == BgmTickOption.Pal ? SequencerTickProfile.PalBinary : SequencerTickProfile.Desktop60;
 
     // JUSTIFICATION: C# language bridge only
     // RELATION: batch counterpart to --render-bgm; renders every LoadMapSequence-addressable track
@@ -170,8 +192,10 @@ internal class Program
     // touching TimesPlayed. So the loop point is detected the model-free way instead: watch
     // SequenceTrackState.SeqPosition frame to frame. A track that loops is written as [0, J2), J1 and J2 being
     // its first and second loop jumps, and bgm.json records Looping, LoopStartFrame = J1 and
-    // LoopStartSample = J1 x 735 (the sample the engine seeks to when it loops); a track without a loop keeps
+    // LoopStartSample = start(J1) (the sample the engine seeks to when it loops); a track without a loop keeps
     // its release tail. Capped at maxSeconds: reaching the cap is a failure, not a file.
+    // The ticks are those of the SequencerTickProfile: tick n covers the output samples [start(n), start(n + 1)), with
+    // start(n) = floor(n * 44100 / f) (parent repository docs/plan-bgm-tick-pal.md, P1); at desktop60, start(n) = 735 n.
     // JUSTIFICATION: C# language bridge only
     // RELATION: docs/plan-extraction-bgm.md decision D-X-7 - this batch never cleans its output
     // directory, so a track that is refused today would otherwise keep the file a previous, broken run
@@ -184,16 +208,16 @@ internal class Program
         }
     }
 
-    private static void ExtractDataFromBgm(string soundBinPath, string extractionPath)
+    private static void ExtractDataFromBgm(string soundBinPath, string extractionPath, SequencerTickProfile tickProfile)
     {
-        Console.WriteLine("Extract BGM");
+        Console.WriteLine($"Extract BGM (tick {tickProfile.Name}, {tickProfile.TickRate.ToString(System.Globalization.CultureInfo.InvariantCulture)} Hz)");
 
         var soundPath = Path.Combine(extractionPath, "sound");
         var bgmPath = Path.Combine(soundPath, "bgm");
         Directory.CreateDirectory(bgmPath);
 
         const int maxSeconds = 480;
-        const int maxFrames = maxSeconds * 60;
+        var maxFrames = tickProfile.TicksForSeconds(maxSeconds);
         var maxSoundIndex = (new SoundBin(soundBinPath).MusicSeqVabOffsets.Length - 4) / 3;
         var exported = new List<BgmExportRecord>();
         var silent = 0;
@@ -209,7 +233,7 @@ internal class Program
                 // docs/plan-e19-opcodes.md section 1.2v (X2, D-E19-69): every track is rendered from a
                 // fresh sound bank, mixer, engine and sound system, like --render-bgm. One shared system
                 // made each track start with what the previous one left sounding.
-                var soundBin = new SoundBin(soundBinPath);
+                var soundBin = new SoundBin(soundBinPath) { TickProfile = tickProfile };
                 var mixer = new SpuMixerSoundPlaybackBackend();
                 soundBin.AttachPlaybackBackend(mixer);
                 var gameEngine = new GameEngine(null!, null!, soundBin, null!, null!, null);
@@ -226,7 +250,7 @@ internal class Program
                     continue;
                 }
 
-                var result = RenderBgmTrackUntilLoop(gameEngine, mixer, seqId, maxFrames);
+                var result = RenderBgmTrackUntilLoop(gameEngine, mixer, seqId, maxFrames, tickProfile);
                 if (result.Failure != null)
                 {
                     Console.WriteLine($"BGM {soundIndex} failed: {result.Failure} - not exported");
@@ -250,8 +274,11 @@ internal class Program
                 }
 
                 WriteStereoWav(filePath, result.Samples, SpuMixerSoundPlaybackBackend.OutputSampleRate);
-                exported.Add(new BgmExportRecord(soundIndex, fileName, result.Frames, result.Frames / 60.0, result.LoopDetected, result.PeakLeft, result.PeakRight, result.RmsLeft, result.RmsRight, result.FirstAudibleFrame,
-                    result.Looping, result.Looping ? result.LoopStartFrame : null, result.Looping ? result.LoopStartFrame * SpuMixerSoundPlaybackBackend.OutputSampleRate / 60 : null));
+                // DurationSeconds = start(Frames) / 44100: at desktop60 the same double as Frames / 60.0 (one exact rational,
+                // correctly rounded once).
+                exported.Add(new BgmExportRecord(soundIndex, fileName, result.Frames, tickProfile.StartSample(result.Frames) / (double)SpuMixerSoundPlaybackBackend.OutputSampleRate, result.LoopDetected, result.PeakLeft, result.PeakRight, result.RmsLeft, result.RmsRight, result.FirstAudibleFrame,
+                    result.Looping, result.Looping ? result.LoopStartFrame : null, result.Looping ? (int)tickProfile.StartSample(result.LoopStartFrame) : null,
+                    ReferenceEquals(tickProfile, SequencerTickProfile.Desktop60) ? null : tickProfile.TickRate));
             }
             catch (Exception ex)
             {
@@ -291,13 +318,14 @@ internal class Program
         public string? Failure;
     }
 
-    private static BgmRender RenderBgmTrackUntilLoop(GameEngine gameEngine, SpuMixerSoundPlaybackBackend mixer, short seqId, int maxFrames)
+    private static BgmRender RenderBgmTrackUntilLoop(GameEngine gameEngine, SpuMixerSoundPlaybackBackend mixer, short seqId, int maxFrames, SequencerTickProfile tickProfile)
     {
-        const int samplesPerFrame = SpuMixerSoundPlaybackBackend.OutputSampleRate / 60;
-        const int silenceGraceFrames = 5 * 60;
-        const int releaseTailSilentFrames = 60;
-        var renderBuffer = new short[samplesPerFrame * 2];
-        var allSamples = new List<short>(maxFrames * samplesPerFrame * 2 / 4);
+        // The frames below are host ticks of tickProfile; the grace and the silent tail keep their length in seconds.
+        var silenceGraceFrames = tickProfile.TicksForSeconds(5);
+        var releaseTailSilentFrames = tickProfile.TicksForSeconds(1);
+        var renderBuffer = new short[tickProfile.MaxSamplesInTick * 2];
+        var allSamples = new List<short>((int)(tickProfile.StartSample(maxFrames) * 2 / 4));
+        var renderedTicks = 0;
         var result = new BgmRender();
         var sequenceStates = gameEngine.StaticVariables.g_sequenceStatePointers;
         var previousSeqPosition = (uint)sequenceStates[seqId].SeqPosition;
@@ -310,7 +338,8 @@ internal class Program
             gameEngine.SoundManager.AdvanceSoundFrame();
             var currentSeqPosition = (uint)sequenceStates[seqId].SeqPosition;
             var sequencePlaying = (sequenceStates[seqId].Flags & 1u) != 0;
-            mixer.RenderSamples(renderBuffer, samplesPerFrame);
+            var tickSamples = tickProfile.SamplesInTick(frame);
+            mixer.RenderSamples(renderBuffer, tickSamples);
             var backward = currentSeqPosition < previousSeqPosition;
 
             if (backward && sequencePlaying && result.LoopStartFrame >= 0)
@@ -321,7 +350,7 @@ internal class Program
             }
 
             var frameAudible = false;
-            for (var i = 0; i < samplesPerFrame; i++)
+            for (var i = 0; i < tickSamples; i++)
             {
                 if (Math.Abs((int)renderBuffer[i * 2]) > 64 || Math.Abs((int)renderBuffer[i * 2 + 1]) > 64)
                 {
@@ -330,7 +359,8 @@ internal class Program
                 }
             }
 
-            allSamples.AddRange(renderBuffer);
+            allSamples.AddRange(new ArraySegment<short>(renderBuffer, 0, tickSamples * 2));
+            renderedTicks++;
             if (frameAudible)
             {
                 lastAudibleFrame = frame;
@@ -365,11 +395,12 @@ internal class Program
             previousSeqPosition = currentSeqPosition;
         }
 
-        var frames = allSamples.Count / (samplesPerFrame * 2);
+        var frames = renderedTicks;
         if (result.EndOfTrackFrame >= 0)
         {
             frames = Math.Max(result.EndOfTrackFrame + 1, lastAudibleFrame + 1);
-            allSamples.RemoveRange(frames * samplesPerFrame * 2, allSamples.Count - frames * samplesPerFrame * 2);
+            var keptValues = (int)(tickProfile.StartSample(frames) * 2);
+            allSamples.RemoveRange(keptValues, allSamples.Count - keptValues);
         }
 
         if (result.LoopStartFrame >= 0 && result.LoopEndFrame < 0)
@@ -395,13 +426,14 @@ internal class Program
         result.Looping = result.LoopEndFrame >= 0;
         if (result.Looping)
         {
-            CrossfadeLoopEnd(result.Samples, result.LoopStartFrame, result.LoopEndFrame, samplesPerFrame);
+            CrossfadeLoopEnd(result.Samples, result.LoopStartFrame, result.LoopEndFrame, tickProfile);
         }
 
         // The statistics describe the written samples, after the crossfade.
         long sumSquaresLeft = 0;
         long sumSquaresRight = 0;
-        for (var i = 0; i < frames * samplesPerFrame; i++)
+        var totalSamples = tickProfile.StartSample(frames);
+        for (var i = 0; i < totalSamples; i++)
         {
             int left = result.Samples[i * 2];
             int right = result.Samples[i * 2 + 1];
@@ -411,23 +443,24 @@ internal class Program
             result.PeakRight = Math.Max(result.PeakRight, Math.Abs(right));
             if (result.FirstAudibleFrame < 0 && (Math.Abs(left) > 64 || Math.Abs(right) > 64))
             {
-                result.FirstAudibleFrame = i / samplesPerFrame;
+                result.FirstAudibleFrame = (int)tickProfile.TickOfSample(i);
             }
         }
 
-        var totalSamples = (long)frames * samplesPerFrame;
         result.RmsLeft = totalSamples > 0 ? Math.Sqrt(sumSquaresLeft / (double)totalSamples) : 0;
         result.RmsRight = totalSamples > 0 ? Math.Sqrt(sumSquaresRight / (double)totalSamples) : 0;
         return result;
     }
 
-    // Linear crossfade of the file's last frame (k stereo samples before J2) toward the k stereo samples before J1, so the
-    // last sample equals the sample just before J1: the wrap J2 -> J1 is the junction the render itself made at J1.
-    // Round to nearest, k odd: no ties.
-    private static void CrossfadeLoopEnd(short[] samples, int loopStartFrame, int loopEndFrame, int k)
+    // Linear crossfade of the file's last tick (its k stereo samples, before start(J2)) toward the k stereo samples before
+    // start(J1), so the last sample equals the sample just before J1: the wrap J2 -> J1 is the junction the render itself
+    // made at J1. k is the length of the last tick: 735 at desktop60, 886 or 887 at the PAL rate. Round to nearest; for an
+    // even k a tie rounds away from zero.
+    private static void CrossfadeLoopEnd(short[] samples, int loopStartFrame, int loopEndFrame, SequencerTickProfile tickProfile)
     {
-        var a0 = loopEndFrame * k - k;
-        var b0 = loopStartFrame * k - k;
+        var k = tickProfile.SamplesInTick(loopEndFrame - 1);
+        var a0 = (int)tickProfile.StartSample(loopEndFrame) - k;
+        var b0 = (int)tickProfile.StartSample(loopStartFrame) - k;
         for (var x = 0; x < k; x++)
         {
             for (var channel = 0; channel < 2; channel++)
@@ -479,18 +512,19 @@ internal class Program
     {
         if (args.Length < 3)
         {
-            Console.WriteLine("Usage: AlundraDataExtractor --extract-bgm <gamePath> <extractionPath>");
+            Console.WriteLine("Usage: AlundraDataExtractor --extract-bgm <gamePath> <extractionPath> [--tick pal|desktop60]");
             return;
         }
 
         var gamePath = args[1];
         var extractionPath = args[2];
+        var tickProfile = ReadTickProfile(args);
         Console.WriteLine($"Extract music from {gamePath}");
         Console.WriteLine($"To {extractionPath}");
 
         var gameEngine = CreateGameEngine(gamePath, out _, out _, out _);
         gameEngine.InitializeEngine();
-        ExtractDataFromBgm(Path.Combine(gamePath, "DATA", "SOUND.BIN"), extractionPath);
+        ExtractDataFromBgm(Path.Combine(gamePath, "DATA", "SOUND.BIN"), extractionPath, tickProfile);
     }
 
     // JUSTIFICATION: C# language bridge only
@@ -709,7 +743,7 @@ internal class Program
     {
         if (args.Length < 3)
         {
-            Console.WriteLine("Usage: AlundraDataExtractor --trace-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
+            Console.WriteLine("Usage: AlundraDataExtractor --trace-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N] [--tick pal|desktop60]");
             return;
         }
 
@@ -720,7 +754,7 @@ internal class Program
 
         Directory.CreateDirectory(outputPath);
 
-        var gameEngine = CreateSoundOnlyGameEngine(soundBinPath);
+        var gameEngine = CreateSoundOnlyGameEngine(soundBinPath, ReadTickProfile(args));
 
         var traceFileName = Path.Combine(outputPath, $"bgm_{bgmIndex:D3}_csharp_trace.jsonl");
         using var writer = new StreamWriter(traceFileName) { AutoFlush = true };
@@ -754,29 +788,31 @@ internal class Program
     {
         if (args.Length < 2)
         {
-            Console.WriteLine("Usage: AlundraDataExtractor --verify-bgm <gamePath|soundBinPath> [--frames N]");
+            Console.WriteLine("Usage: AlundraDataExtractor --verify-bgm <gamePath|soundBinPath> [--frames N] [--tick pal|desktop60]");
             return;
         }
 
         var soundBinPath = ResolveSoundBinPath(args[1]);
         var frames = ReadIntOption(args, "--frames", 3600);
+        var tickProfile = ReadTickProfile(args);
 
-        var soundBin = new SoundBin(soundBinPath);
+        var soundBin = new SoundBin(soundBinPath) { TickProfile = tickProfile };
         var mixer = new SpuMixerSoundPlaybackBackend();
         soundBin.AttachPlaybackBackend(mixer);
         var gameEngine = new GameEngine(null!, null!, soundBin, null!, null!, null);
         gameEngine.StaticVariables.Initialize(gameEngine);
         gameEngine.SoundManager.InitializeSoundSystem();
 
-        const int samplesPerFrame = SpuMixerSoundPlaybackBackend.OutputSampleRate / 60;
-        var renderBuffer = new short[samplesPerFrame * 2];
+        // One engine for every track: the host tick keeps counting across tracks, like the sound bank's own tick count.
+        var renderBuffer = new short[tickProfile.MaxSamplesInTick * 2];
         var maxSoundIndex = (soundBin.MusicSeqVabOffsets.Length - 4) / 3;
+        long hostTick = 0;
 
         var audible = 0;
         var silent = 0;
         var failed = 0;
 
-        Console.WriteLine($"Verify BGM ({maxSoundIndex} tracks, {frames} frames each)");
+        Console.WriteLine($"Verify BGM ({maxSoundIndex} tracks, {frames} frames each, tick {tickProfile.Name})");
         Console.WriteLine("idx  peak   verdict");
 
         for (var soundIndex = 1; soundIndex <= maxSoundIndex; soundIndex++)
@@ -796,10 +832,11 @@ internal class Program
                 for (var frame = 0; frame < frames; frame++)
                 {
                     gameEngine.SoundManager.AdvanceSoundFrame();
-                    mixer.RenderSamples(renderBuffer, samplesPerFrame);
-                    foreach (var sample in renderBuffer)
+                    var tickSamples = tickProfile.SamplesInTick(hostTick++);
+                    mixer.RenderSamples(renderBuffer, tickSamples);
+                    for (var i = 0; i < tickSamples * 2; i++)
                     {
-                        var magnitude = Math.Abs((int)sample);
+                        var magnitude = Math.Abs((int)renderBuffer[i]);
                         if (magnitude > peak)
                         {
                             peak = magnitude;
@@ -833,7 +870,7 @@ internal class Program
     {
         if (args.Length < 3)
         {
-            Console.WriteLine("Usage: AlundraDataExtractor --render-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
+            Console.WriteLine("Usage: AlundraDataExtractor --render-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N] [--tick pal|desktop60]");
             return;
         }
 
@@ -841,10 +878,11 @@ internal class Program
         var outputPath = args[2];
         var bgmIndex = ReadIntOption(args, "--bgm-index", 1);
         var frames = ReadIntOption(args, "--frames", 600);
+        var tickProfile = ReadTickProfile(args);
 
         Directory.CreateDirectory(outputPath);
 
-        var soundBin = new SoundBin(soundBinPath);
+        var soundBin = new SoundBin(soundBinPath) { TickProfile = tickProfile };
         var mixer = new SpuMixerSoundPlaybackBackend();
         soundBin.AttachPlaybackBackend(mixer);
         var gameEngine = new GameEngine(null!, null!, soundBin, null!, null!, null);
@@ -858,9 +896,8 @@ internal class Program
             mixer.SetReverbEnabled(false);
         }
 
-        const int samplesPerFrame = SpuMixerSoundPlaybackBackend.OutputSampleRate / 60;
-        var renderBuffer = new short[samplesPerFrame * 2];
-        var allSamples = new short[frames * samplesPerFrame * 2];
+        var renderBuffer = new short[tickProfile.MaxSamplesInTick * 2];
+        var allSamples = new short[tickProfile.StartSample(frames) * 2];
         long sumSquaresLeft = 0;
         long sumSquaresRight = 0;
         var peakLeft = 0;
@@ -870,10 +907,11 @@ internal class Program
         for (var frame = 0; frame < frames; frame++)
         {
             gameEngine.SoundManager.AdvanceSoundFrame();
-            mixer.RenderSamples(renderBuffer, samplesPerFrame);
-            Array.Copy(renderBuffer, 0, allSamples, frame * samplesPerFrame * 2, samplesPerFrame * 2);
+            var tickSamples = tickProfile.SamplesInTick(frame);
+            mixer.RenderSamples(renderBuffer, tickSamples);
+            Array.Copy(renderBuffer, 0, allSamples, tickProfile.StartSample(frame) * 2, tickSamples * 2);
 
-            for (var i = 0; i < samplesPerFrame; i++)
+            for (var i = 0; i < tickSamples; i++)
             {
                 int left = renderBuffer[i * 2];
                 int right = renderBuffer[i * 2 + 1];
@@ -899,7 +937,7 @@ internal class Program
         var waveFileName = Path.Combine(outputPath, $"bgm_{bgmIndex:D3}_csharp_render.wav");
         WriteStereoWav(waveFileName, allSamples, SpuMixerSoundPlaybackBackend.OutputSampleRate);
 
-        var totalSamples = (long)frames * samplesPerFrame;
+        var totalSamples = tickProfile.StartSample(frames);
         var rmsLeft = Math.Sqrt(sumSquaresLeft / (double)totalSamples);
         var rmsRight = Math.Sqrt(sumSquaresRight / (double)totalSamples);
         Console.WriteLine($"Render BGM C# written to {waveFileName}");
@@ -954,9 +992,9 @@ internal class Program
     }
 
     // JUSTIFICATION: C# language bridge only
-    private static GameEngine CreateSoundOnlyGameEngine(string soundBinPath)
+    private static GameEngine CreateSoundOnlyGameEngine(string soundBinPath, SequencerTickProfile tickProfile)
     {
-        var soundBin = new SoundBin(soundBinPath);
+        var soundBin = new SoundBin(soundBinPath) { TickProfile = tickProfile };
         soundBin.AttachPlaybackBackend(new TraceSoundPlaybackBackend());
         var gameEngine = new GameEngine(null!, null!, soundBin, null!, null!, null);
         gameEngine.StaticVariables.Initialize(gameEngine);
@@ -1016,6 +1054,7 @@ internal class Program
             eventName = "trace-start",
             bgmIndex,
             frames,
+            tickProfile = gameEngine.SoundBin.TickProfile.Name,
             sequenceOffset,
             vabHeaderOffset,
             vabBodyOffset,

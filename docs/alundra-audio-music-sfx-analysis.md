@@ -558,3 +558,16 @@ Blocked:
 
 - la garde `IsSoundEffectAlreadyPlaying @ 0x80048DF4` n'est plus ouverte sur son controle de flux: PCSX ferme maintenant une table brute de 64 mots sous `0x80165028`, scannee pour retrouver `sfxId` puis ecrite au premier slot nul. En revanche son clear reste non prouve, meme apres passe exacte sur `InitializeSoundSystem @ 0x800484E8`, `MainLoop @ 0x8002BFE0`, `UpdateWorld @ 0x8002E34C`, `FUN_8008E034 @ 0x8008E034`, et `FUN_80090168 @ 0x80090168`; la garde reste donc volontairement non branchee dans le runtime C# tant que ce cycle de vie n'est pas ferme.
 - `TriggerVoice @ 0x80094660`, `CalculateVoicePitch @ 0x80091C18`, et le backend de voix SPU restent les prochains blocages structurants pour fermer le chemin direct VAG avec fidelite.
+
+## Cadence du sequenceur: profil de tic (2026-11-06)
+
+Le binaire PAL francais (`ALUN_CD.EXE`) appelle une seule fois `SsSetTickMode(4)` (`0x8004859C` -> `FUN_8008EC8C`). Son cas 4 ecrit `0x32` (50) dans le taux `0x801F6CE0`, que la formule du tempo divise, puis, sur console PAL, 5 dans le mode de tic `0x800C9774`: un tic du sequenceur par VBlank. Alundra programme le GPU en PAL non entrelace (`PutDispEnv @ 0x80085518`), dont la VBlank tourne a 49,761 Hz (psx-spx, GPU Timings). Le port C# forcait 60 deux fois: dans `FUN_8008ec8c` et par `FUN_8008df4c`, appele apres alors que le binaire l'appelle avant (`SsInit @ 0x8008E034`, appele en `0x8002C02C`).
+
+Depuis le 2026-11-06, la cadence est un parametre de l'hote, `SequencerTickProfile`, porte par `SoundBin.TickProfile`:
+
+- `Desktop60` (defaut, AlundraGame): taux `0x3C`, mode 4, tic a 60 Hz, 735 echantillons par tic. Ecart volontaire au binaire, car l'hote desktop tique a 60 Hz.
+- `PalBinary` (extracteur, par defaut): taux `0x32`, mode 5, tic a 49,761 Hz. Le tic n couvre les echantillons `[start(n), start(n+1))`, avec `start(n) = floor(n * 44100 / 49,761)`, soit 886 ou 887 echantillons par tic.
+
+`FUN_8008df4c` est maintenant appele avant `FUN_8008ec8c(4)`. L'approximation desktop de l'ADSR (`SoundBin`) prend la longueur du tic courant et la frequence du tic dans le profil; ses durees en secondes ne changent pas.
+
+Extracteur: `--tick pal|desktop60` (defaut `pal`) choisit le profil de l'export complet, de `--extract-bgm` (qui ne rend que `sound/bgm/` et `sound/bgm.json`), de `--trace-bgm`, `--render-bgm` et `--verify-bgm`. Au profil PAL, `bgm.json` compte `Frames` et `LoopStartFrame` en tics a 49,761 Hz, `LoopStartSample = start(LoopStartFrame)`, et porte en dernier `TickRate: 49.761`. Au profil `desktop60`, `TickRate` n'est pas ecrit et la sortie est identique au bit pres a celle d'avant le profil. Detail et preuves: plan `docs/plan-bgm-tick-pal.md` du depot parent et son annexe.
