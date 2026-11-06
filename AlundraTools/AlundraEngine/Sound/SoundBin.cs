@@ -78,6 +78,15 @@ public class SoundBin
     }
 
     // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: the cadence the host ticks the sound engine at (SequencerTickProfile). Set before
+    // InitializeSoundSystem; FUN_8008ec8c reads its rate and the desktop envelope approximation its tick length.
+    public SequencerTickProfile TickProfile { get; set; } = SequencerTickProfile.Desktop60;
+
+    // Number of AdvanceTrackedVoices calls so far, i.e. of host ticks, and the output samples of the current one.
+    private long _trackedVoiceTick;
+    private int _currentTickSamples;
+
+    // JUSTIFICATION: PSX hardware adaptation only
     private void ScanSoundBinSections(string soundBinfile)
     {
         var buffer = File.ReadAllBytes(soundBinfile);
@@ -839,7 +848,7 @@ public void KeyOffTrackedVoice(int voiceId)
         return;
     }
 
-    var releaseFrames = CalculateReleaseFrameCount(_voiceAdsr2[voiceId]);
+    var releaseFrames = CalculateReleaseFrameCount(_voiceAdsr2[voiceId], TickProfile.TickRate);
     _voiceReleaseFrameCount[voiceId] = releaseFrames;
     _voiceReleaseFramesRemaining[voiceId] = releaseFrames;
     _voiceReleaseStartEnvelopeLevels[voiceId] = GetTrackedVoiceEnvelopeLevel(voiceId);
@@ -1257,6 +1266,8 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
 
     public void AdvanceTrackedVoices()
     {
+        _currentTickSamples = TickProfile.SamplesInTick(_trackedVoiceTick);
+        _trackedVoiceTick++;
         for (var voiceId = 0; voiceId < VoicesAreActive.Length; voiceId++)
         {
             if (VoicesAreActive[voiceId] == 0)
@@ -1387,7 +1398,7 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
     {
         ClearVoiceEnvelopeState(voiceId);
         _voiceEnvelopeSustainLevels[voiceId] = CalculateSustainLevel(_voiceAdsr1[voiceId]);
-        var attackFrames = CalculateAttackFrameCount(_voiceAdsr1[voiceId]);
+        var attackFrames = CalculateAttackFrameCount(_voiceAdsr1[voiceId], TickProfile.TickRate);
         if (attackFrames > 1)
         {
             _voiceEnvelopeStages[voiceId] = VoiceEnvelopeStageAttack;
@@ -1445,7 +1456,8 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
             return;
         }
 
-        const int samplesPerFrame = 44100 / 60;
+        // The output samples of the current host tick: 735 at 60 Hz, 886 or 887 at the PAL rate.
+        var samplesPerFrame = _currentTickSamples;
         var sustainExponential = (rawAdsr2 & 0x8000) != 0;
         var remainingSamples = samplesPerFrame;
         while (remainingSamples > 0 && level > 0)
@@ -1532,7 +1544,7 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
     // RELATION: enters the desktop decay ramp derived from SPU ADSR1
     private void EnterTrackedVoiceDecay(int voiceId)
     {
-        var decayFrames = CalculateDecayFrameCount(_voiceAdsr1[voiceId]);
+        var decayFrames = CalculateDecayFrameCount(_voiceAdsr1[voiceId], TickProfile.TickRate);
         var sustainLevel = _voiceEnvelopeSustainLevels[voiceId];
         if (decayFrames <= 1 || sustainLevel >= VoiceEnvelopeLevelMax)
         {
@@ -1619,12 +1631,16 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
     }
 
     // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: ceiling of the desktop ADSR durations below, in seconds (600 ticks at 60 Hz). frameRate is the host
+    // tick rate (SequencerTickProfile.TickRate): the durations in seconds do not depend on it, their tick counts do.
+    private const double MaxEnvelopeSeconds = 10.0;
+
+    // JUSTIFICATION: PSX hardware adaptation only
     // RELATION: derives attack duration from SPU ADSR1 using the Alundraportage/P.E.Op.S rate-table convention
-    private static int CalculateAttackFrameCount(short adsr1)
+    private static int CalculateAttackFrameCount(short adsr1, double frameRate)
     {
         const double sampleRate = 44100.0;
-        const double frameRate = 60.0;
-        const int maxEnvelopeFrames = 600;
+        var maxEnvelopeFrames = (int)Math.Ceiling(MaxEnvelopeSeconds * frameRate);
         var rawAdsr1 = unchecked((ushort)adsr1);
         var attackMode = (rawAdsr1 & 0x8000) != 0;
         var attackRate = (rawAdsr1 & 0x7f00) >> 8;
@@ -1660,11 +1676,10 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
 
     // JUSTIFICATION: PSX hardware adaptation only
     // RELATION: derives decay duration from SPU ADSR1 using the Alundraportage/P.E.Op.S rate-table convention
-    private static int CalculateDecayFrameCount(short adsr1)
+    private static int CalculateDecayFrameCount(short adsr1, double frameRate)
     {
         const double sampleRate = 44100.0;
-        const double frameRate = 60.0;
-        const int maxEnvelopeFrames = 600;
+        var maxEnvelopeFrames = (int)Math.Ceiling(MaxEnvelopeSeconds * frameRate);
         var rawAdsr1 = unchecked((ushort)adsr1);
         var decayRate = (rawAdsr1 & 0x00f0) >> 4;
         if (4 * (decayRate ^ 0x1f) < 0x18)
@@ -1676,7 +1691,7 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
         var targetEnvelopeLevel = (long)((sustainLevel / (double)VoiceEnvelopeLevelMax) * 0x7fffffff);
         var envelopeLevel = 0x7fffffffL;
         var sampleCount = 0;
-        var maxSamples = (int)(sampleRate * (maxEnvelopeFrames / frameRate));
+        var maxSamples = (int)(sampleRate * MaxEnvelopeSeconds);
         while (envelopeLevel > targetEnvelopeLevel && sampleCount < maxSamples)
         {
             var rate = GetExponentialDecayRate(decayRate, envelopeLevel);
@@ -1726,11 +1741,10 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
 
     // JUSTIFICATION: PSX hardware adaptation only
     // RELATION: derives a frame count from SPU ADSR2 release fields using the Alundraportage/P.E.Op.S rate-table convention
-    private static int CalculateReleaseFrameCount(short adsr2)
+    private static int CalculateReleaseFrameCount(short adsr2, double frameRate)
     {
         const double sampleRate = 44100.0;
-        const double frameRate = 60.0;
-        const int maxReleaseFrames = 600;
+        var maxReleaseFrames = (int)Math.Ceiling(MaxEnvelopeSeconds * frameRate);
         var rawAdsr2 = unchecked((ushort)adsr2);
         var releaseRate = rawAdsr2 & 0x001f;
         var releaseMode = (rawAdsr2 & 0x0020) != 0;
@@ -1750,7 +1764,7 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
 
             var envelopeLevel = 0x7fffffffL;
             var sampleCount = 0;
-            var maxSamples = (int)(sampleRate * (maxReleaseFrames / frameRate));
+            var maxSamples = (int)(sampleRate * MaxEnvelopeSeconds);
             while (envelopeLevel > 0 && sampleCount < maxSamples)
             {
                 var rate = GetExponentialReleaseRate(releaseRate, envelopeLevel);
@@ -1909,7 +1923,7 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
         }
 
         var sampleCount = usedBlocks * SamplesPerBlock;
-        frameCount = Math.Max(1, (int)Math.Ceiling(sampleCount * 60.0 / sampleRate));
+        frameCount = Math.Max(1, (int)Math.Ceiling(sampleCount * TickProfile.TickRate / sampleRate));
         return true;
     }
 

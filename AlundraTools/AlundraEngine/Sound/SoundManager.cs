@@ -359,11 +359,14 @@ public class SoundManager
             _gameEngine.StaticVariables.g_loadedSequenceHandles[sequenceIndex] = -1;
         }
 
+        // FUN_8008df4c is the rate-resetting part of SsInit (0x8008E034, called from the main init at 0x8002C02C), which
+        // the binary runs long before this function: its write of 60 to the rate comes before SsSetTickMode(4)
+        // (0x8004859C below), never after it.
+        FUN_8008df4c();
         FUN_8008eeac(unchecked((int)0x80175A50), 4, 1);
         //FUN_8008e398();
         //SpuSetMute(1);
         FUN_8008ec8c(4);
-        FUN_8008df4c();
         //_gameEngine.StaticVariables.g_globalSoundVabId = -1;
         _gameEngine.StaticVariables.g_currentVabId = -1;
         //FUN_8008f994();
@@ -782,15 +785,20 @@ public class SoundManager
     // GHIDRA: FUN_8008EC8C @ 0x8008EC8C
     private void FUN_8008ec8c(int param_1)
     {
-        // PARTIAL: InitializeSoundSystem only calls this as FUN_8008ec8c(4).
-        // The original also queries another low-level mode helper to pick 50Hz vs 60Hz.
-        // The desktop runtime currently ticks at 60Hz, so keep the proven raw globals and use the 60Hz branch for this call-site.
+        // PARTIAL: InitializeSoundSystem only calls this as FUN_8008ec8c(4) (0x8004859C, the binary's only call), so
+        // only case 4 is transcribed. The binary's case 4 (jump table 0x8002AAC0 -> 0x8008ED1C) writes 0x32 to the rate
+        // 0x801F6CE0 and, the video mode being PAL (GetVideoMode() == 1, 0x8008ED2C), 5 to the tick mode 0x800C9774
+        // (0x8008ED30, 0x8008ED60): one tick per PAL VBlank. The rate and the tick mode come from the host's
+        // SequencerTickProfile: PalBinary gives exactly those values. Desktop60, the default and AlundraGame's profile,
+        // departs from the binary on purpose: its host ticks at 60 Hz, so it keeps the rate 0x3C and the tick mode 4.
         _gameEngine.StaticVariables.DAT_800c9778 = (param_1 & 0x1000) != 0 ? 1 : 0;
         _gameEngine.StaticVariables.DAT_800c9774 = param_1 & 0x0FFF;
 
         if (_gameEngine.StaticVariables.DAT_800c9774 == 4)
         {
-            _gameEngine.StaticVariables.DAT_801f6ce0 = 0x3C;
+            var tickProfile = _gameEngine.SoundBin.TickProfile;
+            _gameEngine.StaticVariables.DAT_801f6ce0 = tickProfile.DriverRate;
+            _gameEngine.StaticVariables.DAT_800c9774 = tickProfile.TickMode;
             return;
         }
 

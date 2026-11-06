@@ -114,6 +114,12 @@ internal class Program
             return;
         }
 
+        if (args.Length > 0 && string.Equals(args[0], "--extract-bgm", StringComparison.OrdinalIgnoreCase))
+        {
+            ExtractBgmOnly(args);
+            return;
+        }
+
         if (args.Length < 2)
         {
             Console.WriteLine("Usage: AlundraDataExtractor <gamePath> <extractionPath> [--tiled-tileset-layout original|compact] [--spritesheet-layout original|compact]");
@@ -122,6 +128,7 @@ internal class Program
             Console.WriteLine("       AlundraDataExtractor --verify-bgm <gamePath|soundBinPath> [--frames N]");
             Console.WriteLine("       AlundraDataExtractor --probe-portraits <gamePath> <outputJsonPath>");
             Console.WriteLine("       AlundraDataExtractor --extract-sfx <gamePath> <extractionPath>");
+            Console.WriteLine("       AlundraDataExtractor --extract-bgm <gamePath> <extractionPath>");
         Console.WriteLine("       AlundraDataExtractor --extract-movies <cdImage.bin> <movieOutputPath>");
             return;
         }
@@ -462,6 +469,28 @@ internal class Program
         var gameEngine = CreateGameEngine(gamePath, out _, out _, out _);
         gameEngine.InitializeEngine();
         ExtractDataFromSoundBin(gameEngine.SoundBin, extractionPath);
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: re-extracts the music alone (sound/bgm/*.wav and sound/bgm.json) through the very function the full
+    // export calls, so a change to the music render needs no 4 GB re-extraction and touches nothing else
+    // (parent repository docs/plan-bgm-tick-pal.md, P5). The engine is created as for the full export.
+    private static void ExtractBgmOnly(string[] args)
+    {
+        if (args.Length < 3)
+        {
+            Console.WriteLine("Usage: AlundraDataExtractor --extract-bgm <gamePath> <extractionPath>");
+            return;
+        }
+
+        var gamePath = args[1];
+        var extractionPath = args[2];
+        Console.WriteLine($"Extract music from {gamePath}");
+        Console.WriteLine($"To {extractionPath}");
+
+        var gameEngine = CreateGameEngine(gamePath, out _, out _, out _);
+        gameEngine.InitializeEngine();
+        ExtractDataFromBgm(Path.Combine(gamePath, "DATA", "SOUND.BIN"), extractionPath);
     }
 
     // JUSTIFICATION: C# language bridge only
