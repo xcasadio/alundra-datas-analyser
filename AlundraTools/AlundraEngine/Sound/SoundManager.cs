@@ -3683,11 +3683,27 @@ public class SoundManager
         var loadedHeader = _loadedVabHeaders[vabId];
         if (loadedHeader != null)
         {
-            var programCount = Math.Min(loadedHeader.Header.Ps, loadedHeader.ProgAttributes.Length);
-            for (var programIndex = 0; programIndex < programCount; programIndex++)
+            // 0x8008FC70-0x8008FC9C [binary]: the program table holds 0x80 records for a 'VABp' header of version 5 or
+            // later, 0x40 otherwise, and that count is written to 0x801F7660. Every retail VAB is version 7. The parser
+            // always reads 128 records, and the open's refusal of a ps above the count (0x8008FCA0-0x8008FCB4) is not
+            // ported: no retail VAB has more than 16 programs.
+            var header = loadedHeader.Header;
+            var programLimit = (short)((header.Form & 0xFF) == 0x70 && header.Ver >= 5 ? 0x80 : 0x40);
+            _gameEngine.StaticVariables.DAT_sound_801f7660 = programLimit;
+
+            // 0x8008FCE4-0x8008FD0C [binary]: each program record of that table gets, as the word at +0x08, the number of
+            // non-empty programs (tones != 0) before it: its slot, the index of its 16-record block in the tone table,
+            // which holds ps blocks (0x8008FD38) and is materialized here as VagAttributes[slot][tone]. The slot equals
+            // the program number only when the programs are contiguous from 0, which holds for all 124 VABs of SOUND.BIN.
+            var slot = 0;
+            for (var programIndex = 0; programIndex < programLimit; programIndex++)
             {
-                // PARTIAL: LoadVabHeaderCore materializes programAttr+0x08 as the first tone block; C# stores tones as [program][tone].
-                loadedHeader.ProgAttributes[programIndex].Reserved1 = (loadedHeader.ProgAttributes[programIndex].Reserved1 & unchecked((int)0xFFFFFF00)) | programIndex;
+                var programAttr = loadedHeader.ProgAttributes[programIndex];
+                programAttr.Reserved1 = slot;
+                if (programAttr.Tones != 0)
+                {
+                    slot++;
+                }
             }
         }
 
@@ -4220,13 +4236,17 @@ public class SoundManager
                     return 0;
                 }
 
-                var programIndex = _gameEngine.StaticVariables.g_currentVabProgramIndex;
-                if ((uint)programIndex >= (uint)vabHeader.VagAttributes.Length)
+                // 0x80091220-0x80091244 [binary]: the tone records are read at [0x801F7680] + ((slot << 4) + tone) << 5,
+                // with the program's slot 0x801F769F (set by SelectLoadedVabProgram from the program record's +0x08),
+                // not the program number 0x801F769E. The two differ only for a VAB whose programs are not contiguous.
+                var slot = _gameEngine.StaticVariables.g_currentVabFirstToneIndex;
+                if ((uint)slot >= (uint)vabHeader.VagAttributes.Length)
                 {
+                    // The binary has no bound here; its note-on stops first on a slot at or past ps (0x80093650).
                     return 0;
                 }
 
-                var tones = vabHeader.VagAttributes[programIndex];
+                var tones = vabHeader.VagAttributes[slot];
                 var toneCount = Math.Min(_gameEngine.StaticVariables.g_currentVabToneCount, (byte)tones.Length);
                 byte matchCount = 0;
                 for (byte toneIndex = 0; toneIndex < toneCount; toneIndex++)
@@ -4316,6 +4336,8 @@ public class SoundManager
                 _gameEngine.StaticVariables.g_sequenceKey = unchecked((short)sequenceKey);
 
                 var playedMask = 0xFFFFFFFFu;
+                // DEVIATION: 0x80093650-0x80093660 [binary] compare the slot with the header's +0x12, ps, not ts. Inert
+                // while SelectLoadedVabProgram bounds the program by ps: the slot is then below ps, hence below ts.
                 if (_gameEngine.StaticVariables.g_currentVabFirstToneIndex >= vabHeader.Header.Ts)
                 {
                     return playedMask;
@@ -4594,6 +4616,18 @@ public class SoundManager
             return -1;
         }
 
+        // DEVIATION: 0x800902E0-0x800902FC [binary] bound the program by 0x801F7660 (0x80 or 0x40, written by the VAB
+        // open at 0x8008FC9C; 0x80 for every retail VAB, all of version 7), in a signed comparison, not by ps. A
+        // program from ps to 0x7F is accepted there, with slot ps (no program past the last non-empty one has tones).
+        // Kept at ps on purpose. Measured in the BGM export (both tick profiles), only track 44 asks for such programs
+        // (7, 8 and 9, on a VAB of ps 6), through the note-on and the CC 7/10/11 voice
+        // refresh: the note-on of the binary then stops on the slot test (0x80093650-0x80093660, slot 6 is not below
+        // ps) and plays nothing, as the port does here, and FUN_8009410c ignores this result in both. Past ps, the
+        // tone-attribute callers of the binary (0x80090370, 0x80090824, 0x80092E04 through 0x80093030) read or write
+        // past the tone table, memory the port does not model and refuses anyway; only the program-attribute ones
+        // (0x800901A8, 0x80093F8C) stay inside the program table. Widening the bound would change nothing the BGM
+        // render was checked on, only paths it does not reach (sound effects of the game, NRPN, pitch bend), and it
+        // would also need the note-on test below on ps (0x80093650 reads the header's +0x12), not ts.
         if ((uint)programIndex >= (uint)vabHeader.Header.Ps)
         {
             return -1;
