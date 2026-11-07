@@ -125,7 +125,9 @@ public static class GameMapHelper
     // (Spritesheet+Palette+SourceX+SourceY+Swidth+Sheight already combined, see SiImage), so a quad
     // and its mirrored twin share one cell, and both stamp the resulting position on every SiImage
     // instance carrying that signature.
-    public static void SaveSpriteSheet(GameMap gameMap, string fileName, SpriteSheetLayoutMode layoutMode = SpriteSheetLayoutMode.Compact)
+    //
+    // Returns the sheet image without writing it; the caller disposes it and encodes it (ExtractionImages.EncodePng).
+    public static Bitmap ComputeSpriteSheet(GameMap gameMap, SpriteSheetLayoutMode layoutMode = SpriteSheetLayoutMode.Compact)
     {
         var uniqueImages = new List<SiImage>();
         var imagesBySignature = new Dictionary<long, List<SiImage>>();
@@ -157,7 +159,7 @@ public static class GameMapHelper
             DrawSpriteWords(canvas, layout.Width, layout.Height, gameMap.GetSpriteWords(image), image.Swidth, image.Sheight, x, y);
         }
 
-        SaveWordCanvas(canvas, layout.Width, layout.Height, fileName);
+        var sheet = CreateWordCanvasBitmap(canvas, layout.Width, layout.Height);
 
         foreach (var (signature, position) in layout.PositionBySignature)
         {
@@ -167,6 +169,8 @@ public static class GameMapHelper
                 image.AtlasY = position.Y;
             }
         }
+
+        return sheet;
     }
 
     // Sprite sheets are built from the raw CLUT words, not from drawn bitmaps: a word keeps its bit 15 (STP),
@@ -196,7 +200,7 @@ public static class GameMapHelper
     private const byte AlphaSemiTransparent = 128;
     private const byte AlphaOpaque = 255;
 
-    private static void SaveWordCanvas(ushort[] canvas, int width, int height, string fileName)
+    private static Bitmap CreateWordCanvasBitmap(ushort[] canvas, int width, int height)
     {
         var pixels = new byte[width * height * 4];
 
@@ -215,11 +219,11 @@ public static class GameMapHelper
             pixels[i * 4 + 3] = (word & 0x8000) != 0 ? AlphaSemiTransparent : AlphaOpaque;
         }
 
-        using var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+        var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
         var data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
         System.Runtime.InteropServices.Marshal.Copy(pixels, 0, data.Scan0, pixels.Length);
         bitmap.UnlockBits(data);
-        bitmap.Save(fileName, ImageFormat.Png);
+        return bitmap;
     }
 
     // Original layout (no longer the default, see Compact): the eight 256x256 VRAM pages stacked
@@ -312,7 +316,9 @@ public static class GameMapHelper
     // of the Spritesheet byte show the same texels, and those bits belong to the quad, not to the cell. Quads
     // of size 0 x 0 (map 161) get no cell and keep AtlasX/AtlasY = 0. Only the effect SiImage instances are
     // stamped: an entity image with the same Signature keeps its own entity-sheet position.
-    public static void SaveEffectSheet(GameMap gameMap, string fileName)
+    //
+    // Returns the sheet image, or null (and stamps nothing) when the map has no effect quad; the caller disposes it.
+    public static Bitmap? ComputeEffectSheet(GameMap gameMap)
     {
         var effectImages = EnumerateEffectImages(gameMap).Where(image => image.Swidth != 0 && image.Sheight != 0).ToList();
         var representativeByCell = new Dictionary<EffectCell, SiImage>();
@@ -324,7 +330,7 @@ public static class GameMapHelper
 
         if (representativeByCell.Count == 0)
         {
-            return;
+            return null;
         }
 
         var packingOrder = CompactPackingOrder(representativeByCell.Values);
@@ -340,7 +346,7 @@ public static class GameMapHelper
             DrawSpriteWords(canvas, CompactCanvasWidth, height, gameMap.GetSpriteWords(image), image.Swidth, image.Sheight, positions[i].X, positions[i].Y);
         }
 
-        SaveWordCanvas(canvas, CompactCanvasWidth, height, fileName);
+        var sheet = CreateWordCanvasBitmap(canvas, CompactCanvasWidth, height);
 
         foreach (var image in effectImages)
         {
@@ -348,6 +354,8 @@ public static class GameMapHelper
             image.AtlasX = x;
             image.AtlasY = y;
         }
+
+        return sheet;
     }
 
     // JUSTIFICATION: C# language bridge only - the dictionary key of an effect cell.

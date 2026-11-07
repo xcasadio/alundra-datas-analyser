@@ -915,7 +915,8 @@ internal class Program
         // animation: without this field, neither the atlas nor map_alundra.json would carry it.
         datasBin.AlundraGameMap.InventoryPortrait = datasBin.AlundraGameMap.SpriteInfo.SpriteRecords[0].GetPortraitImageset(br).Images[0];
         GameMapHelper.LoadDialoguePortraits(datasBin.AlundraGameMap, br);
-        SaveAlundraMap(datasBin.AlundraGameMap, dataPath, spriteSheetLayoutMode);
+        var sink = new DirectorySink(extractionPath);
+        SaveAlundraMap(datasBin.AlundraGameMap, spriteSheetLayoutMode, sink);
 
         for (int i = 0; i < 483; i++)
         {
@@ -923,7 +924,7 @@ internal class Program
             var gameMap = datasBin.GameMaps[i];
             gameMap.Load(br);
             GameMapHelper.LoadDialoguePortraits(gameMap, br);
-            SaveMap(gameMap, i, dataPath, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode);
+            SaveMap(gameMap, i, dataPath, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode, sink);
         }
 
         foreach (var entitySpriteSheet in entitySpriteSheetIds)
@@ -937,27 +938,22 @@ internal class Program
         }
     }
 
-    private static void SaveAlundraMap(GameMap gameMap, string extractionPath, SpriteSheetLayoutMode spriteSheetLayoutMode)
+    private static void SaveAlundraMap(GameMap gameMap, SpriteSheetLayoutMode spriteSheetLayoutMode, IExtractionSink sink)
     {
-        // Must run before the JSON dump below: it populates SiImage.AtlasX/AtlasY, which the
-        // serialized map_alundra.json needs to carry.
-        GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.png"), spriteSheetLayoutMode);
-        GameMapHelper.SaveEffectSheet(gameMap, Path.Combine(extractionPath, "map_alundra_effectsheet.png"));
-
-        File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMap, ExtractionJson.Options));
+        // Packs the sheets (populating SiImage.AtlasX/AtlasY) before serializing map_alundra.json.
+        SpriteExtraction.WriteAlundraMap(gameMap, spriteSheetLayoutMode, sink);
 
         //var gameMapJson = ConvertGameMap(gameMap);
         //File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMapJson, ExtractionJson.Options));
     }
 
-    private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors, int psxFramesPerSecond, TiledTilesetLayoutMode tiledTilesetLayoutMode, SpriteSheetLayoutMode spriteSheetLayoutMode)
+    private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors, int psxFramesPerSecond, TiledTilesetLayoutMode tiledTilesetLayoutMode, SpriteSheetLayoutMode spriteSheetLayoutMode, IExtractionSink sink)
     {
         GameMapHelper.SaveTileSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_tilesheet.png"), tileAnimDescriptors);
 
         // Must run before the JSON dump below: it populates SiImage.AtlasX/AtlasY, which the
         // serialized map_{id}.json needs to carry.
-        GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_spritesheet.png"), spriteSheetLayoutMode);
-        GameMapHelper.SaveEffectSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_effectsheet.png"));
+        SpriteExtraction.WriteMapSheets(gameMap, id, spriteSheetLayoutMode, sink);
 
         //var gameMapJson = ConvertGameMap(gameMap);
         //File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMapJson, ExtractionJson.Options));
