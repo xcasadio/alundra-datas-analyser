@@ -57,6 +57,9 @@ public sealed class BgmTrackResult
 
 public sealed record BgmSummary(int Rendered, int Silent, int Failed, int MaxSoundIndex);
 
+/// <summary>Every music track result, in track order, and the summary, as computed by AudioExtraction.ComputeBgm.</summary>
+public sealed record BgmComputation(IReadOnlyList<BgmTrackResult> Tracks, BgmSummary Summary);
+
 /// <summary>PCM of one sound-effect tone, as decoded; encode it with ExtractionAudio.EncodeMonoWav.</summary>
 public sealed record SfxTonePcm(string FileName, byte[] Pcm, int SampleRate);
 
@@ -452,33 +455,42 @@ public static class AudioExtraction
         sink.WriteBytes("sound/bgm.json", ExtractionJson.Serialize(records));
 
     /// <summary>
-    /// Renders every track, writes the WAV of each rendered one and the manifest. Track by track, so only one
-    /// rendering is held. notWritten receives the sink-relative path of every track that is silent, failed or
-    /// refused, so the caller may remove a stale file (the library never deletes). log receives the per-track messages.
+    /// Renders every track without writing anything: every track result in order (a rendered one carries its record and
+    /// samples; a silent, refused or failed one carries its status and message, an exception being a Failed result) and the
+    /// summary. log receives the per-track messages of the tracks that are not rendered, in track order. All the samples
+    /// are held at once (about 1.3 GB on the French disc).
     /// </summary>
-    public static BgmSummary ExtractBgm(string soundBinPath, SequencerTickProfile tickProfile, IExtractionSink sink, Action<string> log, Action<string> notWritten) =>
-        ExtractBgm(ComputeMaxSoundIndex(soundBinPath), soundIndex => ComputeBgmTrack(soundBinPath, soundIndex, tickProfile), sink, log, notWritten);
+    public static BgmComputation ComputeBgm(string soundBinPath, SequencerTickProfile tickProfile, Action<string> log) =>
+        ComputeBgm(ComputeMaxSoundIndex(soundBinPath), soundIndex => ComputeBgmTrack(soundBinPath, soundIndex, tickProfile), log);
 
     /// <summary>Same as the path overload, from the contents of SOUND.BIN; each track gets a fresh SoundBin built from the array.</summary>
-    public static BgmSummary ExtractBgm(byte[] soundBin, SequencerTickProfile tickProfile, IExtractionSink sink, Action<string> log, Action<string> notWritten) =>
-        ExtractBgm(ComputeMaxSoundIndex(soundBin), soundIndex => ComputeBgmTrack(soundBin, soundIndex, tickProfile), sink, log, notWritten);
+    public static BgmComputation ComputeBgm(byte[] soundBin, SequencerTickProfile tickProfile, Action<string> log) =>
+        ComputeBgm(ComputeMaxSoundIndex(soundBin), soundIndex => ComputeBgmTrack(soundBin, soundIndex, tickProfile), log);
 
-    private static BgmSummary ExtractBgm(int maxSoundIndex, Func<int, BgmTrackResult> computeTrack, IExtractionSink sink, Action<string> log, Action<string> notWritten)
+    private static BgmComputation ComputeBgm(int maxSoundIndex, Func<int, BgmTrackResult> computeTrack, Action<string> log)
     {
-        var exported = new List<BgmExportRecord>();
+        var tracks = new List<BgmTrackResult>();
+        var summary = ComputeBgmTracks(maxSoundIndex, computeTrack, log, tracks.Add);
+        return new BgmComputation(tracks, summary);
+    }
+
+    // The loop of ComputeBgm and ExtractBgm. consume receives every track result, in order, once its message is logged; a
+    // rendered result whose consume throws is turned into a Failed one (logged, consumed again) and counted as failed.
+    private static BgmSummary ComputeBgmTracks(int maxSoundIndex, Func<int, BgmTrackResult> computeTrack, Action<string> log, Action<BgmTrackResult> consume)
+    {
+        var rendered = 0;
         var silent = 0;
         var failed = 0;
 
         for (var soundIndex = 1; soundIndex <= maxSoundIndex; soundIndex++)
         {
-            var relativePath = $"sound/bgm/bgm_{soundIndex:D3}.wav";
             try
             {
                 var track = computeTrack(soundIndex);
                 if (track.Status != BgmTrackStatus.Rendered)
                 {
                     log(track.Message);
-                    notWritten(relativePath);
+                    consume(track);
                     if (track.Status == BgmTrackStatus.Silent)
                     {
                         silent++;
@@ -491,19 +503,51 @@ public static class AudioExtraction
                     continue;
                 }
 
-                WriteBgmTrack(track, sink);
-                exported.Add(track.Record!);
+                consume(track);
+                rendered++;
             }
             catch (Exception ex)
             {
-                log($"BGM {soundIndex} failed: {ex.Message}");
-                notWritten(relativePath);
+                var message = $"BGM {soundIndex} failed: {ex.Message}";
+                log(message);
+                consume(new BgmTrackResult { SoundIndex = soundIndex, FileName = $"bgm_{soundIndex:D3}.wav", Status = BgmTrackStatus.Failed, Message = message });
                 failed++;
             }
         }
 
+        return new BgmSummary(rendered, silent, failed, maxSoundIndex);
+    }
+
+    /// <summary>
+    /// Renders every track, writes the WAV of each rendered one and the manifest. Track by track, so only one
+    /// rendering is held (the same decisions as ComputeBgm, consumed one at a time). notWritten receives the sink-relative
+    /// path of every track that is silent, failed or refused, so the caller may remove a stale file (the library never
+    /// deletes). log receives the per-track messages.
+    /// </summary>
+    public static BgmSummary ExtractBgm(string soundBinPath, SequencerTickProfile tickProfile, IExtractionSink sink, Action<string> log, Action<string> notWritten) =>
+        ExtractBgm(ComputeMaxSoundIndex(soundBinPath), soundIndex => ComputeBgmTrack(soundBinPath, soundIndex, tickProfile), sink, log, notWritten);
+
+    /// <summary>Same as the path overload, from the contents of SOUND.BIN; each track gets a fresh SoundBin built from the array.</summary>
+    public static BgmSummary ExtractBgm(byte[] soundBin, SequencerTickProfile tickProfile, IExtractionSink sink, Action<string> log, Action<string> notWritten) =>
+        ExtractBgm(ComputeMaxSoundIndex(soundBin), soundIndex => ComputeBgmTrack(soundBin, soundIndex, tickProfile), sink, log, notWritten);
+
+    private static BgmSummary ExtractBgm(int maxSoundIndex, Func<int, BgmTrackResult> computeTrack, IExtractionSink sink, Action<string> log, Action<string> notWritten)
+    {
+        var exported = new List<BgmExportRecord>();
+        var summary = ComputeBgmTracks(maxSoundIndex, computeTrack, log, track =>
+        {
+            if (track.Status != BgmTrackStatus.Rendered)
+            {
+                notWritten($"sound/bgm/bgm_{track.SoundIndex:D3}.wav");
+                return;
+            }
+
+            WriteBgmTrack(track, sink);
+            exported.Add(track.Record!);
+        });
+
         WriteBgmManifest(exported, sink);
-        return new BgmSummary(exported.Count, silent, failed, maxSoundIndex);
+        return summary;
     }
 
     public static void WriteSfx(SfxExtraction extraction, IExtractionSink sink)

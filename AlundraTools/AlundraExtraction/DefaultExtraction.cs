@@ -64,7 +64,8 @@ public static class DefaultExtraction
         => Write(Load(inputs), tiledTilesetLayoutMode, spriteSheetLayoutMode, tickProfile, sink, log, notWritten);
 
     /// <summary>
-    /// Writes every file of the default extraction to the sink, in the order of the extractor's default mode. Every console line
+    /// Writes every file of the default extraction to the sink, in the order of the extractor's default mode: the text and
+    /// interface family, the maps, the sound effects, then the music, each through its own public step below. Every console line
     /// goes through log. notWritten receives the relative path of a music track that is silent, failed or refused, so the caller
     /// can remove a file a previous run wrote (the library never deletes).
     /// </summary>
@@ -77,38 +78,61 @@ public static class DefaultExtraction
         Action<string> log,
         Action<string> notWritten)
     {
+        WriteTextAndUi(context, sink);
+        WriteMaps(context, tiledTilesetLayoutMode, spriteSheetLayoutMode, sink, log);
+        WriteSoundEffects(context, sink, log);
+        WriteMusic(context, tickProfile, sink, log, notWritten);
+    }
+
+    /// <summary>
+    /// Text and interface family: memory card frames, closing images, balance, font3 and wind, ETC strings, then the loading
+    /// screen (which Write used to write at the start of the DatasBin part; it logs nothing and shares no state with the map
+    /// step, see WriteMaps).
+    /// </summary>
+    public static void WriteTextAndUi(DefaultExtractionContext context, IExtractionSink sink)
+    {
         var inputs = context.Inputs;
-        var gameEngine = context.GameEngine;
-        var balanceBin = context.BalanceBin;
-        var font3 = context.Font3;
-        var etcRes = context.EtcRes;
-        var alunCdExe = context.AlunCdExe;
-        var closingExe = context.ClosingExeInspector;
+        TextAndUiExtraction.WriteMemoryCardFrames(context.AlunCdExe, sink);
+        TextAndUiExtraction.WriteClosingImages(context.ClosingExeInspector, sink);
+        TextAndUiExtraction.WriteBalance(context.BalanceBin, sink);
+        TextAndUiExtraction.WriteFont3AndWind(context.Font3, context.GameEngine.StaticVariables, inputs.Font3Tim, inputs.WindCl, sink);
+        TextAndUiExtraction.WriteEtcStrings(context.EtcRes, sink);
+        TextAndUiExtraction.WriteLoadingScreen(context.GameEngine.DatasBin, sink);
+    }
 
-        TextAndUiExtraction.WriteMemoryCardFrames(alunCdExe, sink);
-        TextAndUiExtraction.WriteClosingImages(closingExe, sink);
-        TextAndUiExtraction.WriteBalance(balanceBin, sink);
-        TextAndUiExtraction.WriteFont3AndWind(font3, gameEngine.StaticVariables, inputs.Font3Tim, inputs.WindCl, sink);
-        TextAndUiExtraction.WriteEtcStrings(etcRes, sink);
-        var psxFramesPerSecond = etcRes is EtcResUsa ? 60 : 50;
-
-        // DatasBin: loading screen, then every map. (The extractor's old per-entity sprite sheet listing loop printed nothing:
-        // its dictionary was never filled, the code that filled it being commented out.)
-        TextAndUiExtraction.WriteLoadingScreen(gameEngine.DatasBin, sink);
+    /// <summary>
+    /// Maps family: the French entity names, the tile animation descriptors, then every map. (The extractor's old per-entity
+    /// sprite sheet listing loop printed nothing: its dictionary was never filled, the code that filled it being commented out.)
+    /// </summary>
+    public static void WriteMaps(
+        DefaultExtractionContext context,
+        TiledTilesetLayoutMode tiledTilesetLayoutMode,
+        SpriteSheetLayoutMode spriteSheetLayoutMode,
+        IExtractionSink sink,
+        Action<string> log)
+    {
+        var psxFramesPerSecond = context.EtcRes is EtcResUsa ? 60 : 50;
         var tileAnimDescriptors = GameInitializer.CreateTileAnimDescriptors(0);
         EntityNames.Load(EntityNames.Language.French);
-        MapExtraction.WriteAllMaps(gameEngine.DatasBin, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode, sink, log);
+        MapExtraction.WriteAllMaps(context.GameEngine.DatasBin, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode, sink, log);
+    }
 
-        // Sound effects.
+    /// <summary>Sound effects: computed, written, then the two summary lines.</summary>
+    public static void WriteSoundEffects(DefaultExtractionContext context, IExtractionSink sink, Action<string> log)
+    {
+        var soundBin = context.GameEngine.SoundBin;
         log("Extract sound effects");
-        var extraction = AudioExtraction.ComputeSfx(gameEngine.SoundBin);
+        var extraction = AudioExtraction.ComputeSfx(soundBin);
         AudioExtraction.WriteSfx(extraction, sink);
-        log($"Extracted {extraction.Records.Values.Count(r => r.Tones.Length > 0)}/{gameEngine.SoundBin.SfxRecords.Length - 1} sound effects ({extraction.Records.Values.Sum(r => r.Tones.Length)} WAV files)");
+        log($"Extracted {extraction.Records.Values.Count(r => r.Tones.Length > 0)}/{soundBin.SfxRecords.Length - 1} sound effects ({extraction.Records.Values.Sum(r => r.Tones.Length)} WAV files)");
         log($"Sound effects exported from a sibling of their RefSfxId chain: {extraction.SiblingSourcedCount} ({extraction.CrossVabIds.Count} of them from another VAB: {string.Join(", ", extraction.CrossVabIds)})");
+    }
 
-        // Music.
+    /// <summary>Music: every track rendered from SOUND.BIN and written, then the summary and the pitch guard report.</summary>
+    public static void WriteMusic(DefaultExtractionContext context, SequencerTickProfile tickProfile, IExtractionSink sink, Action<string> log, Action<string> notWritten)
+    {
         log($"Extract BGM (tick {tickProfile.Name}, {tickProfile.TickRate.ToString(System.Globalization.CultureInfo.InvariantCulture)} Hz)");
-        var summary = AudioExtraction.ExtractBgm(inputs.SoundBin, tickProfile, sink, log, notWritten);
+        var summary = AudioExtraction.ExtractBgm(context.Inputs.SoundBin, tickProfile, sink, log, notWritten);
         log($"Extracted BGM: rendered={summary.Rendered} silent={summary.Silent} failed={summary.Failed} (of {summary.MaxSoundIndex})");
         log(VoicePitchGuard.FormatReport());
     }
