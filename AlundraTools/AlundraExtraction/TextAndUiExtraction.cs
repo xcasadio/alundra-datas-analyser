@@ -27,12 +27,15 @@ public static class TextAndUiExtraction
     // (docs/formats/font.md). The 15-bit colours are decoded as TimLoader does (bit replication, never the plain << 3 of
     // Font3.Palettes); colour 0x0000 stays transparent and keeps FONT3.TIM's own index-0 RGB. Lives here and calls the
     // public TimLoader API: the decompiled AlundraEngine is not modified.
-    public static Bitmap DecodeFont3WithWindClut(string screenFolder, int windClutEntry)
+    public static Bitmap DecodeFont3WithWindClut(string screenFolder, int windClutEntry) =>
+        DecodeFont3WithWindClut(File.ReadAllBytes(Path.Combine(screenFolder, "FONT3.TIM")), File.ReadAllBytes(Path.Combine(screenFolder, "WIND.CL")), windClutEntry);
+
+    /// <summary>Same as the folder overload, from the contents of FONT3.TIM and WIND.CL.</summary>
+    public static Bitmap DecodeFont3WithWindClut(byte[] font3Tim, byte[] windCl, int windClutEntry)
     {
-        using var stream = File.OpenRead(Path.Combine(screenFolder, "FONT3.TIM"));
+        using var stream = new MemoryStream(font3Tim, writable: false);
         using var reader = new BinaryReader(stream);
         var raw = AlundraEngine.Graphics.TimLoader.LoadTimRaw(reader, Color.FromArgb(255, 156, 165, 132));
-        var windCl = File.ReadAllBytes(Path.Combine(screenFolder, "WIND.CL"));
         var palette = new Color[16];
         for (var i = 0; i < 16; i++)
         {
@@ -104,9 +107,17 @@ public static class TextAndUiExtraction
         sink.WriteBytes($"data/{Path.GetFileName(balanceBin.FileName)}.json", ExtractionJson.Serialize(balanceBin));
     }
 
-    public static void WriteFont3AndWind(Font3 font3, StaticVariables staticVariables, string screenFolder, IExtractionSink sink)
+    public static void WriteFont3AndWind(Font3 font3, StaticVariables staticVariables, string screenFolder, IExtractionSink sink) =>
+        WriteFont3AndWind(font3, staticVariables, DecodeFont3WithWindClut(screenFolder, 8), sink);
+
+    /// <summary>Same as the folder overload, from the contents of FONT3.TIM and WIND.CL.</summary>
+    public static void WriteFont3AndWind(Font3 font3, StaticVariables staticVariables, byte[] font3Tim, byte[] windCl, IExtractionSink sink) =>
+        WriteFont3AndWind(font3, staticVariables, DecodeFont3WithWindClut(font3Tim, windCl, 8), sink);
+
+    // Takes ownership of font3Page (disposed here).
+    private static void WriteFont3AndWind(Font3 font3, StaticVariables staticVariables, Bitmap font3Page, IExtractionSink sink)
     {
-        using (var font3Page = DecodeFont3WithWindClut(screenFolder, 8))
+        using (font3Page)
         {
             sink.WriteBytes("ui/font3.png", ExtractionImages.EncodePng(font3Page));
         }

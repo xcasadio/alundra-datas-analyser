@@ -139,24 +139,53 @@ internal class Program
         Console.WriteLine($"Extract data from {gamePath}");
         Console.WriteLine($"To {extractionPath}");
 
-        var gameEngine = CreateGameEngine(gamePath, out var balanceBin, out var font3, out var etcRes);
+        // The nine disc files of the default extraction are read once, here; everything below is built from the bytes.
+        var discFiles = ReadDiscFiles(gamePath);
+        var gameEngine = CreateGameEngine(discFiles, out var balanceBin, out var font3, out var etcRes);
         gameEngine.InitializeEngine();
 
-        var alunCdExe = new AlunCdExe(gamePath);
-        var closingExe = new ClosingExeInspector(gamePath);
+        var alunCdExe = new AlunCdExe(discFiles.AlunCdExe);
+        var closingExe = new ClosingExeInspector(discFiles.ClosingExe);
 
         var sink = new DirectorySink(extractionPath);
         TextAndUiExtraction.WriteMemoryCardFrames(alunCdExe, sink);
         TextAndUiExtraction.WriteClosingImages(closingExe, sink);
         TextAndUiExtraction.WriteBalance(balanceBin, sink);
-        TextAndUiExtraction.WriteFont3AndWind(font3, gameEngine.StaticVariables, Path.Combine(gamePath, "DATA", "..", "TAKI\\SCREEN"), sink);
+        TextAndUiExtraction.WriteFont3AndWind(font3, gameEngine.StaticVariables, discFiles.Font3Tim, discFiles.WindCl, sink);
         TextAndUiExtraction.WriteEtcStrings(etcRes, sink);
         var psxFramesPerSecond = etcRes is EtcResUsa ? 60 : 50;
         var tiledTilesetLayoutMode = ReadEnumOption(args, "--tiled-tileset-layout", TiledTilesetLayoutMode.Compact);
         var spriteSheetLayoutMode = ReadEnumOption(args, "--spritesheet-layout", SpriteSheetLayoutMode.Compact);
         ExtractDataFromDatasBin(gameEngine.DatasBin, gameEngine.StaticVariables, extractionPath, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode);
         ExtractDataFromSoundBin(gameEngine.SoundBin, extractionPath);
-        ExtractDataFromBgm(Path.Combine(gamePath, "DATA", "SOUND.BIN"), extractionPath, tickProfile);
+        ExtractDataFromBgm(discFiles.SoundBin, extractionPath, tickProfile);
+    }
+
+    // The nine disc files read by the default extraction. EtcResName and BalanceBinName are the logical names passed to the
+    // readers; BalanceBinName is the path as the path entry builds it, because data/BALANCE.BIN.json serializes BalanceBin.FileName.
+    private sealed record DiscFiles(
+        byte[] DatasBin, byte[] BalanceBin, string BalanceBinName, byte[] SoundBin, byte[] EtcRes, string EtcResName,
+        byte[] AlunCdExe, byte[] ClosingExe, byte[] Font3Tim, byte[] WindCl, byte[] WindTx);
+
+    // JUSTIFICATION: C# language bridge only
+    private static DiscFiles ReadDiscFiles(string gamePath)
+    {
+        var dataFolder = Path.Combine(gamePath, "DATA");
+        var screenFolder = Path.Combine(dataFolder, "..", "TAKI\\SCREEN");
+        var etcResFileName = PathHelper.GetEtcFileName(dataFolder);
+
+        return new DiscFiles(
+            File.ReadAllBytes(Path.Combine(dataFolder, "DATAS.BIN")),
+            File.ReadAllBytes(Path.Combine(dataFolder, "BALANCE.BIN")),
+            Path.Combine(dataFolder, "BALANCE.BIN"),
+            File.ReadAllBytes(Path.Combine(dataFolder, "SOUND.BIN")),
+            File.ReadAllBytes(etcResFileName),
+            Path.GetFileName(etcResFileName),
+            File.ReadAllBytes(Path.Combine(gamePath, "ALUN_CD.EXE")),
+            File.ReadAllBytes(Path.Combine(gamePath, "CLOSING.EXE")),
+            File.ReadAllBytes(Path.Combine(screenFolder, "FONT3.TIM")),
+            File.ReadAllBytes(Path.Combine(screenFolder, "WIND.CL")),
+            File.ReadAllBytes(Path.Combine(screenFolder, "WIND.TX")));
     }
 
     // TickRate (ticks per second) is written last and only at a profile other than desktop60, so a desktop60 bgm.json is
@@ -205,14 +234,20 @@ internal class Program
         }
     }
 
-    private static void ExtractDataFromBgm(string soundBinPath, string extractionPath, SequencerTickProfile tickProfile)
+    private static void ExtractDataFromBgm(string soundBinPath, string extractionPath, SequencerTickProfile tickProfile) =>
+        ExtractDataFromBgm(extractionPath, tickProfile, (sink, notWritten) => AudioExtraction.ExtractBgm(soundBinPath, tickProfile, sink, Console.WriteLine, notWritten));
+
+    private static void ExtractDataFromBgm(byte[] soundBin, string extractionPath, SequencerTickProfile tickProfile) =>
+        ExtractDataFromBgm(extractionPath, tickProfile, (sink, notWritten) => AudioExtraction.ExtractBgm(soundBin, tickProfile, sink, Console.WriteLine, notWritten));
+
+    private static void ExtractDataFromBgm(string extractionPath, SequencerTickProfile tickProfile, Func<IExtractionSink, Action<string>, BgmSummary> extract)
     {
         Console.WriteLine($"Extract BGM (tick {tickProfile.Name}, {tickProfile.TickRate.ToString(System.Globalization.CultureInfo.InvariantCulture)} Hz)");
 
         Directory.CreateDirectory(Path.Combine(extractionPath, "sound", "bgm"));
 
         // The library never deletes: a track that is silent, failed or refused must not keep the file a previous run wrote.
-        var summary = AudioExtraction.ExtractBgm(soundBinPath, tickProfile, new DirectorySink(extractionPath), Console.WriteLine,
+        var summary = extract(new DirectorySink(extractionPath),
             relativePath => DeleteStaleBgm(Path.Combine(extractionPath, relativePath.Replace('/', Path.DirectorySeparatorChar))));
 
         Console.WriteLine($"Extracted BGM: rendered={summary.Rendered} silent={summary.Silent} failed={summary.Failed} (of {summary.MaxSoundIndex})");
@@ -359,6 +394,20 @@ internal class Program
         Console.WriteLine($"  ok: {results.Count(r => r.Status == "ok")}");
         Console.WriteLine($"  missing record: {results.Count(r => r.Status.StartsWith("missing"))}");
         Console.WriteLine($"  exception: {results.Count(r => r.Status.StartsWith("exception"))}");
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static GameEngine CreateGameEngine(DiscFiles discFiles, out BalanceBin balanceBin, out Font3 font3, out EtcRes etcRes)
+    {
+        var datasBin = new DatasBin(discFiles.DatasBin);
+        balanceBin = new BalanceBin(discFiles.BalanceBin, discFiles.BalanceBinName);
+        var soundBin = new SoundBin(discFiles.SoundBin);
+        font3 = new Font3(discFiles.Font3Tim, discFiles.WindCl, discFiles.WindTx);
+        etcRes = discFiles.EtcResName.Contains("usa", StringComparison.InvariantCultureIgnoreCase)
+            ? new EtcResUsa(discFiles.EtcRes, discFiles.EtcResName)
+            : new EtcResR(discFiles.EtcRes, discFiles.EtcResName);
+
+        return new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, null);
     }
 
     // JUSTIFICATION: C# language bridge only

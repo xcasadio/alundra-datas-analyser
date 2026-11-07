@@ -56,6 +56,13 @@ namespace AlundraEngine.Closing
             _imageOffsets = ResolveImageOffsets(_exeBytes);
         }
 
+        // The array is kept, not copied.
+        public ClosingExeInspector(byte[] closingExe)
+        {
+            _exeBytes = closingExe;
+            _imageOffsets = ResolveImageOffsets(_exeBytes);
+        }
+
         public Bitmap LoadImage(int index)
         {
             if (_images.TryGetValue(index, out var cached))

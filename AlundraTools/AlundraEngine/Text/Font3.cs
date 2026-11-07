@@ -22,6 +22,15 @@ public class Font3
         LoadImageTim(folderName);
     }
 
+    // The arrays are the contents of FONT3.TIM, WIND.CL and WIND.TX; windTx is kept, not copied.
+    public Font3(byte[] font3Tim, byte[] windCl, byte[] windTx)
+    {
+        LoadPalette(windCl);
+        _hudImageData = windTx;
+        using var br = new BinaryReader(new MemoryStream(font3Tim, writable: false));
+        FontBitmapTim = TimLoader.LoadTim(br, 0, Color.FromArgb(255, 156, 165, 132));
+    }
+
     public Bitmap GenerateHudBitmapFromSprite(SPRT sprite)
     {
         return GenerateHudBitmap(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut);
@@ -113,9 +122,13 @@ public class Font3
 
     private void LoadPalette(string folderName)
     {
+        LoadPalette(File.ReadAllBytes(Path.Combine(folderName, "WIND.CL")));
+    }
+
+    private void LoadPalette(byte[] buffer)
+    {
         var maxPalettes = 16;
         Palettes = new Color[maxPalettes][];
-        var buffer = File.ReadAllBytes(Path.Combine(folderName, "WIND.CL"));
         var buffIndex = 0;
 
         for (var i = 0; i < maxPalettes; i++)

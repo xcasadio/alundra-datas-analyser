@@ -10,36 +10,52 @@ public class DatasBin
     public readonly GameMap[] GameMaps;
     public readonly Bitmap LoadingScreen;
 
-    public readonly string Binfile;
+    // Null when built from bytes (no file behind it).
+    public readonly string? Binfile;
+
+    private readonly byte[]? _datasBin;
 
     public DatasBin(string binfile)
     {
         Binfile = binfile;
         using var br = new BinaryReader(File.OpenRead(binfile));
-        Header = new DataBinHeader(br);
-        AlundraGameMap = new GameMap(br, Header);
-        GameMaps = new GameMap[Header.GameMapOffsets.Length]; 
+        (Header, AlundraGameMap, GameMaps, LoadingScreen) = Parse(br);
+    }
 
-        for (var i = 0; i < Header.GameMapOffsets.Length; i++)
+    // The array is kept, not copied: OpenBin() returns readers over it.
+    public DatasBin(byte[] datasBin)
+    {
+        _datasBin = datasBin;
+        using var br = new BinaryReader(new MemoryStream(datasBin, writable: false));
+        (Header, AlundraGameMap, GameMaps, LoadingScreen) = Parse(br);
+    }
+
+    private static (DataBinHeader Header, GameMap AlundraGameMap, GameMap[] GameMaps, Bitmap LoadingScreen) Parse(BinaryReader br)
+    {
+        var header = new DataBinHeader(br);
+        var alundraGameMap = new GameMap(br, header);
+        var gameMaps = new GameMap[header.GameMapOffsets.Length]; 
+
+        for (var i = 0; i < header.GameMapOffsets.Length; i++)
         {
-            var gameMapOffset = Header.GameMapOffsets[i];
+            var gameMapOffset = header.GameMapOffsets[i];
         
             if (gameMapOffset > 0 && gameMapOffset < br.BaseStream.Length)
             {
-                GameMaps[i] = new GameMap(br, gameMapOffset);
+                gameMaps[i] = new GameMap(br, gameMapOffset);
             }
         }
 
         var offsets = new[]
         {
-            Header.LoadingScreen0,
-            Header.LoadingScreen1,
-            Header.LoadingScreen2,
-            Header.LoadingScreen3
+            header.LoadingScreen0,
+            header.LoadingScreen1,
+            header.LoadingScreen2,
+            header.LoadingScreen3
         };
 
-        LoadingScreen = new Bitmap(320, 240);
-        using var graphics2 = System.Drawing.Graphics.FromImage(LoadingScreen);
+        var loadingScreen = new Bitmap(320, 240);
+        using var graphics2 = System.Drawing.Graphics.FromImage(loadingScreen);
         var index = 0;
 
         foreach (var offset in offsets)
@@ -50,10 +66,17 @@ public class DatasBin
             graphics2.DrawImage(bitmapChunk, 0, 60 * index);
             index++;
         }
+
+        return (header, alundraGameMap, gameMaps, loadingScreen);
     }
 
     public BinaryReader OpenBin()
     {
-        return new BinaryReader(File.OpenRead(Binfile));
+        if (_datasBin != null)
+        {
+            return new BinaryReader(new MemoryStream(_datasBin, writable: false));
+        }
+
+        return new BinaryReader(File.OpenRead(Binfile!));
     }
 }

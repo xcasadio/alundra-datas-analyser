@@ -116,8 +116,19 @@ public static class AudioExtraction
     public static int ComputeMaxSoundIndex(string soundBinPath) =>
         (new SoundBin(soundBinPath).MusicSeqVabOffsets.Length - 4) / 3;
 
+    /// <summary>Same as the path overload, from the contents of SOUND.BIN.</summary>
+    public static int ComputeMaxSoundIndex(byte[] soundBin) =>
+        (new SoundBin(soundBin).MusicSeqVabOffsets.Length - 4) / 3;
+
     /// <summary>Renders one track from a fresh sound bank, mixer, engine and sound system. Exceptions propagate.</summary>
-    public static BgmTrackResult ComputeBgmTrack(string soundBinPath, int soundIndex, SequencerTickProfile tickProfile)
+    public static BgmTrackResult ComputeBgmTrack(string soundBinPath, int soundIndex, SequencerTickProfile tickProfile) =>
+        ComputeBgmTrack(() => new SoundBin(soundBinPath), soundIndex, tickProfile);
+
+    /// <summary>Same as the path overload, from the contents of SOUND.BIN; the track still gets a fresh SoundBin built from the same array.</summary>
+    public static BgmTrackResult ComputeBgmTrack(byte[] soundBin, int soundIndex, SequencerTickProfile tickProfile) =>
+        ComputeBgmTrack(() => new SoundBin(soundBin), soundIndex, tickProfile);
+
+    private static BgmTrackResult ComputeBgmTrack(Func<SoundBin> createSoundBin, int soundIndex, SequencerTickProfile tickProfile)
     {
         var maxFrames = tickProfile.TicksForSeconds(BgmMaxSeconds);
         var track = new BgmTrackResult { SoundIndex = soundIndex, FileName = $"bgm_{soundIndex:D3}.wav" };
@@ -125,7 +136,8 @@ public static class AudioExtraction
         // docs/plan-e19-opcodes.md section 1.2v (X2, D-E19-69): every track is rendered from a
         // fresh sound bank, mixer, engine and sound system, like --render-bgm. One shared system
         // made each track start with what the previous one left sounding.
-        var soundBin = new SoundBin(soundBinPath) { TickProfile = tickProfile };
+        var soundBin = createSoundBin();
+        soundBin.TickProfile = tickProfile;
         var mixer = new SpuMixerSoundPlaybackBackend();
         soundBin.AttachPlaybackBackend(mixer);
         var gameEngine = new GameEngine(null!, null!, soundBin, null!, null!, null);
@@ -444,9 +456,15 @@ public static class AudioExtraction
     /// rendering is held. notWritten receives the sink-relative path of every track that is silent, failed or
     /// refused, so the caller may remove a stale file (the library never deletes). log receives the per-track messages.
     /// </summary>
-    public static BgmSummary ExtractBgm(string soundBinPath, SequencerTickProfile tickProfile, IExtractionSink sink, Action<string> log, Action<string> notWritten)
+    public static BgmSummary ExtractBgm(string soundBinPath, SequencerTickProfile tickProfile, IExtractionSink sink, Action<string> log, Action<string> notWritten) =>
+        ExtractBgm(ComputeMaxSoundIndex(soundBinPath), soundIndex => ComputeBgmTrack(soundBinPath, soundIndex, tickProfile), sink, log, notWritten);
+
+    /// <summary>Same as the path overload, from the contents of SOUND.BIN; each track gets a fresh SoundBin built from the array.</summary>
+    public static BgmSummary ExtractBgm(byte[] soundBin, SequencerTickProfile tickProfile, IExtractionSink sink, Action<string> log, Action<string> notWritten) =>
+        ExtractBgm(ComputeMaxSoundIndex(soundBin), soundIndex => ComputeBgmTrack(soundBin, soundIndex, tickProfile), sink, log, notWritten);
+
+    private static BgmSummary ExtractBgm(int maxSoundIndex, Func<int, BgmTrackResult> computeTrack, IExtractionSink sink, Action<string> log, Action<string> notWritten)
     {
-        var maxSoundIndex = ComputeMaxSoundIndex(soundBinPath);
         var exported = new List<BgmExportRecord>();
         var silent = 0;
         var failed = 0;
@@ -456,7 +474,7 @@ public static class AudioExtraction
             var relativePath = $"sound/bgm/bgm_{soundIndex:D3}.wav";
             try
             {
-                var track = ComputeBgmTrack(soundBinPath, soundIndex, tickProfile);
+                var track = computeTrack(soundIndex);
                 if (track.Status != BgmTrackStatus.Rendered)
                 {
                     log(track.Message);
