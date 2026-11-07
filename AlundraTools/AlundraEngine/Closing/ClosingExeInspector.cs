@@ -89,6 +89,15 @@ namespace AlundraEngine.Closing
             }
         }
 
+        // Same images and same file names as SaveAllImages, returned without writing anything.
+        public IEnumerable<(string FileName, Bitmap Image)> EnumerateImages()
+        {
+            for (var index = 0; index < ImageCount; index++)
+            {
+                yield return ($"closing_{index:D2}.png", LoadImage(index));
+            }
+        }
+
         private static int[] ResolveImageOffsets(byte[] bytes)
         {
             var matchesBySignature = ImageSignatures

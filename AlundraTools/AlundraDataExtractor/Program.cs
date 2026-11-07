@@ -6,6 +6,7 @@ using AlundraEngine.Editor;
 using AlundraEngine.Etc;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
+using AlundraExtraction;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text.Json;
@@ -15,7 +16,6 @@ namespace AlundraDataExtractor;
 
 internal class Program
 {
-    private static readonly JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true, IncludeFields = true };
     private static readonly JsonSerializerOptions _jsonLineSerializerOptions = new() { IncludeFields = true };
     private static Dictionary<string, HashSet<string>> entitySpriteSheetIds = new();
     private static HashSet<string> entitySpriteSheetAlreadySaved = new();
@@ -77,8 +77,6 @@ internal class Program
 
     static void Main(string[] args)
     {
-        _jsonSerializerOptions.Converters.Add(new ByteArrayAsNumbersConverter());
-
         if (args.Length > 0 && string.Equals(args[0], "--trace-bgm", StringComparison.OrdinalIgnoreCase))
         {
             TraceBgm(args);
@@ -147,11 +145,12 @@ internal class Program
         var alunCdExe = new AlunCdExe(gamePath);
         var closingExe = new ClosingExeInspector(gamePath);
 
-        ExtractDataFromAlunCdExe(alunCdExe, extractionPath);
-        ExtractDataFromClosingExe(closingExe, extractionPath);
-        ExtractDataFromBalanceBin(balanceBin, extractionPath);
-        ExtractDataFromScreenFolder(font3, gameEngine.StaticVariables, extractionPath, Path.Combine(gamePath, "DATA", "..", "TAKI\\SCREEN"));
-        ExtractDataFromEtcRes(etcRes, gameEngine.StaticVariables, extractionPath);
+        var sink = new DirectorySink(extractionPath);
+        TextAndUiExtraction.WriteMemoryCardFrames(alunCdExe, sink);
+        TextAndUiExtraction.WriteClosingImages(closingExe, sink);
+        TextAndUiExtraction.WriteBalance(balanceBin, sink);
+        TextAndUiExtraction.WriteFont3AndWind(font3, gameEngine.StaticVariables, Path.Combine(gamePath, "DATA", "..", "TAKI\\SCREEN"), sink);
+        TextAndUiExtraction.WriteEtcStrings(etcRes, sink);
         var psxFramesPerSecond = etcRes is EtcResUsa ? 60 : 50;
         var tiledTilesetLayoutMode = ReadEnumOption(args, "--tiled-tileset-layout", TiledTilesetLayoutMode.Compact);
         var spriteSheetLayoutMode = ReadEnumOption(args, "--spritesheet-layout", SpriteSheetLayoutMode.Compact);
@@ -288,7 +287,7 @@ internal class Program
             }
         }
 
-        File.WriteAllText(Path.Combine(soundPath, "bgm.json"), JsonSerializer.Serialize(exported, _jsonSerializerOptions));
+        File.WriteAllText(Path.Combine(soundPath, "bgm.json"), JsonSerializer.Serialize(exported, ExtractionJson.Options));
         Console.WriteLine($"Extracted BGM: rendered={exported.Count} silent={silent} failed={failed} (of {maxSoundIndex})");
         Console.WriteLine(VoicePitchGuard.FormatReport());
     }
@@ -638,7 +637,7 @@ internal class Program
                 null, null, null);
         }
 
-        File.WriteAllText(Path.Combine(soundPath, "sfx.json"), JsonSerializer.Serialize(exported.Values, _jsonSerializerOptions));
+        File.WriteAllText(Path.Combine(soundPath, "sfx.json"), JsonSerializer.Serialize(exported.Values, ExtractionJson.Options));
         Console.WriteLine($"Extracted {exported.Values.Count(r => r.Tones.Length > 0)}/{soundBin.SfxRecords.Length - 1} sound effects ({exported.Values.Sum(r => r.Tones.Length)} WAV files)");
         Console.WriteLine($"Sound effects exported from a sibling of their RefSfxId chain: {siblingSourcedCount} ({crossVabIds.Count} of them from another VAB: {string.Join(", ", crossVabIds)})");
     }
@@ -714,7 +713,7 @@ internal class Program
             Directory.CreateDirectory(outputDir);
         }
 
-        File.WriteAllText(outputJsonPath, JsonSerializer.Serialize(results, _jsonSerializerOptions));
+        File.WriteAllText(outputJsonPath, JsonSerializer.Serialize(results, ExtractionJson.Options));
 
         Console.WriteLine($"Probed {results.Count} icons ({firstIcon}..{lastIcon}), wrote {outputJsonPath}");
         Console.WriteLine($"  ok: {results.Count(r => r.Status == "ok")}");
@@ -1283,295 +1282,9 @@ internal class Program
         }
     }
 
-    private static void ExtractDataFromAlunCdExe(AlunCdExe alunCdExe, string extractionPath)
-    {
-        var memoryCardPath = Path.Combine(extractionPath, "memorycard");
-        Directory.CreateDirectory(memoryCardPath);
-        alunCdExe.MemoryCardFrame1Image.Save(Path.Combine(memoryCardPath, "memorycardframe1.png"), ImageFormat.Png);
-        alunCdExe.MemoryCardFrame2Image.Save(Path.Combine(memoryCardPath, "memorycardframe2.png"), ImageFormat.Png);
-        alunCdExe.MemoryCardFrame3Image.Save(Path.Combine(memoryCardPath, "memorycardframe3.png"), ImageFormat.Png);
-    }
-
-    private static void ExtractDataFromClosingExe(ClosingExeInspector closingExeInspector, string extractionPath)
-    {
-        closingExeInspector.SaveAllImages(Path.Combine(extractionPath, "closing"));
-    }
-
-    private static void ExtractDataFromBalanceBin(BalanceBin balanceBin, string extractionPath)
-    {
-        var balanceBinPath = Path.Combine(extractionPath, "data");
-        Directory.CreateDirectory(balanceBinPath);
-        File.WriteAllText(Path.Combine(balanceBinPath, $"{Path.GetFileName(balanceBin.FileName)}.json"), JsonSerializer.Serialize(balanceBin, _jsonSerializerOptions));
-    }
-
-    // E19.L-b1 (O-E19-66, docs/plan-e19-opcodes.md section 1.2w.2): FONT3.TIM's 4 bpp image decoded with entry 8 of
-    // the binary's CLUT table, filled from WIND.CL (the loop at 0x80044B48-0x80044B9C reads it into the table, the text
-    // bands and the cursor draw font3 with entry 8, read at 0x80050424). Only those two uses are proven to read entry 8
-    // (docs/formats/font.md). The 15-bit colours are decoded as TimLoader does (bit replication, never the plain << 3 of
-    // Font3.Palettes); colour 0x0000 stays transparent and keeps FONT3.TIM's own index-0 RGB. Lives here and calls the
-    // public TimLoader API: the decompiled AlundraEngine is not modified.
-    private static Bitmap DecodeFont3WithWindClut(string screenFolder, int windClutEntry)
-    {
-        using var stream = File.OpenRead(Path.Combine(screenFolder, "FONT3.TIM"));
-        using var reader = new BinaryReader(stream);
-        var raw = AlundraEngine.Graphics.TimLoader.LoadTimRaw(reader, Color.FromArgb(255, 156, 165, 132));
-        var windCl = File.ReadAllBytes(Path.Combine(screenFolder, "WIND.CL"));
-        var palette = new Color[16];
-        for (var i = 0; i < 16; i++)
-        {
-            int c = BitConverter.ToUInt16(windCl, (windClutEntry * 16 + i) * 2);
-            if (c == 0)
-            {
-                palette[i] = raw.Palettes![0][0];
-                continue;
-            }
-
-            int r = ((c & 0x1F) << 3) | ((c & 0x1F) >> 2);
-            int g = (((c >> 5) & 31) << 3) | (((c >> 5) & 31) >> 2);
-            int b = (((c >> 10) & 31) << 3) | (((c >> 10) & 31) >> 2);
-            palette[i] = Color.FromArgb(255, r, g, b);
-        }
-
-        return AlundraEngine.Graphics.TimLoader.DecodeBuffer(0, raw.Width, raw.Height, raw.Bpp, new[] { palette }, raw.ImgWWords, raw.ImgData);
-    }
-
-    private static void ExtractDataFromScreenFolder(Font3 font3, StaticVariables staticVariables, string extractionPath, string screenFolder)
-    {
-        var screenPath = Path.Combine(extractionPath, "ui");
-        Directory.CreateDirectory(screenPath);
-        using (var font3Page = DecodeFont3WithWindClut(screenFolder, 8))
-        {
-            font3Page.Save(Path.Combine(screenPath, "font3.png"), ImageFormat.Png);
-        }
-
-        var fontCharTiles = new List<FontCharTile>();
-
-        for (int i = 0; i < 16 * 16; i++)
-        {
-            var charValue = (char)i;
-            //charValue = TextDecoder.ConvertCp850ToLatin1(charIndex);
-            fontCharTiles.Add(new FontCharTile { Code = i, X = charValue % 16 * 16, Y = charValue / 16 * 16, Width = 16, Height = 16, Palette = 8 });
-        }
-
-        //all tiles data
-        File.WriteAllText(Path.Combine(screenPath, "font3.json"), JsonSerializer.Serialize(fontCharTiles, _jsonSerializerOptions));
-
-        //all hud sprites
-        var windBitmap = new Bitmap(256, 256);
-        var windTiles = DrawAllUITiles(font3, staticVariables, windBitmap);
-        windBitmap.Save(Path.Combine(screenPath, "wind.png"), ImageFormat.Png);
-
-        //all tiles data
-        var windData = windTiles.OrderBy(x => x.U0).ThenBy(x => x.V0);
-        File.WriteAllText(Path.Combine(screenPath, "wind.json"), JsonSerializer.Serialize(windData, _jsonSerializerOptions));
-    }
-
-    private static HashSet<SpriteSheetTile> DrawAllUITiles(Font3 font3, StaticVariables staticVariables, Bitmap windBitmap)
-    {
-        var spriteSheetTiles = new HashSet<SpriteSheetTile>();
-
-        //cursor dialog
-        for (int i = 0; i < 4; i++)
-        {
-            spriteSheetTiles.Add(new SpriteSheetTile(
-                staticVariables.g_dialogCursorTextureUV[i * 0x28],
-                staticVariables.g_dialogCursorTextureUV[i * 0x28 + 1],
-                0x10,
-                0x10,
-                8));
-        }
-
-        //message background
-        foreach (var sprite in staticVariables.g_uiBoxesInventoryDescriptionBackground.SpritesA)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        //numbers
-        for (int i = 0; i < 10; i++)
-        {
-            spriteSheetTiles.Add(new SpriteSheetTile(
-                staticVariables.g_numbersSpriteSheetUVs[i * 0x14],
-                staticVariables.g_numbersSpriteSheetUVs[i * 0x14 + 1],
-                8,
-                0x10,
-                5));
-        }
-
-        AddHudTiles(staticVariables, spriteSheetTiles);
-        AddInventoryTiles(staticVariables, spriteSheetTiles);
-
-        //draw
-        using var g = Graphics.FromImage(windBitmap);
-        foreach (var tile in spriteSheetTiles)
-        {
-            var tileBitmap = font3.GenerateHudBitmap(tile.U0, tile.V0, tile.Width, tile.Height, tile.PaletteIndex);
-            g.DrawImage(tileBitmap, tile.U0, tile.V0, tile.Width, tile.Height);
-        }
-
-        return spriteSheetTiles;
-    }
-
-    private static void AddHudTiles(StaticVariables staticVariables, HashSet<SpriteSheetTile> spriteSheetTiles)
-    {
-        //'/'
-        spriteSheetTiles.Add(new SpriteSheetTile(
-            staticVariables.g_numbersSpriteSheetUVs[200],  //0x50
-            staticVariables.g_numbersSpriteSheetUVs[201],  //0x28
-            8,
-            0x10,
-            5));
-
-        //full life big icons
-        spriteSheetTiles.Add(new SpriteSheetTile(
-            staticVariables.g_fullLifeBigIconUVs[0],
-            staticVariables.g_fullLifeBigIconUVs[1],
-            0x10,
-            0x10,
-            7));
-
-
-        //empty life big icons
-        spriteSheetTiles.Add(new SpriteSheetTile(
-            staticVariables.g_emptyLifeBigIconUVs[0],
-            staticVariables.g_emptyLifeBigIconUVs[1],
-            0x10,
-            0x10,
-            7));
-
-
-        //full life small icons
-        spriteSheetTiles.Add(new SpriteSheetTile(
-            staticVariables.g_fullLifeSmallIconUVs[0],
-            staticVariables.g_fullLifeSmallIconUVs[1],
-            8,
-            8,
-            7));
-
-
-        //empty life small icons
-        spriteSheetTiles.Add(new SpriteSheetTile(
-            staticVariables.g_emptyLifeSmallIconUVs[0],
-            staticVariables.g_emptyLifeSmallIconUVs[1],
-            8,
-            8,
-            7));
-
-        // mp cristal
-        for (int i = 0; i < 14; i++)
-        {
-            spriteSheetTiles.Add(new SpriteSheetTile(
-                i * 8,
-                56,
-                8,
-                0x10,
-                5));
-        }
-
-        //money icons
-        for (int i = 0; i < 4; i++)
-        {
-            spriteSheetTiles.Add(new SpriteSheetTile(
-                staticVariables.g_hudMoneyIconUVs[i * 20],
-                staticVariables.g_hudMoneyIconUVs[i * 20 + 1],
-                8,
-                0x10,
-                5));
-        }
-    }
-
-    private static void AddInventoryTiles(StaticVariables staticVariables, HashSet<SpriteSheetTile> spriteSheetTiles)
-    {
-        //cursor
-        for (int i = 0; i < 4; i++)
-        {
-            var sprite = new SpriteSheetTile(
-                staticVariables.g_inventoryCursorTextureUVs[i * 0x28],
-                staticVariables.g_inventoryCursorTextureUVs[i * 0x28 + 1],
-                0x10,
-                0x10,
-                0);
-            spriteSheetTiles.Add(sprite);
-        }
-
-        //icons
-        foreach (var sprite in staticVariables.g_moneyFalconKeyIconSpritesA)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        //rectangle selection
-        spriteSheetTiles.Add(new SpriteSheetTile(48, 0x98, 0x18, 0x20, 0));
-
-        //background
-        foreach (var sprite in staticVariables.g_MainInventoryWeaponBackgroundSpritesA)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.g_MainInventoryItemBackgroundSpritesA)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800ad594)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800af674)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800b06ec)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800b123c)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800b1d8c)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800ba3d0)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800bcb40)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800bf2b0)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800c1a20)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-    }
-
-    private static void ExtractDataFromEtcRes(EtcRes etcRes, StaticVariables staticVariables, string extractionPath)
-    {
-        var dataPath = Path.Combine(extractionPath, "data");
-        Directory.CreateDirectory(dataPath);
-        var path = Path.Combine(dataPath, $"{Path.GetFileName(etcRes.FileName)}.json");
-        var sortedData = etcRes.StringByIndex.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
-        File.WriteAllText(path, JsonSerializer.Serialize(sortedData, _jsonSerializerOptions));
-    }
-
     private static void ExtractDataFromDatasBin(DatasBin datasBin, StaticVariables staticVariables, string extractionPath, int psxFramesPerSecond, TiledTilesetLayoutMode tiledTilesetLayoutMode, SpriteSheetLayoutMode spriteSheetLayoutMode)
     {
-        datasBin.LoadingScreen.Save(Path.Combine(extractionPath, "data", "loading_screen.png"), ImageFormat.Png);
+        TextAndUiExtraction.WriteLoadingScreen(datasBin, new DirectorySink(extractionPath));
 
         var tileAnimDescriptors = GameInitializer.CreateTileAnimDescriptors(0);
         EntityNames.Load(EntityNames.Language.French);
@@ -1615,10 +1328,10 @@ internal class Program
         GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.png"), spriteSheetLayoutMode);
         GameMapHelper.SaveEffectSheet(gameMap, Path.Combine(extractionPath, "map_alundra_effectsheet.png"));
 
-        File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMap, _jsonSerializerOptions));
+        File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMap, ExtractionJson.Options));
 
         //var gameMapJson = ConvertGameMap(gameMap);
-        //File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
+        //File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMapJson, ExtractionJson.Options));
     }
 
     private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors, int psxFramesPerSecond, TiledTilesetLayoutMode tiledTilesetLayoutMode, SpriteSheetLayoutMode spriteSheetLayoutMode)
@@ -1631,9 +1344,9 @@ internal class Program
         GameMapHelper.SaveEffectSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_effectsheet.png"));
 
         //var gameMapJson = ConvertGameMap(gameMap);
-        //File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
+        //File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMapJson, ExtractionJson.Options));
 
-        File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMap, _jsonSerializerOptions));
+        File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMap, ExtractionJson.Options));
 
         //try to extract all entity infos from all map
         //GetEntitySpriteSheets(gameMap, id, extractionPath);
