@@ -56,6 +56,13 @@ namespace AlundraEngine.Closing
             _imageOffsets = ResolveImageOffsets(_exeBytes);
         }
 
+        // The array is kept, not copied.
+        public ClosingExeInspector(byte[] closingExe)
+        {
+            _exeBytes = closingExe;
+            _imageOffsets = ResolveImageOffsets(_exeBytes);
+        }
+
         public Bitmap LoadImage(int index)
         {
             if (_images.TryGetValue(index, out var cached))
@@ -86,6 +93,15 @@ namespace AlundraEngine.Closing
             for (var index = 0; index < ImageCount; index++)
             {
                 SaveImage(index, Path.Combine(directoryPath, $"closing_{index:D2}.png"));
+            }
+        }
+
+        // Same images and same file names as SaveAllImages, returned without writing anything.
+        public IEnumerable<(string FileName, Bitmap Image)> EnumerateImages()
+        {
+            for (var index = 0; index < ImageCount; index++)
+            {
+                yield return ($"closing_{index:D2}.png", LoadImage(index));
             }
         }
 

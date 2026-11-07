@@ -6,6 +6,7 @@ using AlundraEngine.Editor;
 using AlundraEngine.Etc;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
+using AlundraExtraction;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text.Json;
@@ -15,7 +16,6 @@ namespace AlundraDataExtractor;
 
 internal class Program
 {
-    private static readonly JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true, IncludeFields = true };
     private static readonly JsonSerializerOptions _jsonLineSerializerOptions = new() { IncludeFields = true };
     private static Dictionary<string, HashSet<string>> entitySpriteSheetIds = new();
     private static HashSet<string> entitySpriteSheetAlreadySaved = new();
@@ -77,8 +77,6 @@ internal class Program
 
     static void Main(string[] args)
     {
-        _jsonSerializerOptions.Converters.Add(new ByteArrayAsNumbersConverter());
-
         if (args.Length > 0 && string.Equals(args[0], "--trace-bgm", StringComparison.OrdinalIgnoreCase))
         {
             TraceBgm(args);
@@ -141,30 +139,44 @@ internal class Program
         Console.WriteLine($"Extract data from {gamePath}");
         Console.WriteLine($"To {extractionPath}");
 
-        var gameEngine = CreateGameEngine(gamePath, out var balanceBin, out var font3, out var etcRes);
-        gameEngine.InitializeEngine();
-
-        var alunCdExe = new AlunCdExe(gamePath);
-        var closingExe = new ClosingExeInspector(gamePath);
-
-        ExtractDataFromAlunCdExe(alunCdExe, extractionPath);
-        ExtractDataFromClosingExe(closingExe, extractionPath);
-        ExtractDataFromBalanceBin(balanceBin, extractionPath);
-        ExtractDataFromScreenFolder(font3, gameEngine.StaticVariables, extractionPath, Path.Combine(gamePath, "DATA", "..", "TAKI\\SCREEN"));
-        ExtractDataFromEtcRes(etcRes, gameEngine.StaticVariables, extractionPath);
-        var psxFramesPerSecond = etcRes is EtcResUsa ? 60 : 50;
+        // The nine disc files of the default extraction are read once, here; the orchestration lives in AlundraExtraction.
+        var discFiles = ReadDiscFiles(gamePath);
         var tiledTilesetLayoutMode = ReadEnumOption(args, "--tiled-tileset-layout", TiledTilesetLayoutMode.Compact);
         var spriteSheetLayoutMode = ReadEnumOption(args, "--spritesheet-layout", SpriteSheetLayoutMode.Compact);
-        ExtractDataFromDatasBin(gameEngine.DatasBin, gameEngine.StaticVariables, extractionPath, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode);
-        ExtractDataFromSoundBin(gameEngine.SoundBin, extractionPath);
-        ExtractDataFromBgm(Path.Combine(gamePath, "DATA", "SOUND.BIN"), extractionPath, tickProfile);
+
+        // The sink creates folders on write; these two are created up front as before.
+        Directory.CreateDirectory(Path.Combine(extractionPath, "sound", "sfx"));
+        Directory.CreateDirectory(Path.Combine(extractionPath, "sound", "bgm"));
+
+        // The library never deletes: a track that is silent, failed or refused must not keep the file a previous run wrote.
+        DefaultExtraction.Write(discFiles, tiledTilesetLayoutMode, spriteSheetLayoutMode, tickProfile, new DirectorySink(extractionPath), Console.WriteLine,
+            relativePath => DeleteStaleBgm(Path.Combine(extractionPath, relativePath.Replace('/', Path.DirectorySeparatorChar))));
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static DefaultExtractionInputs ReadDiscFiles(string gamePath)
+    {
+        var dataFolder = Path.Combine(gamePath, "DATA");
+        var screenFolder = Path.Combine(dataFolder, "..", "TAKI\\SCREEN");
+        var etcResFileName = PathHelper.GetEtcFileName(dataFolder);
+
+        return new DefaultExtractionInputs(
+            File.ReadAllBytes(Path.Combine(dataFolder, "DATAS.BIN")),
+            File.ReadAllBytes(Path.Combine(dataFolder, "BALANCE.BIN")),
+            Path.Combine(dataFolder, "BALANCE.BIN"),
+            File.ReadAllBytes(Path.Combine(dataFolder, "SOUND.BIN")),
+            File.ReadAllBytes(etcResFileName),
+            Path.GetFileName(etcResFileName),
+            File.ReadAllBytes(Path.Combine(gamePath, "ALUN_CD.EXE")),
+            File.ReadAllBytes(Path.Combine(gamePath, "CLOSING.EXE")),
+            File.ReadAllBytes(Path.Combine(screenFolder, "FONT3.TIM")),
+            File.ReadAllBytes(Path.Combine(screenFolder, "WIND.CL")),
+            File.ReadAllBytes(Path.Combine(screenFolder, "WIND.TX")));
     }
 
     // TickRate (ticks per second) is written last and only at a profile other than desktop60, so a desktop60 bgm.json is
     // byte-identical to the ones written before the PAL tick; its absence means 60 Hz, 735 samples per tick (parent
     // repository docs/plan-bgm-tick-pal.md, D5 and P4). Frames and LoopStartFrame count ticks of that rate.
-    private record BgmExportRecord(int SoundIndex, string File, int Frames, double DurationSeconds, bool LoopDetected, int PeakLeft, int PeakRight, double RmsLeft, double RmsRight, int FirstAudibleFrame, bool Looping, int? LoopStartFrame, int? LoopStartSample,
-        [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] double? TickRate);
 
     // JUSTIFICATION: C# language bridge only
     // RELATION: --tick pal|desktop60 picks the SequencerTickProfile the music is rendered on (parent repository
@@ -208,279 +220,23 @@ internal class Program
         }
     }
 
-    private static void ExtractDataFromBgm(string soundBinPath, string extractionPath, SequencerTickProfile tickProfile)
+    private static void ExtractDataFromBgm(string soundBinPath, string extractionPath, SequencerTickProfile tickProfile) =>
+        ExtractDataFromBgm(extractionPath, tickProfile, (sink, notWritten) => AudioExtraction.ExtractBgm(soundBinPath, tickProfile, sink, Console.WriteLine, notWritten));
+
+    private static void ExtractDataFromBgm(string extractionPath, SequencerTickProfile tickProfile, Func<IExtractionSink, Action<string>, BgmSummary> extract)
     {
         Console.WriteLine($"Extract BGM (tick {tickProfile.Name}, {tickProfile.TickRate.ToString(System.Globalization.CultureInfo.InvariantCulture)} Hz)");
 
-        var soundPath = Path.Combine(extractionPath, "sound");
-        var bgmPath = Path.Combine(soundPath, "bgm");
-        Directory.CreateDirectory(bgmPath);
+        Directory.CreateDirectory(Path.Combine(extractionPath, "sound", "bgm"));
 
-        const int maxSeconds = 480;
-        var maxFrames = tickProfile.TicksForSeconds(maxSeconds);
-        var maxSoundIndex = (new SoundBin(soundBinPath).MusicSeqVabOffsets.Length - 4) / 3;
-        var exported = new List<BgmExportRecord>();
-        var silent = 0;
-        var failed = 0;
+        // The library never deletes: a track that is silent, failed or refused must not keep the file a previous run wrote.
+        var summary = extract(new DirectorySink(extractionPath),
+            relativePath => DeleteStaleBgm(Path.Combine(extractionPath, relativePath.Replace('/', Path.DirectorySeparatorChar))));
 
-        for (var soundIndex = 1; soundIndex <= maxSoundIndex; soundIndex++)
-        {
-            var fileName = $"bgm_{soundIndex:D3}.wav";
-            var filePath = Path.Combine(bgmPath, fileName);
-
-            try
-            {
-                // docs/plan-e19-opcodes.md section 1.2v (X2, D-E19-69): every track is rendered from a
-                // fresh sound bank, mixer, engine and sound system, like --render-bgm. One shared system
-                // made each track start with what the previous one left sounding.
-                var soundBin = new SoundBin(soundBinPath) { TickProfile = tickProfile };
-                var mixer = new SpuMixerSoundPlaybackBackend();
-                soundBin.AttachPlaybackBackend(mixer);
-                var gameEngine = new GameEngine(null!, null!, soundBin, null!, null!, null);
-                gameEngine.StaticVariables.Initialize(gameEngine);
-                gameEngine.SoundManager.InitializeSoundSystem();
-
-                gameEngine.SoundManager.LoadMapSequence(soundIndex, 1);
-                var seqId = gameEngine.StaticVariables.g_requestedSeqId;
-                if (seqId < 0)
-                {
-                    Console.WriteLine($"BGM {soundIndex}: no sequence (seqId<0) - not exported");
-                    DeleteStaleBgm(filePath);
-                    failed++;
-                    continue;
-                }
-
-                var result = RenderBgmTrackUntilLoop(gameEngine, mixer, seqId, maxFrames, tickProfile);
-                if (result.Failure != null)
-                {
-                    Console.WriteLine($"BGM {soundIndex} failed: {result.Failure} - not exported");
-                    DeleteStaleBgm(filePath);
-                    failed++;
-                    continue;
-                }
-
-                // docs/plan-extraction-bgm.md, decision D-X-4: a render that never crossed the
-                // audibility threshold is a FAILURE, not a file. 26 tracks were once written as five
-                // seconds of silence while the run reported success - and FirstAudibleFrame, the very
-                // field that proves it, was already being recorded and never read. Refusing to write
-                // is not enough on its own: the batch never cleans its output directory, so the stale
-                // silent file has to go too (D-X-7), or "not a file" would be false on disk.
-                if (result.FirstAudibleFrame < 0)
-                {
-                    Console.WriteLine($"BGM {soundIndex}: rendered SILENT ({result.Frames} frames, peak {result.PeakLeft}/{result.PeakRight}) - not exported");
-                    DeleteStaleBgm(filePath);
-                    silent++;
-                    continue;
-                }
-
-                WriteStereoWav(filePath, result.Samples, SpuMixerSoundPlaybackBackend.OutputSampleRate);
-                // DurationSeconds = start(Frames) / 44100: at desktop60 the same double as Frames / 60.0 (one exact rational,
-                // correctly rounded once).
-                exported.Add(new BgmExportRecord(soundIndex, fileName, result.Frames, tickProfile.StartSample(result.Frames) / (double)SpuMixerSoundPlaybackBackend.OutputSampleRate, result.LoopDetected, result.PeakLeft, result.PeakRight, result.RmsLeft, result.RmsRight, result.FirstAudibleFrame,
-                    result.Looping, result.Looping ? result.LoopStartFrame : null, result.Looping ? (int)tickProfile.StartSample(result.LoopStartFrame) : null,
-                    ReferenceEquals(tickProfile, SequencerTickProfile.Desktop60) ? null : tickProfile.TickRate));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"BGM {soundIndex} failed: {ex.Message}");
-                DeleteStaleBgm(filePath);
-                failed++;
-            }
-        }
-
-        File.WriteAllText(Path.Combine(soundPath, "bgm.json"), JsonSerializer.Serialize(exported, _jsonSerializerOptions));
-        Console.WriteLine($"Extracted BGM: rendered={exported.Count} silent={silent} failed={failed} (of {maxSoundIndex})");
+        Console.WriteLine($"Extracted BGM: rendered={summary.Rendered} silent={summary.Silent} failed={summary.Failed} (of {summary.MaxSoundIndex})");
         Console.WriteLine(VoicePitchGuard.FormatReport());
     }
 
-    // JUSTIFICATION: C# language bridge only
-    // RELATION: a handful of MusicSeqVabOffsets slots are unused/silent placeholders (or one-shot
-    // stingers with no loop marker at all) rather than real looping tracks, and would otherwise
-    // burn the full maxFrames as near-silence; silenceGraceFrames cuts those short once nothing
-    // has crossed the audible threshold for a few seconds.
-    // A backward SeqPosition with sequence flag bit 0 still set is a loop jump; with bit 0 clear it is the end of
-    // the track (docs/plan-e19-loop-annexe/data/notes.md section 1.2). The first jump J1 is kept, the second J2 is not
-    // (the file is [0, J2)); a track without a loop jump keeps its release tail after the end of the track.
-    private sealed class BgmRender
-    {
-        public short[] Samples = Array.Empty<short>();
-        public int Frames;
-        public bool LoopDetected;
-        public bool Looping;
-        public int LoopStartFrame = -1;
-        public int LoopEndFrame = -1;
-        public int EndOfTrackFrame = -1;
-        public int PeakLeft;
-        public int PeakRight;
-        public double RmsLeft;
-        public double RmsRight;
-        public int FirstAudibleFrame = -1;
-        public string? Failure;
-    }
-
-    private static BgmRender RenderBgmTrackUntilLoop(GameEngine gameEngine, SpuMixerSoundPlaybackBackend mixer, short seqId, int maxFrames, SequencerTickProfile tickProfile)
-    {
-        // The frames below are host ticks of tickProfile; the grace and the silent tail keep their length in seconds.
-        var silenceGraceFrames = tickProfile.TicksForSeconds(5);
-        var releaseTailSilentFrames = tickProfile.TicksForSeconds(1);
-        var renderBuffer = new short[tickProfile.MaxSamplesInTick * 2];
-        var allSamples = new List<short>((int)(tickProfile.StartSample(maxFrames) * 2 / 4));
-        var renderedTicks = 0;
-        var result = new BgmRender();
-        var sequenceStates = gameEngine.StaticVariables.g_sequenceStatePointers;
-        var previousSeqPosition = (uint)sequenceStates[seqId].SeqPosition;
-        var silentFrameRun = 0;
-        var lastAudibleFrame = -1;
-        var stoppedByCap = true;
-
-        for (var frame = 0; frame < maxFrames; frame++)
-        {
-            gameEngine.SoundManager.AdvanceSoundFrame();
-            var currentSeqPosition = (uint)sequenceStates[seqId].SeqPosition;
-            var sequencePlaying = (sequenceStates[seqId].Flags & 1u) != 0;
-            var tickSamples = tickProfile.SamplesInTick(frame);
-            mixer.RenderSamples(renderBuffer, tickSamples);
-            var backward = currentSeqPosition < previousSeqPosition;
-
-            if (backward && sequencePlaying && result.LoopStartFrame >= 0)
-            {
-                result.LoopEndFrame = frame; // J2: the first frame of the third pass, not kept
-                stoppedByCap = false;
-                break;
-            }
-
-            var frameAudible = false;
-            for (var i = 0; i < tickSamples; i++)
-            {
-                if (Math.Abs((int)renderBuffer[i * 2]) > 64 || Math.Abs((int)renderBuffer[i * 2 + 1]) > 64)
-                {
-                    frameAudible = true;
-                    break;
-                }
-            }
-
-            allSamples.AddRange(new ArraySegment<short>(renderBuffer, 0, tickSamples * 2));
-            renderedTicks++;
-            if (frameAudible)
-            {
-                lastAudibleFrame = frame;
-            }
-
-            silentFrameRun = frameAudible ? 0 : silentFrameRun + 1;
-            if (result.EndOfTrackFrame >= 0 && silentFrameRun >= releaseTailSilentFrames)
-            {
-                stoppedByCap = false;
-                break;
-            }
-
-            if (silentFrameRun >= silenceGraceFrames)
-            {
-                stoppedByCap = false;
-                break;
-            }
-
-            if (backward)
-            {
-                result.LoopDetected = true;
-                if (sequencePlaying)
-                {
-                    result.LoopStartFrame = frame; // J1: the first frame of the second pass, kept
-                }
-                else
-                {
-                    result.EndOfTrackFrame = frame; // end of the track, kept; the release tail follows
-                }
-            }
-
-            previousSeqPosition = currentSeqPosition;
-        }
-
-        var frames = renderedTicks;
-        if (result.EndOfTrackFrame >= 0)
-        {
-            frames = Math.Max(result.EndOfTrackFrame + 1, lastAudibleFrame + 1);
-            var keptValues = (int)(tickProfile.StartSample(frames) * 2);
-            allSamples.RemoveRange(keptValues, allSamples.Count - keptValues);
-        }
-
-        if (result.LoopStartFrame >= 0 && result.LoopEndFrame < 0)
-        {
-            result.Failure = $"first loop jump at frame {result.LoopStartFrame} but no second one before the cap ({maxFrames} frames)";
-            return result;
-        }
-
-        if (result.LoopStartFrame < 0 && result.EndOfTrackFrame < 0 && stoppedByCap)
-        {
-            result.Failure = $"no loop jump and no end of track before the cap ({maxFrames} frames)";
-            return result;
-        }
-
-        if (result.EndOfTrackFrame >= 0 && stoppedByCap)
-        {
-            result.Failure = $"end of track at frame {result.EndOfTrackFrame} but its release tail did not end before the cap ({maxFrames} frames)";
-            return result;
-        }
-
-        result.Frames = frames;
-        result.Samples = allSamples.ToArray();
-        result.Looping = result.LoopEndFrame >= 0;
-        if (result.Looping)
-        {
-            CrossfadeLoopEnd(result.Samples, result.LoopStartFrame, result.LoopEndFrame, tickProfile);
-        }
-
-        // The statistics describe the written samples, after the crossfade.
-        long sumSquaresLeft = 0;
-        long sumSquaresRight = 0;
-        var totalSamples = tickProfile.StartSample(frames);
-        for (var i = 0; i < totalSamples; i++)
-        {
-            int left = result.Samples[i * 2];
-            int right = result.Samples[i * 2 + 1];
-            sumSquaresLeft += (long)left * left;
-            sumSquaresRight += (long)right * right;
-            result.PeakLeft = Math.Max(result.PeakLeft, Math.Abs(left));
-            result.PeakRight = Math.Max(result.PeakRight, Math.Abs(right));
-            if (result.FirstAudibleFrame < 0 && (Math.Abs(left) > 64 || Math.Abs(right) > 64))
-            {
-                result.FirstAudibleFrame = (int)tickProfile.TickOfSample(i);
-            }
-        }
-
-        result.RmsLeft = totalSamples > 0 ? Math.Sqrt(sumSquaresLeft / (double)totalSamples) : 0;
-        result.RmsRight = totalSamples > 0 ? Math.Sqrt(sumSquaresRight / (double)totalSamples) : 0;
-        return result;
-    }
-
-    // Linear crossfade of the file's last tick (its k stereo samples, before start(J2)) toward the k stereo samples before
-    // start(J1), so the last sample equals the sample just before J1: the wrap J2 -> J1 is the junction the render itself
-    // made at J1. k is the length of the last tick: 735 at desktop60, 886 or 887 at the PAL rate. Round to nearest; for an
-    // even k a tie rounds away from zero.
-    private static void CrossfadeLoopEnd(short[] samples, int loopStartFrame, int loopEndFrame, SequencerTickProfile tickProfile)
-    {
-        var k = tickProfile.SamplesInTick(loopEndFrame - 1);
-        var a0 = (int)tickProfile.StartSample(loopEndFrame) - k;
-        var b0 = (int)tickProfile.StartSample(loopStartFrame) - k;
-        for (var x = 0; x < k; x++)
-        {
-            for (var channel = 0; channel < 2; channel++)
-            {
-                long end = samples[(a0 + x) * 2 + channel];
-                long beforeLoopStart = samples[(b0 + x) * 2 + channel];
-                var numerator = end * (k - (x + 1)) + beforeLoopStart * (x + 1);
-                var value = numerator >= 0 ? (numerator + k / 2) / k : (numerator - k / 2) / k;
-                samples[(a0 + x) * 2 + channel] = (short)value;
-            }
-        }
-    }
-
-    // Volume/Pan (VagAtr) and the three record-level attributes (VabHdr.Mvol, ProgAtr.Mvol/Mpan) come from the
-    // record DecodeSfxTones actually decoded, after the RefSfxId chain; null when the record was not resolved.
-    // Appended at the end so the fields that were already there keep their place in sfx.json.
-    private record SfxToneExport(int ToneIndex, string File, int SampleRate, int LoopStart, int LoopEnd, bool Repeat, int? Volume, int? Pan);
-
-    private record SfxExportRecord(int Id, short VabId, short ProgramNumber, short ToneNumber, short Note, short SeqNum, short RefSfxId, short MaxVoices, short NumTones, string? SkipReason, SfxToneExport[] Tones,
-        int? VabMasterVolume, int? ProgramVolume, int? ProgramPan);
 
     // JUSTIFICATION: C# language bridge only
     // RELATION: sound effects only (sound/sfx.json and sound/sfx/*.wav), through the very same GameEngine
@@ -535,112 +291,13 @@ internal class Program
     {
         Console.WriteLine("Extract sound effects");
 
-        var soundPath = Path.Combine(extractionPath, "sound");
-        var sfxPath = Path.Combine(soundPath, "sfx");
-        Directory.CreateDirectory(sfxPath);
+        Directory.CreateDirectory(Path.Combine(extractionPath, "sound", "sfx"));
 
-        var exported = new SortedDictionary<int, SfxExportRecord>();
-        var siblingSourcedCount = 0;
-        var crossVabIds = new List<string>();
+        var extraction = AudioExtraction.ComputeSfx(soundBin);
+        AudioExtraction.WriteSfx(extraction, new DirectorySink(extractionPath));
 
-        // Only records a result on successful resolution; unresolved ids are retried on every
-        // OpenMapVab pass below since a given map-specific VabId is only reachable once that
-        // particular map VAB is the one currently loaded.
-        bool TryExtractSfx(int sfxid)
-        {
-            if (exported.ContainsKey(sfxid))
-            {
-                return true;
-            }
-
-            // docs/plan-extraction-bgm.md, D-X-3: the exporter-side pitch guard is expected NEVER to
-            // fire on retail data (the acceptance requires its hit count to read zero). If it ever
-            // does, the dropped tone must be visible in sfx.json - so it is recorded through the
-            // EXISTING record-level SkipReason rather than a new per-tone field, which would emit
-            // "SkipReason": null on every tone and move the whole manifest even when untriggered.
-            var guardHitsBefore = VoicePitchGuard.Hits(VoicePitchSite.Exporter);
-            var tones = soundBin.DecodeSfxTones(sfxid, out var attributes);
-            if (tones == null)
-            {
-                return false;
-            }
-
-            var pitchRefusals = VoicePitchGuard.Hits(VoicePitchSite.Exporter) - guardHitsBefore;
-
-            var record = soundBin.SfxRecords[sfxid];
-            var toneExports = new SfxToneExport[tones.Count];
-            for (var i = 0; i < tones.Count; i++)
-            {
-                var tone = tones[i];
-                var fileName = tones.Count == 1 ? $"sfx_{sfxid:D4}.wav" : $"sfx_{sfxid:D4}_{tone.ToneIndex}.wav";
-                using (var wav = SoundBin.WriteWavFile(tone.Pcm, 0, tone.Pcm.Length, tone.SampleRate, false, 0x7F, 0x7F))
-                {
-                    File.WriteAllBytes(Path.Combine(sfxPath, fileName), wav.ToArray());
-                }
-
-                toneExports[i] = new SfxToneExport(tone.ToneIndex, fileName, tone.SampleRate, tone.LoopStart, tone.LoopEnd, tone.Repeat, tone.Volume, tone.Pan);
-            }
-
-            // The samples of a map record may come from a sibling further down its RefSfxId chain (the first one
-            // whose VAB is the map VAB open right now): counted, since the attributes follow those samples.
-            if (attributes.ResolvedSfxId != sfxid)
-            {
-                siblingSourcedCount++;
-                var resolvedVabId = soundBin.SfxRecords[attributes.ResolvedSfxId].VabId;
-                if (resolvedVabId != record.VabId)
-                {
-                    crossVabIds.Add($"{sfxid}->{attributes.ResolvedSfxId} (VAB {record.VabId}->{resolvedVabId})");
-                }
-            }
-
-            var skipReason = pitchRefusals > 0
-                ? $"pitch out of table ({pitchRefusals} tone(s) refused)"
-                : tones.Count == 0 ? "no tones (NumTones=0)" : null;
-            exported[sfxid] = new SfxExportRecord(sfxid, record.VabId, record.ProgramNumber, record.ToneNumber, record.Note, record.SeqNum, record.RefSfxId, record.MaxVoices, record.NumTones, skipReason, toneExports,
-                attributes.VabMasterVolume, attributes.ProgramVolume, attributes.ProgramPan);
-            return true;
-        }
-
-        for (var sfxid = 1; sfxid < soundBin.SfxRecords.Length; sfxid++)
-        {
-            if (soundBin.SfxRecords[sfxid].VabId == -1)
-            {
-                TryExtractSfx(sfxid);
-            }
-        }
-
-        foreach (var vabIndex in SoundBin.VabIndexByMapId.Distinct().OrderBy(x => x))
-        {
-            soundBin.OpenMapVab(vabIndex);
-            for (var sfxid = 1; sfxid < soundBin.SfxRecords.Length; sfxid++)
-            {
-                if (soundBin.SfxRecords[sfxid].VabId >= 0)
-                {
-                    TryExtractSfx(sfxid);
-                }
-            }
-        }
-
-        // Anything left unresolved after every known map VAB has been tried is genuinely
-        // undecodable (invalid record, sequence-triggered, or an unreachable VabId) - document why.
-        for (var sfxid = 1; sfxid < soundBin.SfxRecords.Length; sfxid++)
-        {
-            if (exported.ContainsKey(sfxid))
-            {
-                continue;
-            }
-
-            var record = soundBin.SfxRecords[sfxid];
-            var reason = record.VabId == -2 ? "invalid (VabId=-2)"
-                : record.SeqNum != -1 ? "sequence-triggered, not a decodable sample"
-                : "map VAB not resolvable";
-            exported[sfxid] = new SfxExportRecord(sfxid, record.VabId, record.ProgramNumber, record.ToneNumber, record.Note, record.SeqNum, record.RefSfxId, record.MaxVoices, record.NumTones, reason, [],
-                null, null, null);
-        }
-
-        File.WriteAllText(Path.Combine(soundPath, "sfx.json"), JsonSerializer.Serialize(exported.Values, _jsonSerializerOptions));
-        Console.WriteLine($"Extracted {exported.Values.Count(r => r.Tones.Length > 0)}/{soundBin.SfxRecords.Length - 1} sound effects ({exported.Values.Sum(r => r.Tones.Length)} WAV files)");
-        Console.WriteLine($"Sound effects exported from a sibling of their RefSfxId chain: {siblingSourcedCount} ({crossVabIds.Count} of them from another VAB: {string.Join(", ", crossVabIds)})");
+        Console.WriteLine($"Extracted {extraction.Records.Values.Count(r => r.Tones.Length > 0)}/{soundBin.SfxRecords.Length - 1} sound effects ({extraction.Records.Values.Sum(r => r.Tones.Length)} WAV files)");
+        Console.WriteLine($"Sound effects exported from a sibling of their RefSfxId chain: {extraction.SiblingSourcedCount} ({extraction.CrossVabIds.Count} of them from another VAB: {string.Join(", ", extraction.CrossVabIds)})");
     }
 
     private record PortraitProbeRecord(int Icon, int ItemId, int Position, string Status, int? Sector5Id, long? Signature, int? Spritesheet, int? Page, int? Palette, int? SourceX, int? SourceY, int? Swidth, int? Sheight);
@@ -714,7 +371,7 @@ internal class Program
             Directory.CreateDirectory(outputDir);
         }
 
-        File.WriteAllText(outputJsonPath, JsonSerializer.Serialize(results, _jsonSerializerOptions));
+        File.WriteAllText(outputJsonPath, JsonSerializer.Serialize(results, ExtractionJson.Options));
 
         Console.WriteLine($"Probed {results.Count} icons ({firstIcon}..{lastIcon}), wrote {outputJsonPath}");
         Console.WriteLine($"  ok: {results.Count(r => r.Status == "ok")}");
@@ -935,37 +592,13 @@ internal class Program
         }
 
         var waveFileName = Path.Combine(outputPath, $"bgm_{bgmIndex:D3}_csharp_render.wav");
-        WriteStereoWav(waveFileName, allSamples, SpuMixerSoundPlaybackBackend.OutputSampleRate);
+        File.WriteAllBytes(waveFileName, ExtractionAudio.EncodeStereoWav(allSamples, SpuMixerSoundPlaybackBackend.OutputSampleRate));
 
         var totalSamples = tickProfile.StartSample(frames);
         var rmsLeft = Math.Sqrt(sumSquaresLeft / (double)totalSamples);
         var rmsRight = Math.Sqrt(sumSquaresRight / (double)totalSamples);
         Console.WriteLine($"Render BGM C# written to {waveFileName}");
         Console.WriteLine($"frames={frames} firstAudibleFrame={firstAudibleFrame} peakL={peakLeft} peakR={peakRight} rmsL={rmsLeft:F1} rmsR={rmsRight:F1}");
-    }
-
-    // JUSTIFICATION: C# language bridge only
-    private static void WriteStereoWav(string fileName, short[] interleavedStereo, int sampleRate)
-    {
-        using var writer = new BinaryWriter(File.Create(fileName));
-        var dataLength = interleavedStereo.Length * sizeof(short);
-        writer.Write("RIFF"u8);
-        writer.Write(36 + dataLength);
-        writer.Write("WAVE"u8);
-        writer.Write("fmt "u8);
-        writer.Write(16);
-        writer.Write((short)1);
-        writer.Write((short)2);
-        writer.Write(sampleRate);
-        writer.Write(sampleRate * 2 * sizeof(short));
-        writer.Write((short)(2 * sizeof(short)));
-        writer.Write((short)16);
-        writer.Write("data"u8);
-        writer.Write(dataLength);
-        foreach (var sample in interleavedStereo)
-        {
-            writer.Write(sample);
-        }
     }
 
     // JUSTIFICATION: C# language bridge only
@@ -1281,364 +914,6 @@ internal class Program
         public void SetReverbState(int mode, short depthLeft, short depthRight)
         {
         }
-    }
-
-    private static void ExtractDataFromAlunCdExe(AlunCdExe alunCdExe, string extractionPath)
-    {
-        var memoryCardPath = Path.Combine(extractionPath, "memorycard");
-        Directory.CreateDirectory(memoryCardPath);
-        alunCdExe.MemoryCardFrame1Image.Save(Path.Combine(memoryCardPath, "memorycardframe1.png"), ImageFormat.Png);
-        alunCdExe.MemoryCardFrame2Image.Save(Path.Combine(memoryCardPath, "memorycardframe2.png"), ImageFormat.Png);
-        alunCdExe.MemoryCardFrame3Image.Save(Path.Combine(memoryCardPath, "memorycardframe3.png"), ImageFormat.Png);
-    }
-
-    private static void ExtractDataFromClosingExe(ClosingExeInspector closingExeInspector, string extractionPath)
-    {
-        closingExeInspector.SaveAllImages(Path.Combine(extractionPath, "closing"));
-    }
-
-    private static void ExtractDataFromBalanceBin(BalanceBin balanceBin, string extractionPath)
-    {
-        var balanceBinPath = Path.Combine(extractionPath, "data");
-        Directory.CreateDirectory(balanceBinPath);
-        File.WriteAllText(Path.Combine(balanceBinPath, $"{Path.GetFileName(balanceBin.FileName)}.json"), JsonSerializer.Serialize(balanceBin, _jsonSerializerOptions));
-    }
-
-    // E19.L-b1 (O-E19-66, docs/plan-e19-opcodes.md section 1.2w.2): FONT3.TIM's 4 bpp image decoded with entry 8 of
-    // the binary's CLUT table, filled from WIND.CL (the loop at 0x80044B48-0x80044B9C reads it into the table, the text
-    // bands and the cursor draw font3 with entry 8, read at 0x80050424). Only those two uses are proven to read entry 8
-    // (docs/formats/font.md). The 15-bit colours are decoded as TimLoader does (bit replication, never the plain << 3 of
-    // Font3.Palettes); colour 0x0000 stays transparent and keeps FONT3.TIM's own index-0 RGB. Lives here and calls the
-    // public TimLoader API: the decompiled AlundraEngine is not modified.
-    private static Bitmap DecodeFont3WithWindClut(string screenFolder, int windClutEntry)
-    {
-        using var stream = File.OpenRead(Path.Combine(screenFolder, "FONT3.TIM"));
-        using var reader = new BinaryReader(stream);
-        var raw = AlundraEngine.Graphics.TimLoader.LoadTimRaw(reader, Color.FromArgb(255, 156, 165, 132));
-        var windCl = File.ReadAllBytes(Path.Combine(screenFolder, "WIND.CL"));
-        var palette = new Color[16];
-        for (var i = 0; i < 16; i++)
-        {
-            int c = BitConverter.ToUInt16(windCl, (windClutEntry * 16 + i) * 2);
-            if (c == 0)
-            {
-                palette[i] = raw.Palettes![0][0];
-                continue;
-            }
-
-            int r = ((c & 0x1F) << 3) | ((c & 0x1F) >> 2);
-            int g = (((c >> 5) & 31) << 3) | (((c >> 5) & 31) >> 2);
-            int b = (((c >> 10) & 31) << 3) | (((c >> 10) & 31) >> 2);
-            palette[i] = Color.FromArgb(255, r, g, b);
-        }
-
-        return AlundraEngine.Graphics.TimLoader.DecodeBuffer(0, raw.Width, raw.Height, raw.Bpp, new[] { palette }, raw.ImgWWords, raw.ImgData);
-    }
-
-    private static void ExtractDataFromScreenFolder(Font3 font3, StaticVariables staticVariables, string extractionPath, string screenFolder)
-    {
-        var screenPath = Path.Combine(extractionPath, "ui");
-        Directory.CreateDirectory(screenPath);
-        using (var font3Page = DecodeFont3WithWindClut(screenFolder, 8))
-        {
-            font3Page.Save(Path.Combine(screenPath, "font3.png"), ImageFormat.Png);
-        }
-
-        var fontCharTiles = new List<FontCharTile>();
-
-        for (int i = 0; i < 16 * 16; i++)
-        {
-            var charValue = (char)i;
-            //charValue = TextDecoder.ConvertCp850ToLatin1(charIndex);
-            fontCharTiles.Add(new FontCharTile { Code = i, X = charValue % 16 * 16, Y = charValue / 16 * 16, Width = 16, Height = 16, Palette = 8 });
-        }
-
-        //all tiles data
-        File.WriteAllText(Path.Combine(screenPath, "font3.json"), JsonSerializer.Serialize(fontCharTiles, _jsonSerializerOptions));
-
-        //all hud sprites
-        var windBitmap = new Bitmap(256, 256);
-        var windTiles = DrawAllUITiles(font3, staticVariables, windBitmap);
-        windBitmap.Save(Path.Combine(screenPath, "wind.png"), ImageFormat.Png);
-
-        //all tiles data
-        var windData = windTiles.OrderBy(x => x.U0).ThenBy(x => x.V0);
-        File.WriteAllText(Path.Combine(screenPath, "wind.json"), JsonSerializer.Serialize(windData, _jsonSerializerOptions));
-    }
-
-    private static HashSet<SpriteSheetTile> DrawAllUITiles(Font3 font3, StaticVariables staticVariables, Bitmap windBitmap)
-    {
-        var spriteSheetTiles = new HashSet<SpriteSheetTile>();
-
-        //cursor dialog
-        for (int i = 0; i < 4; i++)
-        {
-            spriteSheetTiles.Add(new SpriteSheetTile(
-                staticVariables.g_dialogCursorTextureUV[i * 0x28],
-                staticVariables.g_dialogCursorTextureUV[i * 0x28 + 1],
-                0x10,
-                0x10,
-                8));
-        }
-
-        //message background
-        foreach (var sprite in staticVariables.g_uiBoxesInventoryDescriptionBackground.SpritesA)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        //numbers
-        for (int i = 0; i < 10; i++)
-        {
-            spriteSheetTiles.Add(new SpriteSheetTile(
-                staticVariables.g_numbersSpriteSheetUVs[i * 0x14],
-                staticVariables.g_numbersSpriteSheetUVs[i * 0x14 + 1],
-                8,
-                0x10,
-                5));
-        }
-
-        AddHudTiles(staticVariables, spriteSheetTiles);
-        AddInventoryTiles(staticVariables, spriteSheetTiles);
-
-        //draw
-        using var g = Graphics.FromImage(windBitmap);
-        foreach (var tile in spriteSheetTiles)
-        {
-            var tileBitmap = font3.GenerateHudBitmap(tile.U0, tile.V0, tile.Width, tile.Height, tile.PaletteIndex);
-            g.DrawImage(tileBitmap, tile.U0, tile.V0, tile.Width, tile.Height);
-        }
-
-        return spriteSheetTiles;
-    }
-
-    private static void AddHudTiles(StaticVariables staticVariables, HashSet<SpriteSheetTile> spriteSheetTiles)
-    {
-        //'/'
-        spriteSheetTiles.Add(new SpriteSheetTile(
-            staticVariables.g_numbersSpriteSheetUVs[200],  //0x50
-            staticVariables.g_numbersSpriteSheetUVs[201],  //0x28
-            8,
-            0x10,
-            5));
-
-        //full life big icons
-        spriteSheetTiles.Add(new SpriteSheetTile(
-            staticVariables.g_fullLifeBigIconUVs[0],
-            staticVariables.g_fullLifeBigIconUVs[1],
-            0x10,
-            0x10,
-            7));
-
-
-        //empty life big icons
-        spriteSheetTiles.Add(new SpriteSheetTile(
-            staticVariables.g_emptyLifeBigIconUVs[0],
-            staticVariables.g_emptyLifeBigIconUVs[1],
-            0x10,
-            0x10,
-            7));
-
-
-        //full life small icons
-        spriteSheetTiles.Add(new SpriteSheetTile(
-            staticVariables.g_fullLifeSmallIconUVs[0],
-            staticVariables.g_fullLifeSmallIconUVs[1],
-            8,
-            8,
-            7));
-
-
-        //empty life small icons
-        spriteSheetTiles.Add(new SpriteSheetTile(
-            staticVariables.g_emptyLifeSmallIconUVs[0],
-            staticVariables.g_emptyLifeSmallIconUVs[1],
-            8,
-            8,
-            7));
-
-        // mp cristal
-        for (int i = 0; i < 14; i++)
-        {
-            spriteSheetTiles.Add(new SpriteSheetTile(
-                i * 8,
-                56,
-                8,
-                0x10,
-                5));
-        }
-
-        //money icons
-        for (int i = 0; i < 4; i++)
-        {
-            spriteSheetTiles.Add(new SpriteSheetTile(
-                staticVariables.g_hudMoneyIconUVs[i * 20],
-                staticVariables.g_hudMoneyIconUVs[i * 20 + 1],
-                8,
-                0x10,
-                5));
-        }
-    }
-
-    private static void AddInventoryTiles(StaticVariables staticVariables, HashSet<SpriteSheetTile> spriteSheetTiles)
-    {
-        //cursor
-        for (int i = 0; i < 4; i++)
-        {
-            var sprite = new SpriteSheetTile(
-                staticVariables.g_inventoryCursorTextureUVs[i * 0x28],
-                staticVariables.g_inventoryCursorTextureUVs[i * 0x28 + 1],
-                0x10,
-                0x10,
-                0);
-            spriteSheetTiles.Add(sprite);
-        }
-
-        //icons
-        foreach (var sprite in staticVariables.g_moneyFalconKeyIconSpritesA)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        //rectangle selection
-        spriteSheetTiles.Add(new SpriteSheetTile(48, 0x98, 0x18, 0x20, 0));
-
-        //background
-        foreach (var sprite in staticVariables.g_MainInventoryWeaponBackgroundSpritesA)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.g_MainInventoryItemBackgroundSpritesA)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800ad594)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800af674)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800b06ec)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800b123c)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800b1d8c)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800ba3d0)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800bcb40)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800bf2b0)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-
-        foreach (var sprite in staticVariables.SPRT_ARRAY_800c1a20)
-        {
-            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
-        }
-    }
-
-    private static void ExtractDataFromEtcRes(EtcRes etcRes, StaticVariables staticVariables, string extractionPath)
-    {
-        var dataPath = Path.Combine(extractionPath, "data");
-        Directory.CreateDirectory(dataPath);
-        var path = Path.Combine(dataPath, $"{Path.GetFileName(etcRes.FileName)}.json");
-        var sortedData = etcRes.StringByIndex.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
-        File.WriteAllText(path, JsonSerializer.Serialize(sortedData, _jsonSerializerOptions));
-    }
-
-    private static void ExtractDataFromDatasBin(DatasBin datasBin, StaticVariables staticVariables, string extractionPath, int psxFramesPerSecond, TiledTilesetLayoutMode tiledTilesetLayoutMode, SpriteSheetLayoutMode spriteSheetLayoutMode)
-    {
-        datasBin.LoadingScreen.Save(Path.Combine(extractionPath, "data", "loading_screen.png"), ImageFormat.Png);
-
-        var tileAnimDescriptors = GameInitializer.CreateTileAnimDescriptors(0);
-        EntityNames.Load(EntityNames.Language.French);
-
-        var dataPath = Path.Combine(extractionPath, "data");
-        Directory.CreateDirectory(dataPath);
-
-        Console.WriteLine("Extract map alundra");
-        using var br = datasBin.OpenBin();
-        datasBin.AlundraGameMap.Load(br);
-        // The inventory's opening portrait (sprite record 0, see GameMap.InventoryPortrait) is in no
-        // animation: without this field, neither the atlas nor map_alundra.json would carry it.
-        datasBin.AlundraGameMap.InventoryPortrait = datasBin.AlundraGameMap.SpriteInfo.SpriteRecords[0].GetPortraitImageset(br).Images[0];
-        GameMapHelper.LoadDialoguePortraits(datasBin.AlundraGameMap, br);
-        SaveAlundraMap(datasBin.AlundraGameMap, dataPath, spriteSheetLayoutMode);
-
-        for (int i = 0; i < 483; i++)
-        {
-            Console.WriteLine($"Extract map {i}");
-            var gameMap = datasBin.GameMaps[i];
-            gameMap.Load(br);
-            GameMapHelper.LoadDialoguePortraits(gameMap, br);
-            SaveMap(gameMap, i, dataPath, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode);
-        }
-
-        foreach (var entitySpriteSheet in entitySpriteSheetIds)
-        {
-            Console.WriteLine($"Entity {entitySpriteSheet.Key}");
-
-            foreach (var idName in entitySpriteSheet.Value)
-            {
-                Console.WriteLine($"\t{idName}");
-            }
-        }
-    }
-
-    private static void SaveAlundraMap(GameMap gameMap, string extractionPath, SpriteSheetLayoutMode spriteSheetLayoutMode)
-    {
-        // Must run before the JSON dump below: it populates SiImage.AtlasX/AtlasY, which the
-        // serialized map_alundra.json needs to carry.
-        GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.png"), spriteSheetLayoutMode);
-        GameMapHelper.SaveEffectSheet(gameMap, Path.Combine(extractionPath, "map_alundra_effectsheet.png"));
-
-        File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMap, _jsonSerializerOptions));
-
-        //var gameMapJson = ConvertGameMap(gameMap);
-        //File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
-    }
-
-    private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors, int psxFramesPerSecond, TiledTilesetLayoutMode tiledTilesetLayoutMode, SpriteSheetLayoutMode spriteSheetLayoutMode)
-    {
-        GameMapHelper.SaveTileSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_tilesheet.png"), tileAnimDescriptors);
-
-        // Must run before the JSON dump below: it populates SiImage.AtlasX/AtlasY, which the
-        // serialized map_{id}.json needs to carry.
-        GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_spritesheet.png"), spriteSheetLayoutMode);
-        GameMapHelper.SaveEffectSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_effectsheet.png"));
-
-        //var gameMapJson = ConvertGameMap(gameMap);
-        //File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
-
-        File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMap, _jsonSerializerOptions));
-
-        //try to extract all entity infos from all map
-        //GetEntitySpriteSheets(gameMap, id, extractionPath);
-
-        TiledMapExporter.ExportMap(gameMap, id, extractionPath, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode);
     }
 
     private static void GetEntitySpriteSheets(GameMap gameMap, int id, string extractionPath)

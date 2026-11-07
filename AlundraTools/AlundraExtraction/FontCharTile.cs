@@ -1,6 +1,6 @@
 ﻿namespace AlundraDataExtractor;
 
-internal class FontCharTile
+public class FontCharTile
 {
     public int Code { get; set; }
     public int X { get; set; }

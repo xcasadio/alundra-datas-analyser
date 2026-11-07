@@ -23,9 +23,10 @@ public enum SpriteSheetLayoutMode
 
 public static class GameMapHelper
 {
-    public static void SaveTileSheet(GameMap gameMap, string fileName, TileAnimDescriptor[] tileAnimDescriptors = null)
+    // Returns the map's tile sheet without writing it; the caller disposes it and encodes it (ExtractionImages.EncodePng).
+    public static Bitmap ComputeTileSheet(GameMap gameMap, TileAnimDescriptor[] tileAnimDescriptors = null)
     {
-        using var bitmap = new Bitmap(GameMapTilesheetLayout.OriginalImageWidth, GameMapTilesheetLayout.OriginalImageHeight);
+        var bitmap = new Bitmap(GameMapTilesheetLayout.OriginalImageWidth, GameMapTilesheetLayout.OriginalImageHeight);
         using var graphics = Graphics.FromImage(bitmap);
         var tileCache = new HashSet<ushort>();
 
@@ -67,7 +68,7 @@ public static class GameMapHelper
             }
         }
 
-        bitmap.Save(fileName, ImageFormat.Png);
+        return bitmap;
     }
 
     private static void DrawAllAnimatedTiles(GameMap gameMap, ushort tileId, Graphics graphics, TileAnimDescriptor[] tileAnimDescriptors)
@@ -125,7 +126,16 @@ public static class GameMapHelper
     // (Spritesheet+Palette+SourceX+SourceY+Swidth+Sheight already combined, see SiImage), so a quad
     // and its mirrored twin share one cell, and both stamp the resulting position on every SiImage
     // instance carrying that signature.
-    public static void SaveSpriteSheet(GameMap gameMap, string fileName, SpriteSheetLayoutMode layoutMode = SpriteSheetLayoutMode.Compact)
+    //
+    // Returns the sheet image without writing it; the caller disposes it and encodes it (ExtractionImages.EncodePng).
+    public static Bitmap ComputeSpriteSheet(GameMap gameMap, SpriteSheetLayoutMode layoutMode = SpriteSheetLayoutMode.Compact)
+        => DrawSpriteSheet(gameMap, PackSpriteSheet(gameMap, layoutMode));
+
+    // The packing half of ComputeSpriteSheet: resolves the layout and stamps AtlasX/AtlasY on every image, without drawing.
+    // DrawSpriteSheet(gameMap, layout) draws the sheet from the result, at any later time: the drawing reads only the layout,
+    // each quad's readonly crop fields (Spritesheet, Palette, SourceX, SourceY, Swidth, Sheight) and the map's sprite page and
+    // palette words, which nothing changes after GameMap.Load (the AtlasX/AtlasY the packing stamps are not read by it).
+    internal static SpriteSheetLayout PackSpriteSheet(GameMap gameMap, SpriteSheetLayoutMode layoutMode)
     {
         var uniqueImages = new List<SiImage>();
         var imagesBySignature = new Dictionary<long, List<SiImage>>();
@@ -149,16 +159,6 @@ public static class GameMapHelper
             _ => throw new ArgumentOutOfRangeException(nameof(layoutMode), layoutMode, "Unsupported spritesheet layout mode.")
         };
 
-        var canvas = new ushort[layout.Width * layout.Height];
-
-        foreach (var image in layout.DrawOrder)
-        {
-            var (x, y) = layout.PositionBySignature[image.Signature];
-            DrawSpriteWords(canvas, layout.Width, layout.Height, gameMap.GetSpriteWords(image), image.Swidth, image.Sheight, x, y);
-        }
-
-        SaveWordCanvas(canvas, layout.Width, layout.Height, fileName);
-
         foreach (var (signature, position) in layout.PositionBySignature)
         {
             foreach (var image in imagesBySignature[signature])
@@ -167,6 +167,22 @@ public static class GameMapHelper
                 image.AtlasY = position.Y;
             }
         }
+
+        return layout;
+    }
+
+    // The drawing half of ComputeSpriteSheet; the caller disposes the bitmap.
+    internal static Bitmap DrawSpriteSheet(GameMap gameMap, SpriteSheetLayout layout)
+    {
+        var canvas = new ushort[layout.Width * layout.Height];
+
+        foreach (var image in layout.DrawOrder)
+        {
+            var (x, y) = layout.PositionBySignature[image.Signature];
+            DrawSpriteWords(canvas, layout.Width, layout.Height, gameMap.GetSpriteWords(image), image.Swidth, image.Sheight, x, y);
+        }
+
+        return CreateWordCanvasBitmap(canvas, layout.Width, layout.Height);
     }
 
     // Sprite sheets are built from the raw CLUT words, not from drawn bitmaps: a word keeps its bit 15 (STP),
@@ -196,7 +212,7 @@ public static class GameMapHelper
     private const byte AlphaSemiTransparent = 128;
     private const byte AlphaOpaque = 255;
 
-    private static void SaveWordCanvas(ushort[] canvas, int width, int height, string fileName)
+    private static Bitmap CreateWordCanvasBitmap(ushort[] canvas, int width, int height)
     {
         var pixels = new byte[width * height * 4];
 
@@ -215,11 +231,11 @@ public static class GameMapHelper
             pixels[i * 4 + 3] = (word & 0x8000) != 0 ? AlphaSemiTransparent : AlphaOpaque;
         }
 
-        using var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+        var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
         var data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
         System.Runtime.InteropServices.Marshal.Copy(pixels, 0, data.Scan0, pixels.Length);
         bitmap.UnlockBits(data);
-        bitmap.Save(fileName, ImageFormat.Png);
+        return bitmap;
     }
 
     // Original layout (no longer the default, see Compact): the eight 256x256 VRAM pages stacked
@@ -312,7 +328,9 @@ public static class GameMapHelper
     // of the Spritesheet byte show the same texels, and those bits belong to the quad, not to the cell. Quads
     // of size 0 x 0 (map 161) get no cell and keep AtlasX/AtlasY = 0. Only the effect SiImage instances are
     // stamped: an entity image with the same Signature keeps its own entity-sheet position.
-    public static void SaveEffectSheet(GameMap gameMap, string fileName)
+    //
+    // Returns the sheet image, or null (and stamps nothing) when the map has no effect quad; the caller disposes it.
+    public static Bitmap? ComputeEffectSheet(GameMap gameMap)
     {
         var effectImages = EnumerateEffectImages(gameMap).Where(image => image.Swidth != 0 && image.Sheight != 0).ToList();
         var representativeByCell = new Dictionary<EffectCell, SiImage>();
@@ -324,7 +342,7 @@ public static class GameMapHelper
 
         if (representativeByCell.Count == 0)
         {
-            return;
+            return null;
         }
 
         var packingOrder = CompactPackingOrder(representativeByCell.Values);
@@ -340,7 +358,7 @@ public static class GameMapHelper
             DrawSpriteWords(canvas, CompactCanvasWidth, height, gameMap.GetSpriteWords(image), image.Swidth, image.Sheight, positions[i].X, positions[i].Y);
         }
 
-        SaveWordCanvas(canvas, CompactCanvasWidth, height, fileName);
+        var sheet = CreateWordCanvasBitmap(canvas, CompactCanvasWidth, height);
 
         foreach (var image in effectImages)
         {
@@ -348,6 +366,8 @@ public static class GameMapHelper
             image.AtlasX = x;
             image.AtlasY = y;
         }
+
+        return sheet;
     }
 
     // JUSTIFICATION: C# language bridge only - the dictionary key of an effect cell.
@@ -382,7 +402,7 @@ public static class GameMapHelper
 
     // JUSTIFICATION: C# language bridge only - carries one resolved spritesheet layout so both modes
     // share the drawing and AtlasX/AtlasY stamping code above.
-    private sealed record SpriteSheetLayout(
+    internal sealed record SpriteSheetLayout(
         int Width,
         int Height,
         IReadOnlyList<SiImage> DrawOrder,

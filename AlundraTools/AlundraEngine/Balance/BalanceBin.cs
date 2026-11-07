@@ -15,6 +15,19 @@ public class BalanceBin
     {
         FileName = fileName;
         using var br = new BinaryReader(File.OpenRead(fileName));
+        Load(br);
+    }
+
+    // fileName is the logical name of the file: it names the output (data/<name>.json).
+    public BalanceBin(byte[] balanceBin, string fileName)
+    {
+        FileName = fileName;
+        using var br = new BinaryReader(new MemoryStream(balanceBin, writable: false));
+        Load(br);
+    }
+
+    private void Load(BinaryReader br)
+    {
         var firstOffset = 0;
         var offsets = new List<int>();
 

@@ -5,14 +5,24 @@ public class EtcResR : EtcRes
     public EtcResR(string fileName) : base(fileName)
     {
         using var br = new BinaryReader(File.OpenRead(fileName));
+        Load(br, File.ReadAllBytes(fileName));
+    }
+
+    // fileName is the logical name of the file: it names the output (data/<name>.json).
+    public EtcResR(byte[] etcRes, string fileName) : base(fileName)
+    {
+        using var br = new BinaryReader(new MemoryStream(etcRes, writable: false));
+        Load(br, etcRes);
+    }
+
+    private void Load(BinaryReader br, byte[] buffer)
+    {
         IndexTable = new short[1024];
 
         for (int i = 0; i < 1024; i++)
         {
             IndexTable[i] = br.ReadInt16();
         }
-
-        var buffer = File.ReadAllBytes(fileName);
 
         for (int i = 0; i < 0x100; i++)
         {

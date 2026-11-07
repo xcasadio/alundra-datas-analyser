@@ -2,7 +2,7 @@ using AlundraEngine;
 
 namespace AlundraDataExtractor;
 
-internal static class GameMapTilesheetLayout
+public static class GameMapTilesheetLayout
 {
     public const int OriginalColumns = 10;
     public const int OriginalImageWidth = 256;

@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AlundraEngine\AlundraEngine.csproj" />
+    <ProjectReference Include="..\AlundraExtraction\AlundraExtraction.csproj" />
   </ItemGroup>
 
   <ItemGroup>

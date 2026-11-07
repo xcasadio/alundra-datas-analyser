@@ -27,7 +27,9 @@ public class SoundBin
     private const byte SoundBinSectionTypeUnknown = 0;
     private const byte SoundBinSectionTypeSequence = 1;
     private const byte SoundBinSectionTypeVab = 2;
-    private readonly string _soundBinfile;
+    // Exactly one of the two is set: the path entry reopens the file, the byte entry reads the array.
+    private readonly string? _soundBinfile;
+    private readonly byte[]? _soundBinBytes;
     private ISoundPlaybackBackend _playbackBackend;
 
     public int SoundBinSectionCount;
@@ -46,30 +48,53 @@ public class SoundBin
     {
         _soundBinfile = soundBinfile;
         SfxRecords = SfxRecordsData.Select(x => new SfxRecord(x)).ToArray();
-        ScanSoundBinSections(soundBinfile);
+        ScanSoundBinSections(File.ReadAllBytes(soundBinfile));
 
         using var br = new BinaryReader(File.OpenRead(soundBinfile));
+        (_seqDataBuff, _globalSfxVabHeaderBuff, GlobalVabHeader, _globalSfxVabBodyBuff) = ReadGlobalSections(br);
+    }
+
+    // The array is kept, not copied; the file is never reopened.
+    public SoundBin(byte[] soundBin)
+    {
+        _soundBinBytes = soundBin;
+        SfxRecords = SfxRecordsData.Select(x => new SfxRecord(x)).ToArray();
+        ScanSoundBinSections(soundBin);
+
+        using var br = OpenSoundBin();
+        (_seqDataBuff, _globalSfxVabHeaderBuff, GlobalVabHeader, _globalSfxVabBodyBuff) = ReadGlobalSections(br);
+    }
+
+    private BinaryReader OpenSoundBin() =>
+        _soundBinBytes != null
+            ? new BinaryReader(new MemoryStream(_soundBinBytes, writable: false))
+            : new BinaryReader(File.OpenRead(_soundBinfile!));
+
+    private (byte[] SeqDataBuff, byte[] GlobalSfxVabHeaderBuff, VabHeader GlobalVabHeader, byte[] GlobalSfxVabBodyBuff) ReadGlobalSections(BinaryReader br)
+    {
         //red seq buff
-        _seqDataBuff = new byte[SfxVabHeaderOffset];
-        br.Read(_seqDataBuff, 0, SfxVabHeaderOffset);
+        var seqDataBuff = new byte[SfxVabHeaderOffset];
+        br.Read(seqDataBuff, 0, SfxVabHeaderOffset);
 
         //read header
         var pos = SfxVabHeaderOffset;
         var len = SfxVabBodyOffset - pos;
-        _globalSfxVabHeaderBuff = new byte[len];
+        var globalSfxVabHeaderBuff = new byte[len];
         br.BaseStream.Position = pos;
-        br.Read(_globalSfxVabHeaderBuff, 0, len);
+        br.Read(globalSfxVabHeaderBuff, 0, len);
 
         //try reading header directly to class
         br.BaseStream.Position = pos;
-        GlobalVabHeader = new VabHeader(br);
+        var globalVabHeader = new VabHeader(br);
 
         //read body
         pos = SfxVabBodyOffset;
         len = MapVabOffsets[0] - pos;
-        _globalSfxVabBodyBuff = new byte[len];
+        var globalSfxVabBodyBuff = new byte[len];
         br.BaseStream.Position = pos;
-        br.Read(_globalSfxVabBodyBuff, 0, len);
+        br.Read(globalSfxVabBodyBuff, 0, len);
+
+        return (seqDataBuff, globalSfxVabHeaderBuff, globalVabHeader, globalSfxVabBodyBuff);
     }
 
     public void AttachPlaybackBackend(ISoundPlaybackBackend playbackBackend)
@@ -87,9 +112,8 @@ public class SoundBin
     private int _currentTickSamples;
 
     // JUSTIFICATION: PSX hardware adaptation only
-    private void ScanSoundBinSections(string soundBinfile)
+    private void ScanSoundBinSections(byte[] buffer)
     {
-        var buffer = File.ReadAllBytes(soundBinfile);
         var sectionCount = 0;
         var sequenceSectionCount = 0;
         var vabSectionCount = 0;
@@ -189,7 +213,7 @@ public class SoundBin
             return [];
         }
 
-        using var br = new BinaryReader(File.OpenRead(_soundBinfile));
+        using var br = OpenSoundBin();
         var buffer = new byte[length];
         br.BaseStream.Position = offset;
         br.Read(buffer, 0, length);
@@ -218,7 +242,7 @@ public class SoundBin
     public void OpenMapVab(int vabIndex)
     {
         _mapVabIndex = vabIndex;
-        using var br = new BinaryReader(File.OpenRead(_soundBinfile));
+        using var br = OpenSoundBin();
         var index = _mapVabIndex * 2;
 
         //read header

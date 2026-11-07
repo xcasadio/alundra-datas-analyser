@@ -1,6 +1,6 @@
 ﻿namespace AlundraDataExtractor;
 
-record SpriteSheetTile
+public record SpriteSheetTile
 {
     public int U0;
     public int V0;
