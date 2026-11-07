@@ -20,26 +20,27 @@ public static class TiledMapExporter
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
 
-    public static void ExportMap(GameMap gameMap, int mapId, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors, int psxFramesPerSecond = 50, TiledTilesetLayoutMode tilesetLayoutMode = TiledTilesetLayoutMode.Compact)
+    // Builds the tileset image and the three models of a map's Tiled export without writing anything.
+    // The caller disposes the result (it owns the tileset Bitmap) and serializes the models with Serialize.
+    public static TiledMapResult ComputeTiledMap(GameMap gameMap, int mapId, TileAnimDescriptor[] tileAnimDescriptors, int psxFramesPerSecond = 50, TiledTilesetLayoutMode tilesetLayoutMode = TiledTilesetLayoutMode.Compact)
     {
-        var tiledPath = Path.Combine(extractionPath, "tiled");
-        Directory.CreateDirectory(tiledPath);
-
         var catalog = CreateTileCatalog(gameMap, tileAnimDescriptors);
         var tilesetLayout = catalog.CreateTilesetLayout(tilesetLayoutMode);
         var tilesetImageFileName = $"map_{mapId}_tileset.png";
         var tilesetFileName = $"map_{mapId}_tileset.tsj";
         var companionFileName = $"map_{mapId}.alundra.json";
-        SaveTilesetImage(gameMap, tilesetLayout, Path.Combine(tiledPath, tilesetImageFileName));
+        var mapFileName = $"map_{mapId}.tmj";
+        var tilesetImage = CreateTilesetImage(gameMap, tilesetLayout);
         var tilesetJson = CreateTilesetJson(gameMap, mapId, tilesetLayout, tilesetImageFileName, tileAnimDescriptors, psxFramesPerSecond);
-        File.WriteAllText(Path.Combine(tiledPath, tilesetFileName), JsonSerializer.Serialize(tilesetJson, TiledJsonOptions));
-
         var companionJson = CreateCompanionJson(gameMap, mapId);
-        File.WriteAllText(Path.Combine(tiledPath, companionFileName), JsonSerializer.Serialize(companionJson, TiledJsonOptions));
-
         var mapJson = CreateMapJson(gameMap, mapId, tilesetLayout, tilesetFileName, companionFileName);
-        File.WriteAllText(Path.Combine(tiledPath, $"map_{mapId}.tmj"), JsonSerializer.Serialize(mapJson, TiledJsonOptions));
+
+        return new TiledMapResult(tilesetImageFileName, tilesetFileName, companionFileName, mapFileName, tilesetImage, tilesetJson, companionJson, mapJson);
     }
+
+    // Serializes a Tiled model (tileset, companion or map) as UTF-8 without BOM, as File.WriteAllText wrote it.
+    public static byte[] Serialize<T>(T model) =>
+        new System.Text.UTF8Encoding(false).GetBytes(JsonSerializer.Serialize(model, TiledJsonOptions));
 
     public static TiledTileCatalog CreateTileCatalog(GameMap gameMap)
     {
@@ -102,9 +103,9 @@ public static class TiledMapExporter
         }
     }
 
-    private static void SaveTilesetImage(GameMap gameMap, TiledTilesetLayout tilesetLayout, string fileName)
+    private static Bitmap CreateTilesetImage(GameMap gameMap, TiledTilesetLayout tilesetLayout)
     {
-        using var bitmap = new Bitmap(tilesetLayout.ImageWidth, tilesetLayout.ImageHeight);
+        var bitmap = new Bitmap(tilesetLayout.ImageWidth, tilesetLayout.ImageHeight);
         using var graphics = Graphics.FromImage(bitmap);
         graphics.Clear(Color.Transparent);
 
@@ -113,7 +114,7 @@ public static class TiledMapExporter
             graphics.DrawImage(gameMap.GetTileBitmap(entry.RawTileId), entry.ImageX, entry.ImageY, StaticVariables.MapTileWidth, StaticVariables.MapTileHeight);
         }
 
-        bitmap.Save(fileName, ImageFormat.Png);
+        return bitmap;
     }
 
     private static TiledTilesetJson CreateTilesetJson(GameMap gameMap, int mapId, TiledTilesetLayout tilesetLayout, string imageFileName, TileAnimDescriptor[]? tileAnimDescriptors, int psxFramesPerSecond)
@@ -634,6 +635,33 @@ public static class TiledMapExporter
             RendererPixelX = x * StaticVariables.MapTileWidth
         };
     }
+}
+
+/// <summary>The computed Tiled export of one map: the four file names (relative to the "tiled" folder) and the models, with the tileset image the result owns.</summary>
+public sealed class TiledMapResult : IDisposable
+{
+    public TiledMapResult(string tilesetImageFileName, string tilesetFileName, string companionFileName, string mapFileName, Bitmap tilesetImage, TiledTilesetJson tileset, AlundraTiledCompanionJson companion, TiledMapJson map)
+    {
+        TilesetImageFileName = tilesetImageFileName;
+        TilesetFileName = tilesetFileName;
+        CompanionFileName = companionFileName;
+        MapFileName = mapFileName;
+        TilesetImage = tilesetImage;
+        Tileset = tileset;
+        Companion = companion;
+        Map = map;
+    }
+
+    public string TilesetImageFileName { get; }
+    public string TilesetFileName { get; }
+    public string CompanionFileName { get; }
+    public string MapFileName { get; }
+    public Bitmap TilesetImage { get; }
+    public TiledTilesetJson Tileset { get; }
+    public AlundraTiledCompanionJson Companion { get; }
+    public TiledMapJson Map { get; }
+
+    public void Dispose() => TilesetImage.Dispose();
 }
 
 public sealed class AlundraTiledCompanionJson

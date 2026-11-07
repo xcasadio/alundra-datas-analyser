@@ -905,27 +905,7 @@ internal class Program
         var tileAnimDescriptors = GameInitializer.CreateTileAnimDescriptors(0);
         EntityNames.Load(EntityNames.Language.French);
 
-        var dataPath = Path.Combine(extractionPath, "data");
-        Directory.CreateDirectory(dataPath);
-
-        Console.WriteLine("Extract map alundra");
-        using var br = datasBin.OpenBin();
-        datasBin.AlundraGameMap.Load(br);
-        // The inventory's opening portrait (sprite record 0, see GameMap.InventoryPortrait) is in no
-        // animation: without this field, neither the atlas nor map_alundra.json would carry it.
-        datasBin.AlundraGameMap.InventoryPortrait = datasBin.AlundraGameMap.SpriteInfo.SpriteRecords[0].GetPortraitImageset(br).Images[0];
-        GameMapHelper.LoadDialoguePortraits(datasBin.AlundraGameMap, br);
-        var sink = new DirectorySink(extractionPath);
-        SaveAlundraMap(datasBin.AlundraGameMap, spriteSheetLayoutMode, sink);
-
-        for (int i = 0; i < 483; i++)
-        {
-            Console.WriteLine($"Extract map {i}");
-            var gameMap = datasBin.GameMaps[i];
-            gameMap.Load(br);
-            GameMapHelper.LoadDialoguePortraits(gameMap, br);
-            SaveMap(gameMap, i, dataPath, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode, sink);
-        }
+        MapExtraction.WriteAllMaps(datasBin, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode, new DirectorySink(extractionPath), Console.WriteLine);
 
         foreach (var entitySpriteSheet in entitySpriteSheetIds)
         {
@@ -936,34 +916,6 @@ internal class Program
                 Console.WriteLine($"\t{idName}");
             }
         }
-    }
-
-    private static void SaveAlundraMap(GameMap gameMap, SpriteSheetLayoutMode spriteSheetLayoutMode, IExtractionSink sink)
-    {
-        // Packs the sheets (populating SiImage.AtlasX/AtlasY) before serializing map_alundra.json.
-        SpriteExtraction.WriteAlundraMap(gameMap, spriteSheetLayoutMode, sink);
-
-        //var gameMapJson = ConvertGameMap(gameMap);
-        //File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMapJson, ExtractionJson.Options));
-    }
-
-    private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors, int psxFramesPerSecond, TiledTilesetLayoutMode tiledTilesetLayoutMode, SpriteSheetLayoutMode spriteSheetLayoutMode, IExtractionSink sink)
-    {
-        GameMapHelper.SaveTileSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_tilesheet.png"), tileAnimDescriptors);
-
-        // Must run before the JSON dump below: it populates SiImage.AtlasX/AtlasY, which the
-        // serialized map_{id}.json needs to carry.
-        SpriteExtraction.WriteMapSheets(gameMap, id, spriteSheetLayoutMode, sink);
-
-        //var gameMapJson = ConvertGameMap(gameMap);
-        //File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMapJson, ExtractionJson.Options));
-
-        File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMap, ExtractionJson.Options));
-
-        //try to extract all entity infos from all map
-        //GetEntitySpriteSheets(gameMap, id, extractionPath);
-
-        TiledMapExporter.ExportMap(gameMap, id, extractionPath, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode);
     }
 
     private static void GetEntitySpriteSheets(GameMap gameMap, int id, string extractionPath)

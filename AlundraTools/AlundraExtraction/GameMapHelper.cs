@@ -23,9 +23,10 @@ public enum SpriteSheetLayoutMode
 
 public static class GameMapHelper
 {
-    public static void SaveTileSheet(GameMap gameMap, string fileName, TileAnimDescriptor[] tileAnimDescriptors = null)
+    // Returns the map's tile sheet without writing it; the caller disposes it and encodes it (ExtractionImages.EncodePng).
+    public static Bitmap ComputeTileSheet(GameMap gameMap, TileAnimDescriptor[] tileAnimDescriptors = null)
     {
-        using var bitmap = new Bitmap(GameMapTilesheetLayout.OriginalImageWidth, GameMapTilesheetLayout.OriginalImageHeight);
+        var bitmap = new Bitmap(GameMapTilesheetLayout.OriginalImageWidth, GameMapTilesheetLayout.OriginalImageHeight);
         using var graphics = Graphics.FromImage(bitmap);
         var tileCache = new HashSet<ushort>();
 
@@ -67,7 +68,7 @@ public static class GameMapHelper
             }
         }
 
-        bitmap.Save(fileName, ImageFormat.Png);
+        return bitmap;
     }
 
     private static void DrawAllAnimatedTiles(GameMap gameMap, ushort tileId, Graphics graphics, TileAnimDescriptor[] tileAnimDescriptors)
