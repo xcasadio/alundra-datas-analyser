@@ -162,8 +162,6 @@ internal class Program
     // TickRate (ticks per second) is written last and only at a profile other than desktop60, so a desktop60 bgm.json is
     // byte-identical to the ones written before the PAL tick; its absence means 60 Hz, 735 samples per tick (parent
     // repository docs/plan-bgm-tick-pal.md, D5 and P4). Frames and LoopStartFrame count ticks of that rate.
-    private record BgmExportRecord(int SoundIndex, string File, int Frames, double DurationSeconds, bool LoopDetected, int PeakLeft, int PeakRight, double RmsLeft, double RmsRight, int FirstAudibleFrame, bool Looping, int? LoopStartFrame, int? LoopStartSample,
-        [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] double? TickRate);
 
     // JUSTIFICATION: C# language bridge only
     // RELATION: --tick pal|desktop60 picks the SequencerTickProfile the music is rendered on (parent repository
@@ -211,275 +209,16 @@ internal class Program
     {
         Console.WriteLine($"Extract BGM (tick {tickProfile.Name}, {tickProfile.TickRate.ToString(System.Globalization.CultureInfo.InvariantCulture)} Hz)");
 
-        var soundPath = Path.Combine(extractionPath, "sound");
-        var bgmPath = Path.Combine(soundPath, "bgm");
-        Directory.CreateDirectory(bgmPath);
+        Directory.CreateDirectory(Path.Combine(extractionPath, "sound", "bgm"));
 
-        const int maxSeconds = 480;
-        var maxFrames = tickProfile.TicksForSeconds(maxSeconds);
-        var maxSoundIndex = (new SoundBin(soundBinPath).MusicSeqVabOffsets.Length - 4) / 3;
-        var exported = new List<BgmExportRecord>();
-        var silent = 0;
-        var failed = 0;
+        // The library never deletes: a track that is silent, failed or refused must not keep the file a previous run wrote.
+        var summary = AudioExtraction.ExtractBgm(soundBinPath, tickProfile, new DirectorySink(extractionPath), Console.WriteLine,
+            relativePath => DeleteStaleBgm(Path.Combine(extractionPath, relativePath.Replace('/', Path.DirectorySeparatorChar))));
 
-        for (var soundIndex = 1; soundIndex <= maxSoundIndex; soundIndex++)
-        {
-            var fileName = $"bgm_{soundIndex:D3}.wav";
-            var filePath = Path.Combine(bgmPath, fileName);
-
-            try
-            {
-                // docs/plan-e19-opcodes.md section 1.2v (X2, D-E19-69): every track is rendered from a
-                // fresh sound bank, mixer, engine and sound system, like --render-bgm. One shared system
-                // made each track start with what the previous one left sounding.
-                var soundBin = new SoundBin(soundBinPath) { TickProfile = tickProfile };
-                var mixer = new SpuMixerSoundPlaybackBackend();
-                soundBin.AttachPlaybackBackend(mixer);
-                var gameEngine = new GameEngine(null!, null!, soundBin, null!, null!, null);
-                gameEngine.StaticVariables.Initialize(gameEngine);
-                gameEngine.SoundManager.InitializeSoundSystem();
-
-                gameEngine.SoundManager.LoadMapSequence(soundIndex, 1);
-                var seqId = gameEngine.StaticVariables.g_requestedSeqId;
-                if (seqId < 0)
-                {
-                    Console.WriteLine($"BGM {soundIndex}: no sequence (seqId<0) - not exported");
-                    DeleteStaleBgm(filePath);
-                    failed++;
-                    continue;
-                }
-
-                var result = RenderBgmTrackUntilLoop(gameEngine, mixer, seqId, maxFrames, tickProfile);
-                if (result.Failure != null)
-                {
-                    Console.WriteLine($"BGM {soundIndex} failed: {result.Failure} - not exported");
-                    DeleteStaleBgm(filePath);
-                    failed++;
-                    continue;
-                }
-
-                // docs/plan-extraction-bgm.md, decision D-X-4: a render that never crossed the
-                // audibility threshold is a FAILURE, not a file. 26 tracks were once written as five
-                // seconds of silence while the run reported success - and FirstAudibleFrame, the very
-                // field that proves it, was already being recorded and never read. Refusing to write
-                // is not enough on its own: the batch never cleans its output directory, so the stale
-                // silent file has to go too (D-X-7), or "not a file" would be false on disk.
-                if (result.FirstAudibleFrame < 0)
-                {
-                    Console.WriteLine($"BGM {soundIndex}: rendered SILENT ({result.Frames} frames, peak {result.PeakLeft}/{result.PeakRight}) - not exported");
-                    DeleteStaleBgm(filePath);
-                    silent++;
-                    continue;
-                }
-
-                WriteStereoWav(filePath, result.Samples, SpuMixerSoundPlaybackBackend.OutputSampleRate);
-                // DurationSeconds = start(Frames) / 44100: at desktop60 the same double as Frames / 60.0 (one exact rational,
-                // correctly rounded once).
-                exported.Add(new BgmExportRecord(soundIndex, fileName, result.Frames, tickProfile.StartSample(result.Frames) / (double)SpuMixerSoundPlaybackBackend.OutputSampleRate, result.LoopDetected, result.PeakLeft, result.PeakRight, result.RmsLeft, result.RmsRight, result.FirstAudibleFrame,
-                    result.Looping, result.Looping ? result.LoopStartFrame : null, result.Looping ? (int)tickProfile.StartSample(result.LoopStartFrame) : null,
-                    ReferenceEquals(tickProfile, SequencerTickProfile.Desktop60) ? null : tickProfile.TickRate));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"BGM {soundIndex} failed: {ex.Message}");
-                DeleteStaleBgm(filePath);
-                failed++;
-            }
-        }
-
-        File.WriteAllText(Path.Combine(soundPath, "bgm.json"), JsonSerializer.Serialize(exported, ExtractionJson.Options));
-        Console.WriteLine($"Extracted BGM: rendered={exported.Count} silent={silent} failed={failed} (of {maxSoundIndex})");
+        Console.WriteLine($"Extracted BGM: rendered={summary.Rendered} silent={summary.Silent} failed={summary.Failed} (of {summary.MaxSoundIndex})");
         Console.WriteLine(VoicePitchGuard.FormatReport());
     }
 
-    // JUSTIFICATION: C# language bridge only
-    // RELATION: a handful of MusicSeqVabOffsets slots are unused/silent placeholders (or one-shot
-    // stingers with no loop marker at all) rather than real looping tracks, and would otherwise
-    // burn the full maxFrames as near-silence; silenceGraceFrames cuts those short once nothing
-    // has crossed the audible threshold for a few seconds.
-    // A backward SeqPosition with sequence flag bit 0 still set is a loop jump; with bit 0 clear it is the end of
-    // the track (docs/plan-e19-loop-annexe/data/notes.md section 1.2). The first jump J1 is kept, the second J2 is not
-    // (the file is [0, J2)); a track without a loop jump keeps its release tail after the end of the track.
-    private sealed class BgmRender
-    {
-        public short[] Samples = Array.Empty<short>();
-        public int Frames;
-        public bool LoopDetected;
-        public bool Looping;
-        public int LoopStartFrame = -1;
-        public int LoopEndFrame = -1;
-        public int EndOfTrackFrame = -1;
-        public int PeakLeft;
-        public int PeakRight;
-        public double RmsLeft;
-        public double RmsRight;
-        public int FirstAudibleFrame = -1;
-        public string? Failure;
-    }
-
-    private static BgmRender RenderBgmTrackUntilLoop(GameEngine gameEngine, SpuMixerSoundPlaybackBackend mixer, short seqId, int maxFrames, SequencerTickProfile tickProfile)
-    {
-        // The frames below are host ticks of tickProfile; the grace and the silent tail keep their length in seconds.
-        var silenceGraceFrames = tickProfile.TicksForSeconds(5);
-        var releaseTailSilentFrames = tickProfile.TicksForSeconds(1);
-        var renderBuffer = new short[tickProfile.MaxSamplesInTick * 2];
-        var allSamples = new List<short>((int)(tickProfile.StartSample(maxFrames) * 2 / 4));
-        var renderedTicks = 0;
-        var result = new BgmRender();
-        var sequenceStates = gameEngine.StaticVariables.g_sequenceStatePointers;
-        var previousSeqPosition = (uint)sequenceStates[seqId].SeqPosition;
-        var silentFrameRun = 0;
-        var lastAudibleFrame = -1;
-        var stoppedByCap = true;
-
-        for (var frame = 0; frame < maxFrames; frame++)
-        {
-            gameEngine.SoundManager.AdvanceSoundFrame();
-            var currentSeqPosition = (uint)sequenceStates[seqId].SeqPosition;
-            var sequencePlaying = (sequenceStates[seqId].Flags & 1u) != 0;
-            var tickSamples = tickProfile.SamplesInTick(frame);
-            mixer.RenderSamples(renderBuffer, tickSamples);
-            var backward = currentSeqPosition < previousSeqPosition;
-
-            if (backward && sequencePlaying && result.LoopStartFrame >= 0)
-            {
-                result.LoopEndFrame = frame; // J2: the first frame of the third pass, not kept
-                stoppedByCap = false;
-                break;
-            }
-
-            var frameAudible = false;
-            for (var i = 0; i < tickSamples; i++)
-            {
-                if (Math.Abs((int)renderBuffer[i * 2]) > 64 || Math.Abs((int)renderBuffer[i * 2 + 1]) > 64)
-                {
-                    frameAudible = true;
-                    break;
-                }
-            }
-
-            allSamples.AddRange(new ArraySegment<short>(renderBuffer, 0, tickSamples * 2));
-            renderedTicks++;
-            if (frameAudible)
-            {
-                lastAudibleFrame = frame;
-            }
-
-            silentFrameRun = frameAudible ? 0 : silentFrameRun + 1;
-            if (result.EndOfTrackFrame >= 0 && silentFrameRun >= releaseTailSilentFrames)
-            {
-                stoppedByCap = false;
-                break;
-            }
-
-            if (silentFrameRun >= silenceGraceFrames)
-            {
-                stoppedByCap = false;
-                break;
-            }
-
-            if (backward)
-            {
-                result.LoopDetected = true;
-                if (sequencePlaying)
-                {
-                    result.LoopStartFrame = frame; // J1: the first frame of the second pass, kept
-                }
-                else
-                {
-                    result.EndOfTrackFrame = frame; // end of the track, kept; the release tail follows
-                }
-            }
-
-            previousSeqPosition = currentSeqPosition;
-        }
-
-        var frames = renderedTicks;
-        if (result.EndOfTrackFrame >= 0)
-        {
-            frames = Math.Max(result.EndOfTrackFrame + 1, lastAudibleFrame + 1);
-            var keptValues = (int)(tickProfile.StartSample(frames) * 2);
-            allSamples.RemoveRange(keptValues, allSamples.Count - keptValues);
-        }
-
-        if (result.LoopStartFrame >= 0 && result.LoopEndFrame < 0)
-        {
-            result.Failure = $"first loop jump at frame {result.LoopStartFrame} but no second one before the cap ({maxFrames} frames)";
-            return result;
-        }
-
-        if (result.LoopStartFrame < 0 && result.EndOfTrackFrame < 0 && stoppedByCap)
-        {
-            result.Failure = $"no loop jump and no end of track before the cap ({maxFrames} frames)";
-            return result;
-        }
-
-        if (result.EndOfTrackFrame >= 0 && stoppedByCap)
-        {
-            result.Failure = $"end of track at frame {result.EndOfTrackFrame} but its release tail did not end before the cap ({maxFrames} frames)";
-            return result;
-        }
-
-        result.Frames = frames;
-        result.Samples = allSamples.ToArray();
-        result.Looping = result.LoopEndFrame >= 0;
-        if (result.Looping)
-        {
-            CrossfadeLoopEnd(result.Samples, result.LoopStartFrame, result.LoopEndFrame, tickProfile);
-        }
-
-        // The statistics describe the written samples, after the crossfade.
-        long sumSquaresLeft = 0;
-        long sumSquaresRight = 0;
-        var totalSamples = tickProfile.StartSample(frames);
-        for (var i = 0; i < totalSamples; i++)
-        {
-            int left = result.Samples[i * 2];
-            int right = result.Samples[i * 2 + 1];
-            sumSquaresLeft += (long)left * left;
-            sumSquaresRight += (long)right * right;
-            result.PeakLeft = Math.Max(result.PeakLeft, Math.Abs(left));
-            result.PeakRight = Math.Max(result.PeakRight, Math.Abs(right));
-            if (result.FirstAudibleFrame < 0 && (Math.Abs(left) > 64 || Math.Abs(right) > 64))
-            {
-                result.FirstAudibleFrame = (int)tickProfile.TickOfSample(i);
-            }
-        }
-
-        result.RmsLeft = totalSamples > 0 ? Math.Sqrt(sumSquaresLeft / (double)totalSamples) : 0;
-        result.RmsRight = totalSamples > 0 ? Math.Sqrt(sumSquaresRight / (double)totalSamples) : 0;
-        return result;
-    }
-
-    // Linear crossfade of the file's last tick (its k stereo samples, before start(J2)) toward the k stereo samples before
-    // start(J1), so the last sample equals the sample just before J1: the wrap J2 -> J1 is the junction the render itself
-    // made at J1. k is the length of the last tick: 735 at desktop60, 886 or 887 at the PAL rate. Round to nearest; for an
-    // even k a tie rounds away from zero.
-    private static void CrossfadeLoopEnd(short[] samples, int loopStartFrame, int loopEndFrame, SequencerTickProfile tickProfile)
-    {
-        var k = tickProfile.SamplesInTick(loopEndFrame - 1);
-        var a0 = (int)tickProfile.StartSample(loopEndFrame) - k;
-        var b0 = (int)tickProfile.StartSample(loopStartFrame) - k;
-        for (var x = 0; x < k; x++)
-        {
-            for (var channel = 0; channel < 2; channel++)
-            {
-                long end = samples[(a0 + x) * 2 + channel];
-                long beforeLoopStart = samples[(b0 + x) * 2 + channel];
-                var numerator = end * (k - (x + 1)) + beforeLoopStart * (x + 1);
-                var value = numerator >= 0 ? (numerator + k / 2) / k : (numerator - k / 2) / k;
-                samples[(a0 + x) * 2 + channel] = (short)value;
-            }
-        }
-    }
-
-    // Volume/Pan (VagAtr) and the three record-level attributes (VabHdr.Mvol, ProgAtr.Mvol/Mpan) come from the
-    // record DecodeSfxTones actually decoded, after the RefSfxId chain; null when the record was not resolved.
-    // Appended at the end so the fields that were already there keep their place in sfx.json.
-    private record SfxToneExport(int ToneIndex, string File, int SampleRate, int LoopStart, int LoopEnd, bool Repeat, int? Volume, int? Pan);
-
-    private record SfxExportRecord(int Id, short VabId, short ProgramNumber, short ToneNumber, short Note, short SeqNum, short RefSfxId, short MaxVoices, short NumTones, string? SkipReason, SfxToneExport[] Tones,
-        int? VabMasterVolume, int? ProgramVolume, int? ProgramPan);
 
     // JUSTIFICATION: C# language bridge only
     // RELATION: sound effects only (sound/sfx.json and sound/sfx/*.wav), through the very same GameEngine
@@ -534,112 +273,13 @@ internal class Program
     {
         Console.WriteLine("Extract sound effects");
 
-        var soundPath = Path.Combine(extractionPath, "sound");
-        var sfxPath = Path.Combine(soundPath, "sfx");
-        Directory.CreateDirectory(sfxPath);
+        Directory.CreateDirectory(Path.Combine(extractionPath, "sound", "sfx"));
 
-        var exported = new SortedDictionary<int, SfxExportRecord>();
-        var siblingSourcedCount = 0;
-        var crossVabIds = new List<string>();
+        var extraction = AudioExtraction.ComputeSfx(soundBin);
+        AudioExtraction.WriteSfx(extraction, new DirectorySink(extractionPath));
 
-        // Only records a result on successful resolution; unresolved ids are retried on every
-        // OpenMapVab pass below since a given map-specific VabId is only reachable once that
-        // particular map VAB is the one currently loaded.
-        bool TryExtractSfx(int sfxid)
-        {
-            if (exported.ContainsKey(sfxid))
-            {
-                return true;
-            }
-
-            // docs/plan-extraction-bgm.md, D-X-3: the exporter-side pitch guard is expected NEVER to
-            // fire on retail data (the acceptance requires its hit count to read zero). If it ever
-            // does, the dropped tone must be visible in sfx.json - so it is recorded through the
-            // EXISTING record-level SkipReason rather than a new per-tone field, which would emit
-            // "SkipReason": null on every tone and move the whole manifest even when untriggered.
-            var guardHitsBefore = VoicePitchGuard.Hits(VoicePitchSite.Exporter);
-            var tones = soundBin.DecodeSfxTones(sfxid, out var attributes);
-            if (tones == null)
-            {
-                return false;
-            }
-
-            var pitchRefusals = VoicePitchGuard.Hits(VoicePitchSite.Exporter) - guardHitsBefore;
-
-            var record = soundBin.SfxRecords[sfxid];
-            var toneExports = new SfxToneExport[tones.Count];
-            for (var i = 0; i < tones.Count; i++)
-            {
-                var tone = tones[i];
-                var fileName = tones.Count == 1 ? $"sfx_{sfxid:D4}.wav" : $"sfx_{sfxid:D4}_{tone.ToneIndex}.wav";
-                using (var wav = SoundBin.WriteWavFile(tone.Pcm, 0, tone.Pcm.Length, tone.SampleRate, false, 0x7F, 0x7F))
-                {
-                    File.WriteAllBytes(Path.Combine(sfxPath, fileName), wav.ToArray());
-                }
-
-                toneExports[i] = new SfxToneExport(tone.ToneIndex, fileName, tone.SampleRate, tone.LoopStart, tone.LoopEnd, tone.Repeat, tone.Volume, tone.Pan);
-            }
-
-            // The samples of a map record may come from a sibling further down its RefSfxId chain (the first one
-            // whose VAB is the map VAB open right now): counted, since the attributes follow those samples.
-            if (attributes.ResolvedSfxId != sfxid)
-            {
-                siblingSourcedCount++;
-                var resolvedVabId = soundBin.SfxRecords[attributes.ResolvedSfxId].VabId;
-                if (resolvedVabId != record.VabId)
-                {
-                    crossVabIds.Add($"{sfxid}->{attributes.ResolvedSfxId} (VAB {record.VabId}->{resolvedVabId})");
-                }
-            }
-
-            var skipReason = pitchRefusals > 0
-                ? $"pitch out of table ({pitchRefusals} tone(s) refused)"
-                : tones.Count == 0 ? "no tones (NumTones=0)" : null;
-            exported[sfxid] = new SfxExportRecord(sfxid, record.VabId, record.ProgramNumber, record.ToneNumber, record.Note, record.SeqNum, record.RefSfxId, record.MaxVoices, record.NumTones, skipReason, toneExports,
-                attributes.VabMasterVolume, attributes.ProgramVolume, attributes.ProgramPan);
-            return true;
-        }
-
-        for (var sfxid = 1; sfxid < soundBin.SfxRecords.Length; sfxid++)
-        {
-            if (soundBin.SfxRecords[sfxid].VabId == -1)
-            {
-                TryExtractSfx(sfxid);
-            }
-        }
-
-        foreach (var vabIndex in SoundBin.VabIndexByMapId.Distinct().OrderBy(x => x))
-        {
-            soundBin.OpenMapVab(vabIndex);
-            for (var sfxid = 1; sfxid < soundBin.SfxRecords.Length; sfxid++)
-            {
-                if (soundBin.SfxRecords[sfxid].VabId >= 0)
-                {
-                    TryExtractSfx(sfxid);
-                }
-            }
-        }
-
-        // Anything left unresolved after every known map VAB has been tried is genuinely
-        // undecodable (invalid record, sequence-triggered, or an unreachable VabId) - document why.
-        for (var sfxid = 1; sfxid < soundBin.SfxRecords.Length; sfxid++)
-        {
-            if (exported.ContainsKey(sfxid))
-            {
-                continue;
-            }
-
-            var record = soundBin.SfxRecords[sfxid];
-            var reason = record.VabId == -2 ? "invalid (VabId=-2)"
-                : record.SeqNum != -1 ? "sequence-triggered, not a decodable sample"
-                : "map VAB not resolvable";
-            exported[sfxid] = new SfxExportRecord(sfxid, record.VabId, record.ProgramNumber, record.ToneNumber, record.Note, record.SeqNum, record.RefSfxId, record.MaxVoices, record.NumTones, reason, [],
-                null, null, null);
-        }
-
-        File.WriteAllText(Path.Combine(soundPath, "sfx.json"), JsonSerializer.Serialize(exported.Values, ExtractionJson.Options));
-        Console.WriteLine($"Extracted {exported.Values.Count(r => r.Tones.Length > 0)}/{soundBin.SfxRecords.Length - 1} sound effects ({exported.Values.Sum(r => r.Tones.Length)} WAV files)");
-        Console.WriteLine($"Sound effects exported from a sibling of their RefSfxId chain: {siblingSourcedCount} ({crossVabIds.Count} of them from another VAB: {string.Join(", ", crossVabIds)})");
+        Console.WriteLine($"Extracted {extraction.Records.Values.Count(r => r.Tones.Length > 0)}/{soundBin.SfxRecords.Length - 1} sound effects ({extraction.Records.Values.Sum(r => r.Tones.Length)} WAV files)");
+        Console.WriteLine($"Sound effects exported from a sibling of their RefSfxId chain: {extraction.SiblingSourcedCount} ({extraction.CrossVabIds.Count} of them from another VAB: {string.Join(", ", extraction.CrossVabIds)})");
     }
 
     private record PortraitProbeRecord(int Icon, int ItemId, int Position, string Status, int? Sector5Id, long? Signature, int? Spritesheet, int? Page, int? Palette, int? SourceX, int? SourceY, int? Swidth, int? Sheight);
@@ -934,37 +574,13 @@ internal class Program
         }
 
         var waveFileName = Path.Combine(outputPath, $"bgm_{bgmIndex:D3}_csharp_render.wav");
-        WriteStereoWav(waveFileName, allSamples, SpuMixerSoundPlaybackBackend.OutputSampleRate);
+        File.WriteAllBytes(waveFileName, ExtractionAudio.EncodeStereoWav(allSamples, SpuMixerSoundPlaybackBackend.OutputSampleRate));
 
         var totalSamples = tickProfile.StartSample(frames);
         var rmsLeft = Math.Sqrt(sumSquaresLeft / (double)totalSamples);
         var rmsRight = Math.Sqrt(sumSquaresRight / (double)totalSamples);
         Console.WriteLine($"Render BGM C# written to {waveFileName}");
         Console.WriteLine($"frames={frames} firstAudibleFrame={firstAudibleFrame} peakL={peakLeft} peakR={peakRight} rmsL={rmsLeft:F1} rmsR={rmsRight:F1}");
-    }
-
-    // JUSTIFICATION: C# language bridge only
-    private static void WriteStereoWav(string fileName, short[] interleavedStereo, int sampleRate)
-    {
-        using var writer = new BinaryWriter(File.Create(fileName));
-        var dataLength = interleavedStereo.Length * sizeof(short);
-        writer.Write("RIFF"u8);
-        writer.Write(36 + dataLength);
-        writer.Write("WAVE"u8);
-        writer.Write("fmt "u8);
-        writer.Write(16);
-        writer.Write((short)1);
-        writer.Write((short)2);
-        writer.Write(sampleRate);
-        writer.Write(sampleRate * 2 * sizeof(short));
-        writer.Write((short)(2 * sizeof(short)));
-        writer.Write((short)16);
-        writer.Write("data"u8);
-        writer.Write(dataLength);
-        foreach (var sample in interleavedStereo)
-        {
-            writer.Write(sample);
-        }
     }
 
     // JUSTIFICATION: C# language bridge only
