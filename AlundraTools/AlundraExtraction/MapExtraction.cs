@@ -91,7 +91,12 @@ public static class MapExtraction
         SpriteSheetLayoutMode spriteSheetLayoutMode,
         IMapFamilyConsumer consumer)
     {
-        consumer.MapTileSheet(id, ComputeTileSheetPng(gameMap, tileAnimDescriptors));
+        // The tile sheet only fills GameMap's pure per-index tile bitmap memo (GetTileBitmap), which the Tiled export fills
+        // identically on demand: skipping it for a consumer that declines it changes no later output.
+        if (consumer.WantsTileSheets)
+        {
+            consumer.MapTileSheet(id, ComputeTileSheetPng(gameMap, tileAnimDescriptors));
+        }
 
         // Must run before the map is handed over: packing populates SiImage.AtlasX/AtlasY, which the
         // serialized map_{id}.json needs to carry.

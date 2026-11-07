@@ -129,6 +129,13 @@ public static class GameMapHelper
     //
     // Returns the sheet image without writing it; the caller disposes it and encodes it (ExtractionImages.EncodePng).
     public static Bitmap ComputeSpriteSheet(GameMap gameMap, SpriteSheetLayoutMode layoutMode = SpriteSheetLayoutMode.Compact)
+        => DrawSpriteSheet(gameMap, PackSpriteSheet(gameMap, layoutMode));
+
+    // The packing half of ComputeSpriteSheet: resolves the layout and stamps AtlasX/AtlasY on every image, without drawing.
+    // DrawSpriteSheet(gameMap, layout) draws the sheet from the result, at any later time: the drawing reads only the layout,
+    // each quad's readonly crop fields (Spritesheet, Palette, SourceX, SourceY, Swidth, Sheight) and the map's sprite page and
+    // palette words, which nothing changes after GameMap.Load (the AtlasX/AtlasY the packing stamps are not read by it).
+    internal static SpriteSheetLayout PackSpriteSheet(GameMap gameMap, SpriteSheetLayoutMode layoutMode)
     {
         var uniqueImages = new List<SiImage>();
         var imagesBySignature = new Dictionary<long, List<SiImage>>();
@@ -152,16 +159,6 @@ public static class GameMapHelper
             _ => throw new ArgumentOutOfRangeException(nameof(layoutMode), layoutMode, "Unsupported spritesheet layout mode.")
         };
 
-        var canvas = new ushort[layout.Width * layout.Height];
-
-        foreach (var image in layout.DrawOrder)
-        {
-            var (x, y) = layout.PositionBySignature[image.Signature];
-            DrawSpriteWords(canvas, layout.Width, layout.Height, gameMap.GetSpriteWords(image), image.Swidth, image.Sheight, x, y);
-        }
-
-        var sheet = CreateWordCanvasBitmap(canvas, layout.Width, layout.Height);
-
         foreach (var (signature, position) in layout.PositionBySignature)
         {
             foreach (var image in imagesBySignature[signature])
@@ -171,7 +168,21 @@ public static class GameMapHelper
             }
         }
 
-        return sheet;
+        return layout;
+    }
+
+    // The drawing half of ComputeSpriteSheet; the caller disposes the bitmap.
+    internal static Bitmap DrawSpriteSheet(GameMap gameMap, SpriteSheetLayout layout)
+    {
+        var canvas = new ushort[layout.Width * layout.Height];
+
+        foreach (var image in layout.DrawOrder)
+        {
+            var (x, y) = layout.PositionBySignature[image.Signature];
+            DrawSpriteWords(canvas, layout.Width, layout.Height, gameMap.GetSpriteWords(image), image.Swidth, image.Sheight, x, y);
+        }
+
+        return CreateWordCanvasBitmap(canvas, layout.Width, layout.Height);
     }
 
     // Sprite sheets are built from the raw CLUT words, not from drawn bitmaps: a word keeps its bit 15 (STP),
@@ -391,7 +402,7 @@ public static class GameMapHelper
 
     // JUSTIFICATION: C# language bridge only - carries one resolved spritesheet layout so both modes
     // share the drawing and AtlasX/AtlasY stamping code above.
-    private sealed record SpriteSheetLayout(
+    internal sealed record SpriteSheetLayout(
         int Width,
         int Height,
         IReadOnlyList<SiImage> DrawOrder,
