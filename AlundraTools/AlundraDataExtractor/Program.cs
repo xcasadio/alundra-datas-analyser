@@ -139,42 +139,28 @@ internal class Program
         Console.WriteLine($"Extract data from {gamePath}");
         Console.WriteLine($"To {extractionPath}");
 
-        // The nine disc files of the default extraction are read once, here; everything below is built from the bytes.
+        // The nine disc files of the default extraction are read once, here; the orchestration lives in AlundraExtraction.
         var discFiles = ReadDiscFiles(gamePath);
-        var gameEngine = CreateGameEngine(discFiles, out var balanceBin, out var font3, out var etcRes);
-        gameEngine.InitializeEngine();
-
-        var alunCdExe = new AlunCdExe(discFiles.AlunCdExe);
-        var closingExe = new ClosingExeInspector(discFiles.ClosingExe);
-
-        var sink = new DirectorySink(extractionPath);
-        TextAndUiExtraction.WriteMemoryCardFrames(alunCdExe, sink);
-        TextAndUiExtraction.WriteClosingImages(closingExe, sink);
-        TextAndUiExtraction.WriteBalance(balanceBin, sink);
-        TextAndUiExtraction.WriteFont3AndWind(font3, gameEngine.StaticVariables, discFiles.Font3Tim, discFiles.WindCl, sink);
-        TextAndUiExtraction.WriteEtcStrings(etcRes, sink);
-        var psxFramesPerSecond = etcRes is EtcResUsa ? 60 : 50;
         var tiledTilesetLayoutMode = ReadEnumOption(args, "--tiled-tileset-layout", TiledTilesetLayoutMode.Compact);
         var spriteSheetLayoutMode = ReadEnumOption(args, "--spritesheet-layout", SpriteSheetLayoutMode.Compact);
-        ExtractDataFromDatasBin(gameEngine.DatasBin, gameEngine.StaticVariables, extractionPath, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode);
-        ExtractDataFromSoundBin(gameEngine.SoundBin, extractionPath);
-        ExtractDataFromBgm(discFiles.SoundBin, extractionPath, tickProfile);
+
+        // The sink creates folders on write; these two are created up front as before.
+        Directory.CreateDirectory(Path.Combine(extractionPath, "sound", "sfx"));
+        Directory.CreateDirectory(Path.Combine(extractionPath, "sound", "bgm"));
+
+        // The library never deletes: a track that is silent, failed or refused must not keep the file a previous run wrote.
+        DefaultExtraction.Write(discFiles, tiledTilesetLayoutMode, spriteSheetLayoutMode, tickProfile, new DirectorySink(extractionPath), Console.WriteLine,
+            relativePath => DeleteStaleBgm(Path.Combine(extractionPath, relativePath.Replace('/', Path.DirectorySeparatorChar))));
     }
 
-    // The nine disc files read by the default extraction. EtcResName and BalanceBinName are the logical names passed to the
-    // readers; BalanceBinName is the path as the path entry builds it, because data/BALANCE.BIN.json serializes BalanceBin.FileName.
-    private sealed record DiscFiles(
-        byte[] DatasBin, byte[] BalanceBin, string BalanceBinName, byte[] SoundBin, byte[] EtcRes, string EtcResName,
-        byte[] AlunCdExe, byte[] ClosingExe, byte[] Font3Tim, byte[] WindCl, byte[] WindTx);
-
     // JUSTIFICATION: C# language bridge only
-    private static DiscFiles ReadDiscFiles(string gamePath)
+    private static DefaultExtractionInputs ReadDiscFiles(string gamePath)
     {
         var dataFolder = Path.Combine(gamePath, "DATA");
         var screenFolder = Path.Combine(dataFolder, "..", "TAKI\\SCREEN");
         var etcResFileName = PathHelper.GetEtcFileName(dataFolder);
 
-        return new DiscFiles(
+        return new DefaultExtractionInputs(
             File.ReadAllBytes(Path.Combine(dataFolder, "DATAS.BIN")),
             File.ReadAllBytes(Path.Combine(dataFolder, "BALANCE.BIN")),
             Path.Combine(dataFolder, "BALANCE.BIN"),
@@ -236,9 +222,6 @@ internal class Program
 
     private static void ExtractDataFromBgm(string soundBinPath, string extractionPath, SequencerTickProfile tickProfile) =>
         ExtractDataFromBgm(extractionPath, tickProfile, (sink, notWritten) => AudioExtraction.ExtractBgm(soundBinPath, tickProfile, sink, Console.WriteLine, notWritten));
-
-    private static void ExtractDataFromBgm(byte[] soundBin, string extractionPath, SequencerTickProfile tickProfile) =>
-        ExtractDataFromBgm(extractionPath, tickProfile, (sink, notWritten) => AudioExtraction.ExtractBgm(soundBin, tickProfile, sink, Console.WriteLine, notWritten));
 
     private static void ExtractDataFromBgm(string extractionPath, SequencerTickProfile tickProfile, Func<IExtractionSink, Action<string>, BgmSummary> extract)
     {
@@ -394,20 +377,6 @@ internal class Program
         Console.WriteLine($"  ok: {results.Count(r => r.Status == "ok")}");
         Console.WriteLine($"  missing record: {results.Count(r => r.Status.StartsWith("missing"))}");
         Console.WriteLine($"  exception: {results.Count(r => r.Status.StartsWith("exception"))}");
-    }
-
-    // JUSTIFICATION: C# language bridge only
-    private static GameEngine CreateGameEngine(DiscFiles discFiles, out BalanceBin balanceBin, out Font3 font3, out EtcRes etcRes)
-    {
-        var datasBin = new DatasBin(discFiles.DatasBin);
-        balanceBin = new BalanceBin(discFiles.BalanceBin, discFiles.BalanceBinName);
-        var soundBin = new SoundBin(discFiles.SoundBin);
-        font3 = new Font3(discFiles.Font3Tim, discFiles.WindCl, discFiles.WindTx);
-        etcRes = discFiles.EtcResName.Contains("usa", StringComparison.InvariantCultureIgnoreCase)
-            ? new EtcResUsa(discFiles.EtcRes, discFiles.EtcResName)
-            : new EtcResR(discFiles.EtcRes, discFiles.EtcResName);
-
-        return new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, null);
     }
 
     // JUSTIFICATION: C# language bridge only
@@ -944,26 +913,6 @@ internal class Program
         // JUSTIFICATION: backend desktop adaptation only
         public void SetReverbState(int mode, short depthLeft, short depthRight)
         {
-        }
-    }
-
-    private static void ExtractDataFromDatasBin(DatasBin datasBin, StaticVariables staticVariables, string extractionPath, int psxFramesPerSecond, TiledTilesetLayoutMode tiledTilesetLayoutMode, SpriteSheetLayoutMode spriteSheetLayoutMode)
-    {
-        TextAndUiExtraction.WriteLoadingScreen(datasBin, new DirectorySink(extractionPath));
-
-        var tileAnimDescriptors = GameInitializer.CreateTileAnimDescriptors(0);
-        EntityNames.Load(EntityNames.Language.French);
-
-        MapExtraction.WriteAllMaps(datasBin, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode, new DirectorySink(extractionPath), Console.WriteLine);
-
-        foreach (var entitySpriteSheet in entitySpriteSheetIds)
-        {
-            Console.WriteLine($"Entity {entitySpriteSheet.Key}");
-
-            foreach (var idName in entitySpriteSheet.Value)
-            {
-                Console.WriteLine($"\t{idName}");
-            }
         }
     }
 
