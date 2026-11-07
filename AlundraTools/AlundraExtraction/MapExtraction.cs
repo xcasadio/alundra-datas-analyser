@@ -29,6 +29,21 @@ public static class MapExtraction
         SpriteSheetLayoutMode spriteSheetLayoutMode,
         IExtractionSink sink,
         Action<string> log)
+        => ProcessAllMaps(datasBin, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode, new SinkMapFamilyConsumer(sink), log);
+
+    /// <summary>
+    /// Loads map_alundra then the 483 maps, in the original order, computing each item where the default extraction
+    /// computes it and handing it to <paramref name="consumer"/> (see <see cref="IMapFamilyConsumer"/> for the callback
+    /// order). Logs "Extract map alundra" and "Extract map {i}" through <paramref name="log"/>.
+    /// </summary>
+    public static void ProcessAllMaps(
+        DatasBin datasBin,
+        TileAnimDescriptor[] tileAnimDescriptors,
+        int psxFramesPerSecond,
+        TiledTilesetLayoutMode tiledTilesetLayoutMode,
+        SpriteSheetLayoutMode spriteSheetLayoutMode,
+        IMapFamilyConsumer consumer,
+        Action<string> log)
     {
         log("Extract map alundra");
         using var br = datasBin.OpenBin();
@@ -37,7 +52,7 @@ public static class MapExtraction
         // animation: without this field, neither the atlas nor map_alundra.json would carry it.
         datasBin.AlundraGameMap.InventoryPortrait = datasBin.AlundraGameMap.SpriteInfo.SpriteRecords[0].GetPortraitImageset(br).Images[0];
         GameMapHelper.LoadDialoguePortraits(datasBin.AlundraGameMap, br);
-        SpriteExtraction.WriteAlundraMap(datasBin.AlundraGameMap, spriteSheetLayoutMode, sink);
+        SpriteExtraction.ProcessAlundraMap(datasBin.AlundraGameMap, spriteSheetLayoutMode, consumer);
 
         for (int i = 0; i < 483; i++)
         {
@@ -45,7 +60,7 @@ public static class MapExtraction
             var gameMap = datasBin.GameMaps[i];
             gameMap.Load(br);
             GameMapHelper.LoadDialoguePortraits(gameMap, br);
-            WriteMap(gameMap, i, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode, sink);
+            ProcessMap(gameMap, i, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode, consumer);
         }
     }
 
@@ -61,16 +76,30 @@ public static class MapExtraction
         TiledTilesetLayoutMode tiledTilesetLayoutMode,
         SpriteSheetLayoutMode spriteSheetLayoutMode,
         IExtractionSink sink)
+        => ProcessMap(gameMap, id, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode, new SinkMapFamilyConsumer(sink));
+
+    /// <summary>
+    /// Computes one already loaded map and hands to the consumer, in order: tile sheet, sprite sheet, effect sheet (or null),
+    /// the stamped map, the Tiled export.
+    /// </summary>
+    public static void ProcessMap(
+        GameMap gameMap,
+        int id,
+        TileAnimDescriptor[] tileAnimDescriptors,
+        int psxFramesPerSecond,
+        TiledTilesetLayoutMode tiledTilesetLayoutMode,
+        SpriteSheetLayoutMode spriteSheetLayoutMode,
+        IMapFamilyConsumer consumer)
     {
-        sink.WriteBytes($"data/map_{id}_tilesheet.png", ComputeTileSheetPng(gameMap, tileAnimDescriptors));
+        consumer.MapTileSheet(id, ComputeTileSheetPng(gameMap, tileAnimDescriptors));
 
-        // Must run before the JSON dump below: it populates SiImage.AtlasX/AtlasY, which the
+        // Must run before the map is handed over: packing populates SiImage.AtlasX/AtlasY, which the
         // serialized map_{id}.json needs to carry.
-        SpriteExtraction.WriteMapSheets(gameMap, id, spriteSheetLayoutMode, sink);
+        SpriteExtraction.ProcessMapSheets(gameMap, id, spriteSheetLayoutMode, consumer);
 
-        sink.WriteBytes($"data/map_{id}.json", ExtractionJson.Serialize(gameMap));
+        consumer.Map(id, gameMap);
 
-        WriteTiledMap(gameMap, id, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, sink);
+        ProcessTiledMap(gameMap, id, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, consumer);
     }
 
     /// <summary>Writes the map's Tiled files under data/tiled/: tileset image, tileset, companion, map.</summary>
@@ -81,11 +110,18 @@ public static class MapExtraction
         int psxFramesPerSecond,
         TiledTilesetLayoutMode tiledTilesetLayoutMode,
         IExtractionSink sink)
+        => ProcessTiledMap(gameMap, id, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, new SinkMapFamilyConsumer(sink));
+
+    /// <summary>Computes the map's Tiled export, hands it to the consumer, then disposes it (its bitmap must not outlive the call).</summary>
+    public static void ProcessTiledMap(
+        GameMap gameMap,
+        int id,
+        TileAnimDescriptor[] tileAnimDescriptors,
+        int psxFramesPerSecond,
+        TiledTilesetLayoutMode tiledTilesetLayoutMode,
+        IMapFamilyConsumer consumer)
     {
         using var tiled = TiledMapExporter.ComputeTiledMap(gameMap, id, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode);
-        sink.WriteBytes($"data/tiled/{tiled.TilesetImageFileName}", ExtractionImages.EncodePng(tiled.TilesetImage));
-        sink.WriteBytes($"data/tiled/{tiled.TilesetFileName}", TiledMapExporter.Serialize(tiled.Tileset));
-        sink.WriteBytes($"data/tiled/{tiled.CompanionFileName}", TiledMapExporter.Serialize(tiled.Companion));
-        sink.WriteBytes($"data/tiled/{tiled.MapFileName}", TiledMapExporter.Serialize(tiled.Map));
+        consumer.TiledMap(id, gameMap, tiled);
     }
 }

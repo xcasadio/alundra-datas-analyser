@@ -25,29 +25,26 @@ public static class SpriteExtraction
 
     /// <summary>Writes data/map_alundra_spritesheet.png, data/map_alundra_effectsheet.png (if any) and data/map_alundra.json, in that order.</summary>
     public static void WriteAlundraMap(GameMap gameMap, SpriteSheetLayoutMode layoutMode, IExtractionSink sink)
+        => ProcessAlundraMap(gameMap, layoutMode, new SinkMapFamilyConsumer(sink));
+
+    /// <summary>Packs map_alundra's sheets and hands them, then the stamped map, to the consumer, in that order.</summary>
+    public static void ProcessAlundraMap(GameMap gameMap, SpriteSheetLayoutMode layoutMode, IMapFamilyConsumer consumer)
     {
-        // Must run before the JSON dump below: it populates SiImage.AtlasX/AtlasY, which the
+        // Must run before the map is handed over: packing populates SiImage.AtlasX/AtlasY, which the
         // serialized map_alundra.json needs to carry.
-        sink.WriteBytes("data/map_alundra_spritesheet.png", ComputeSpriteSheetPng(gameMap, layoutMode));
-        var effectSheet = ComputeEffectSheetPng(gameMap);
-
-        if (effectSheet != null)
-        {
-            sink.WriteBytes("data/map_alundra_effectsheet.png", effectSheet);
-        }
-
-        sink.WriteBytes("data/map_alundra.json", ExtractionJson.Serialize(gameMap));
+        consumer.AlundraMapSpriteSheet(ComputeSpriteSheetPng(gameMap, layoutMode));
+        consumer.AlundraMapEffectSheet(ComputeEffectSheetPng(gameMap));
+        consumer.AlundraMap(gameMap);
     }
 
     /// <summary>Writes data/map_{id}_spritesheet.png and data/map_{id}_effectsheet.png (if any); call it before serializing the map.</summary>
     public static void WriteMapSheets(GameMap gameMap, int id, SpriteSheetLayoutMode layoutMode, IExtractionSink sink)
-    {
-        sink.WriteBytes($"data/map_{id}_spritesheet.png", ComputeSpriteSheetPng(gameMap, layoutMode));
-        var effectSheet = ComputeEffectSheetPng(gameMap);
+        => ProcessMapSheets(gameMap, id, layoutMode, new SinkMapFamilyConsumer(sink));
 
-        if (effectSheet != null)
-        {
-            sink.WriteBytes($"data/map_{id}_effectsheet.png", effectSheet);
-        }
+    /// <summary>Packs the map's sprite and effect sheets (stamping AtlasX/AtlasY) and hands them to the consumer, in that order.</summary>
+    public static void ProcessMapSheets(GameMap gameMap, int id, SpriteSheetLayoutMode layoutMode, IMapFamilyConsumer consumer)
+    {
+        consumer.MapSpriteSheet(id, ComputeSpriteSheetPng(gameMap, layoutMode));
+        consumer.MapEffectSheet(id, ComputeEffectSheetPng(gameMap));
     }
 }
